@@ -1,0 +1,45 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('applications', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('student_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('program_id')->constrained();
+            $table->foreignId('block_id')->constrained('academic_blocks');
+            $table->string('application_number', 30)->unique();
+            $table->enum('status', [
+                'draft',           // Đang điền
+                'pending_payment', // Chờ thanh toán
+                'pending_approval',// Chờ xét duyệt
+                'request_info',    // Yêu cầu bổ sung
+                'approved',        // Đã duyệt
+                'rejected'         // Từ chối
+            ])->default('draft');
+            $table->tinyInteger('current_step')->default(1);
+            $table->tinyInteger('total_steps')->default(4);
+            $table->text('admin_notes')->nullable();
+            $table->text('rejection_reason')->nullable();
+            $table->timestamp('submitted_at')->nullable();
+            $table->timestamp('approved_at')->nullable();
+            $table->string('approved_by')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+            
+            $table->index('application_number');
+            $table->index('status');
+            $table->index('submitted_at');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('applications');
+    }
+};
