@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UX Design Directions - Student Admission Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        body { font-family: 'Instrument Sans', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Custom scrollbar for mobile feel */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .device-frame {
+            border: 8px solid #1e293b;
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            background: white;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            height: 700px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 24px;
+            background: #1e293b;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 p-8">
+
+    <header class="max-w-7xl mx-auto mb-12 text-center">
+        <h1 class="text-4xl font-bold text-slate-900 mb-4">UX Design Directions</h1>
+        <p class="text-lg text-slate-600 max-w-2xl mx-auto">
+            Exploring 3 distinct visual and interaction approaches for the Student Admission Portal.
+            Each direction solves the "One-Sitting Application" challenge differently.
+        </p>
+    </header>
+
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+        <!-- DIRECTION 1: THE CLEAN WIZARD -->
+        <div class="flex flex-col gap-4">
+            <div class="text-center">
+                <h2 class="text-xl font-bold text-slate-900">Direction 1: The Clean Wizard</h2>
+                <p class="text-sm text-slate-500">Focus on clarity, linearity, and zero distraction.</p>
+            </div>
+            
+            <div class="device-frame">
+                <div class="notch"></div>
+                
+                <!-- Status Bar Mock -->
+                <div class="h-8 bg-white w-full"></div>
+
+                <!-- Content -->
+                <div class="flex-1 overflow-y-auto bg-gray-50 flex flex-col">
+                    <!-- Progress Header -->
+                    <div class="bg-white p-4 border-b border-gray-100 sticky top-0 z-10">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">Step 2 of 4</span>
+                            <span class="text-xs text-gray-400">Autosaved</span>
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-900">Upload Documents</h3>
+                        <div class="w-full bg-gray-100 h-1 mt-3 rounded-full overflow-hidden">
+                            <div class="bg-blue-600 h-full w-1/2 rounded-full"></div>
+                        </div>
+                    </div>
+
+                    <!-- Main Form -->
+                    <div class="p-4 flex-1 flex flex-col gap-6">
+                        <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 flex gap-3 items-start">
+                            <div class="text-blue-600 mt-0.5">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <p class="text-sm text-blue-800">Please upload clear photos. Ensure all text is readable.</p>
+                        </div>
+
+                        <!-- Upload Card 1 -->
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-900">National ID (Front)</label>
+                                    <span class="text-xs text-gray-500">Max 5MB • JPG/PDF</span>
+                                </div>
+                                <div class="h-6 w-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                            </div>
+                            <!-- Preview State -->
+                            <div class="relative h-32 bg-slate-100 rounded-lg overflow-hidden group">
+                                <div class="absolute inset-0 flex items-center justify-center bg-black/5 text-white font-medium">id_front.jpg</div>
+                                <button class="absolute top-2 right-2 p-1 bg-white/90 rounded-full text-slate-500 hover:text-red-500 shadow-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Upload Card 2 (Empty) -->
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 border-dashed border-2 hover:border-blue-300 transition-colors cursor-pointer group">
+                            <div class="flex flex-col items-center justify-center py-6 text-center">
+                                <div class="h-12 w-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                </div>
+                                <p class="text-sm font-medium text-slate-900">National ID (Back)</p>
+                                <p class="text-xs text-gray-500 mt-1">Tap to take photo</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Sticky Footer -->
+                    <div class="bg-white p-4 border-t border-gray-100 pb-8">
+                        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 rounded-lg shadow-sm active:scale-95 transition-all">
+                            Next Step
+                        </button>
+                        <button class="w-full mt-3 text-sm text-slate-500 hover:text-slate-800 font-medium py-2">
+                            Save as Draft
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIRECTION 2: THE CONVERSATIONAL FLOW -->
+        <div class="flex flex-col gap-4">
+            <div class="text-center">
+                <h2 class="text-xl font-bold text-slate-900">Direction 2: Conversational</h2>
+                <p class="text-sm text-slate-500">Friendly, one-question-at-a-time, very human.</p>
+            </div>
+            
+            <div class="device-frame">
+                <div class="notch"></div>
+                <div class="h-8 bg-white w-full"></div>
+
+                <div class="flex-1 bg-white flex flex-col p-6">
+                    <!-- Nav -->
+                    <div class="flex justify-between items-center mb-8">
+                        <button class="text-slate-400 hover:text-slate-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <div class="h-1.5 w-12 bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-indigo-600 w-1/4"></div>
+                        </div>
+                    </div>
+
+                    <!-- Question -->
+                    <div class="flex-1 flex flex-col justify-center mb-12">
+                        <h1 class="text-3xl font-bold text-slate-900 mb-4 leading-tight">
+                            First things first, what's your full name?
+                        </h1>
+                        <p class="text-lg text-slate-500 mb-8">
+                            As it appears on your ID card.
+                        </p>
+
+                        <div class="space-y-6">
+                            <div class="group">
+                                <label class="block text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-2 group-focus-within:text-indigo-700">First Name</label>
+                                <input type="text" class="w-full text-2xl border-b-2 border-gray-200 focus:border-indigo-600 outline-none pb-2 bg-transparent placeholder-gray-300 font-medium text-slate-900 transition-colors" placeholder="e.g. Minh">
+                            </div>
+                            <div class="group">
+                                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 group-focus-within:text-indigo-700">Last Name</label>
+                                <input type="text" class="w-full text-2xl border-b-2 border-gray-200 focus:border-indigo-600 outline-none pb-2 bg-transparent placeholder-gray-300 font-medium text-slate-900 transition-colors" placeholder="e.g. Nguyen">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action -->
+                    <div class="flex justify-end pb-8">
+                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg shadow-indigo-200 flex items-center gap-2">
+                            OK
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIRECTION 3: THE "APP-LIKE" DASHBOARD -->
+        <div class="flex flex-col gap-4">
+            <div class="text-center">
+                <h2 class="text-xl font-bold text-slate-900">Direction 3: App Dashboard</h2>
+                <p class="text-sm text-slate-500">Card-based, overview-first, non-linear freedom.</p>
+            </div>
+            
+            <div class="device-frame">
+                <div class="notch"></div>
+                <div class="h-8 bg-slate-900 w-full"></div>
+
+                <div class="flex-1 bg-slate-50 flex flex-col">
+                    <!-- Header -->
+                    <div class="bg-slate-900 text-white p-6 pb-12 rounded-b-3xl relative overflow-hidden">
+                        <div class="relative z-10">
+                            <h2 class="text-gray-400 text-sm font-medium mb-1">Welcome back,</h2>
+                            <h1 class="text-2xl font-bold">Minh Nguyen</h1>
+                            
+                            <div class="mt-6 flex items-center gap-3">
+                                <div class="bg-white/10 px-3 py-1 rounded-full text-xs font-medium text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                    Draft Application
+                                </div>
+                                <span class="text-xs text-slate-400">Last saved 2m ago</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cards Container -->
+                    <div class="px-4 -mt-8 flex-1 overflow-y-auto pb-6">
+                        <div class="grid gap-4">
+                            
+                            <!-- Step 1: Done -->
+                            <div class="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between border-l-4 border-emerald-500">
+                                <div>
+                                    <h3 class="font-bold text-slate-900">Personal Info</h3>
+                                    <p class="text-xs text-emerald-600 font-medium mt-0.5">Completed</p>
+                                </div>
+                                <div class="h-8 w-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                            </div>
+
+                            <!-- Step 2: Active -->
+                            <div class="bg-white p-5 rounded-xl shadow-lg ring-1 ring-blue-100 transform scale-[1.02]">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div class="h-10 w-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                    </div>
+                                    <span class="bg-blue-600 text-white text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wide">Current Step</span>
+                                </div>
+                                <h3 class="font-bold text-lg text-slate-900 mb-1">Documents</h3>
+                                <p class="text-sm text-slate-500 mb-4">Upload your ID and Transcripts.</p>
+                                <button class="w-full bg-slate-900 text-white py-2.5 rounded-lg font-medium text-sm">Continue</button>
+                            </div>
+
+                            <!-- Step 3: Locked -->
+                            <div class="bg-slate-100 p-4 rounded-xl border border-dashed border-gray-300 opacity-60">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-8 w-8 rounded-full bg-gray-200 text-gray-400 flex items-center justify-center">
+                                        <span class="font-mono text-xs font-bold">3</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-slate-700">Payment</h3>
+                                        <p class="text-xs text-slate-500">Pending previous steps</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
