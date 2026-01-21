@@ -43,7 +43,7 @@ development_status:
   epic-1: in-progress
   1-1-install-configure-breeze-blade: done
   1-2-pii-encryption-schema-migration: done
-  1-3-web-based-otp-integration: backlog
+  1-3-web-based-otp-integration: done
   epic-1-retrospective: optional
 
   epic-2: backlog

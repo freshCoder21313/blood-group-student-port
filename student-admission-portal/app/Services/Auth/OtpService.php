@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Services\Auth;
 
 use App\Models\Otp;
+use App\Models\User;
 use App\Services\Notifications\SmsChannel;
 use App\Services\Notifications\EmailChannel;
 use Illuminate\Support\Facades\Cache;
@@ -23,53 +25,57 @@ class OtpService
     /**
      * Generate and send OTP
      */
-    public function generate(string $identifier, string $type = 'email'): array
+    public function generate(User $user, string $purpose): Otp
     {
-        // 1. Rate limiting check
+        // Determine channel(s) - Send to both if available to ensure delivery
+        // This satisfies the "Email/SMS" requirement
+        $identifier = $user->email;
+        $type = 'email';
+
+        // Check rate limit
         $this->checkRateLimit($identifier);
 
-        // 2. Invalidate previous OTPs
+        // Invalidate previous OTPs for this identifier and purpose
         Otp::where('identifier', $identifier)
+            ->where('purpose', $purpose)
             ->whereNull('verified_at')
             ->update(['verified_at' => Carbon::now()]);
 
-        // 3. Generate secure OTP
+        // Generate OTP
         $otpCode = $this->generateSecureOtp();
 
-        // 4. Store OTP
-        Otp::create([
+        // Create OTP record (Primary identifier is email for now)
+        $otp = Otp::create([
+            'user_id' => $user->id,
             'identifier' => $identifier,
-            'otp_code' => $otpCode, // In prod, consider hashing this
+            'otp_code' => $otpCode,
             'type' => $type,
+            'purpose' => $purpose,
             'expires_at' => Carbon::now()->addMinutes(self::OTP_EXPIRY_MINUTES),
             'attempts' => 0,
-            'purpose' => 'login'
         ]);
 
-        // 5. Send OTP via appropriate channel
-        if ($type === 'email') {
-            $this->emailChannel->send($identifier, $otpCode);
-        } else {
-            $this->smsChannel->send($identifier, $otpCode);
+        // Send OTP via Email
+        $this->emailChannel->send($user->email, $otpCode);
+
+        // Send OTP via SMS if phone exists
+        if (!empty($user->phone)) {
+            $this->smsChannel->send($user->phone, $otpCode);
         }
 
-        // 6. Update cooldown
+        // Set cooldown
         $this->setCooldown($identifier);
 
-        return [
-            'success' => true,
-            'message' => "OTP sent to {$type}",
-            'expires_in' => self::OTP_EXPIRY_MINUTES * 60,
-            'resend_available_in' => self::RESEND_COOLDOWN_SECONDS,
-        ];
+        return $otp;
     }
 
     /**
      * Verify OTP
      */
-    public function verify(string $identifier, string $code): array
+    public function verify(string $identifier, string $code, string $purpose): array
     {
         $otp = Otp::where('identifier', $identifier)
+            ->where('purpose', $purpose)
             ->whereNull('verified_at')
             ->where('expires_at', '>', Carbon::now())
             ->latest()
@@ -132,7 +138,11 @@ class OtpService
     {
         $cacheKey = "otp_cooldown:{$identifier}";
         if (Cache::has($cacheKey)) {
-            throw new \Exception("Please wait before requesting new OTP.");
+            // Throwing exception might be too harsh for UI, maybe return result? 
+            // But strict service pattern often throws. 
+            // Previous code threw Exception. I'll keep it or use a custom exception.
+            // For now, keep as is.
+             throw new \Exception("Please wait before requesting new OTP.");
         }
     }
 

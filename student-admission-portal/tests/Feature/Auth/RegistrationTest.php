@@ -1,4 +1,11 @@
 <?php
+declare(strict_types=1);
+
+use App\Services\Notifications\EmailChannel;
+use App\Services\Notifications\SmsChannel;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
 
 test('registration screen can be rendered', function () {
     $response = $this->get('/register');
@@ -6,14 +13,23 @@ test('registration screen can be rendered', function () {
     $response->assertStatus(200);
 });
 
-test('new users can register', function () {
+test('new users can register and are redirected to otp verification', function () {
+    $this->mock(EmailChannel::class)->shouldReceive('send');
+    $this->mock(SmsChannel::class);
+
     $response = $this->post('/register', [
-        'name' => 'Test User',
         'email' => 'test@example.com',
+        'phone' => '0712345678',
         'password' => 'password',
         'password_confirmation' => 'password',
     ]);
 
-    $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $this->assertGuest();
+    $response->assertRedirect(route('otp.verify'));
+    
+    $this->assertDatabaseHas('users', ['email' => 'test@example.com']);
+    $this->assertDatabaseHas('otps', [
+        'identifier' => 'test@example.com', 
+        'purpose' => 'registration'
+    ]);
 });
