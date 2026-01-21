@@ -31,7 +31,7 @@
                                 switch($application->current_step) {
                                     case 1: $continueRoute = route('application.personal', $application); break;
                                     case 2: $continueRoute = route('application.parent', $application); break;
-                                    case 3: $continueRoute = '#'; break; // Program Selection (Next Story)
+                                    case 3: $continueRoute = route('application.program', $application); break; // Program Selection
                                     case 4: $continueRoute = '#'; break; // Documents (Next Story)
                                     default: $continueRoute = route('dashboard');
                                 }
@@ -95,14 +95,23 @@
                     </x-card>
                 </a>
                 
-                <x-card title="Program" description="Select your course">
-                     <x-slot name="icon">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path></svg>
-                     </x-slot>
-                     @if(isset($application) && $application && $application->current_step > 3)
-                        <span class="text-green-500 text-sm">✓ Completed</span>
-                     @endif
-                </x-card>
+                <!-- Program Info -->
+                <a href="{{ (isset($application) && $application) ? route('application.program', $application) : '#' }}" class="block hover:shadow-lg transition duration-200">
+                    <x-card title="Program" description="Select your course">
+                         <x-slot name="icon">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path></svg>
+                         </x-slot>
+                         @if(isset($application) && $application)
+                             @if($application->current_step > 3)
+                                <span class="text-green-500 text-sm font-bold">✓ Completed</span>
+                             @elseif($application->current_step == 3)
+                                <span class="text-blue-500 text-sm">In Progress</span>
+                             @else
+                                <span class="text-gray-400 text-sm">Pending</span>
+                             @endif
+                         @endif
+                    </x-card>
+                </a>
                 
                 <x-card title="Documents" description="Upload required files">
                      <x-slot name="icon">

@@ -1,0 +1,49 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Application - Program Selection') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <x-card>
+                @if (session('status') === 'program-updated')
+                    <div class="mb-4 text-sm font-medium text-green-600">
+                        {{ __('Program selection saved successfully.') }}
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('application.program.update', $application) }}">
+                    @csrf
+                    
+                    <div class="grid grid-cols-1 gap-6">
+                        <!-- Program -->
+                        <div>
+                            <x-ui.input-label for="program_id" :value="__('Select Program')" />
+                            <x-ui.select id="program_id" name="program_id" class="block mt-1 w-full">
+                                <option value="">{{ __('Select a program...') }}</option>
+                                @foreach($programs as $program)
+                                    <option value="{{ $program->id }}" {{ old('program_id', $application->program_id) == $program->id ? 'selected' : '' }}>
+                                        {{ $program->code }} - {{ $program->name }} ({{ $program->duration }}) - {{ number_format($program->fee, 2) }}
+                                    </option>
+                                @endforeach
+                            </x-ui.select>
+                            <x-ui.input-error :messages="$errors->get('program_id')" class="mt-2" />
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-end mt-4 gap-4">
+                        <x-ui.secondary-button type="submit" name="action" value="save">
+                            {{ __('Save Draft') }}
+                        </x-ui.secondary-button>
+
+                        <x-ui.primary-button type="submit" name="action" value="next">
+                            {{ __('Save & Next') }}
+                        </x-ui.primary-button>
+                    </div>
+                </form>
+            </x-card>
+        </div>
+    </div>
+</x-app-layout>

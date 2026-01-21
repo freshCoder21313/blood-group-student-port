@@ -49,7 +49,7 @@ development_status:
   epic-2: in-progress
   2-1-dashboard-application-initialization: done
   2-2-personal-parent-info-forms: done
-  2-3-program-selection-logic: backlog
+  2-3-program-selection-logic: done
   2-4-document-upload-component-storage: backlog
   epic-2-retrospective: optional
 

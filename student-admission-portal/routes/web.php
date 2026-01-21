@@ -20,6 +20,9 @@ Route::middleware(['auth', 'otp.verified'])->group(function () {
     
     Route::get('/application/{application}/parent', [ApplicationFormController::class, 'parent'])->name('application.parent');
     Route::post('/application/{application}/parent', [ApplicationFormController::class, 'updateParent'])->name('application.parent.update');
+
+    Route::get('/application/{application}/program', [ApplicationFormController::class, 'program'])->name('application.program');
+    Route::post('/application/{application}/program', [ApplicationFormController::class, 'updateProgram'])->name('application.program.update');
 });
 
 Route::middleware('auth')->group(function () {

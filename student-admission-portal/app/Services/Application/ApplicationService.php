@@ -82,7 +82,7 @@ class ApplicationService
     /**
      * Save step data
      */
-    public function saveStep(Application $application, int $stepNumber, array $data): ApplicationStep
+    public function saveStep(Application $application, int $stepNumber, array $data, bool $isCompleted = true): ApplicationStep
     {
         $step = ApplicationStep::where('application_id', $application->id)
                                ->where('step_number', $stepNumber)
@@ -90,15 +90,15 @@ class ApplicationService
 
         $step->update([
             'data' => array_merge($step->data ?? [], $data),
-            'is_completed' => true,
-            'completed_at' => now()
+            'is_completed' => $isCompleted,
+            'completed_at' => $isCompleted ? now() : null
         ]);
 
         // Update student info if needed
         $this->updateStudentFromStep($application->student, $stepNumber, $data);
 
-        // Update current_step
-        if ($stepNumber >= $application->current_step) {
+        // Update current_step ONLY if completed
+        if ($isCompleted && $stepNumber >= $application->current_step) {
             $application->update(['current_step' => min($stepNumber + 1, $application->total_steps)]);
         }
 
@@ -197,5 +197,21 @@ class ApplicationService
             ['student_id' => $student->id],
             $updateData
         );
+    }
+
+    /**
+     * Update application program
+     */
+    public function updateProgram(Application $application, array $data): void
+    {
+        $programId = $data['program_id'] ?? null;
+
+        DB::transaction(function () use ($application, $programId) {
+            $application->update(['program_id' => $programId]);
+            
+            // Update step 3 (Program Selection)
+            // Only mark complete if program_id is selected
+            $this->saveStep($application, 3, ['program_id' => $programId], !is_null($programId));
+        });
     }
 }

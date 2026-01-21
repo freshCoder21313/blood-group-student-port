@@ -66,7 +66,7 @@ workflow_status:
     agent: architect
     command: /bmad:bmm:workflows:implementation-readiness
   sprint-planning:
-    status: required
+    status: _bmad-output/implementation-artifacts/sprint-status.yaml
     phase: 4
     agent: sm
     command: /bmad:bmm:workflows:sprint-planning
