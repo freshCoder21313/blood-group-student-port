@@ -28,9 +28,46 @@ class Student extends Model
         'profile_photo',
     ];
 
-    protected $casts = [
-        'date_of_birth' => 'date',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'date_of_birth' => 'date',
+            'national_id' => 'encrypted',
+            'passport_number' => 'encrypted',
+        ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (Student $student) {
+            if ($student->isDirty('national_id')) {
+                $student->national_id_index = $student->generateBlindIndex($student->national_id);
+            }
+            
+            if ($student->isDirty('passport_number')) {
+                $student->passport_number_index = $student->generateBlindIndex($student->passport_number);
+            }
+        });
+    }
+
+    public function generateBlindIndex(?string $value): ?string
+    {
+        if (! $value) {
+            return null;
+        }
+
+        return hash_hmac('sha256', $value, config('app.blind_index_key'));
+    }
+
+    public function scopeWhereNationalId($query, string $value)
+    {
+        return $query->where('national_id_index', $this->generateBlindIndex($value));
+    }
+
+    public function scopeWherePassportNumber($query, string $value)
+    {
+        return $query->where('passport_number_index', $this->generateBlindIndex($value));
+    }
 
     public function user()
     {

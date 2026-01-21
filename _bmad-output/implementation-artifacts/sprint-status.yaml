@@ -42,7 +42,7 @@ story_location: /media/truc2tz/SantaSSD/SKS/Sources/repos/PHP/blood-group-studen
 development_status:
   epic-1: in-progress
   1-1-install-configure-breeze-blade: done
-  1-2-pii-encryption-schema-migration: backlog
+  1-2-pii-encryption-schema-migration: done
   1-3-web-based-otp-integration: backlog
   epic-1-retrospective: optional
 
