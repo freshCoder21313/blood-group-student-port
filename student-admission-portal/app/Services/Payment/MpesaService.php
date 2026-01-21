@@ -2,12 +2,12 @@
 
 namespace App\Services\Payment;
 
-use App\Models\Payment;
-use App\Models\Application;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
+use App\Models\Payment;
+use App\Models\Application;
 
 class MpesaService
 {
@@ -20,26 +20,26 @@ class MpesaService
 
     public function __construct()
     {
-        $this->consumerKey = config('services.mpesa.consumer_key') ?? '';
-        $this->consumerSecret = config('services.mpesa.consumer_secret') ?? '';
-        $this->shortcode = config('services.mpesa.shortcode') ?? '';
-        $this->passkey = config('services.mpesa.passkey') ?? '';
-        $this->callbackUrl = config('services.mpesa.callback_url') ?? '';
-        $this->baseUrl = config('services.mpesa.environment') === 'production'
+        $this->consumerKey = config('mpesa.consumer_key') ?? '';
+        $this->consumerSecret = config('mpesa.consumer_secret') ?? '';
+        $this->shortcode = config('mpesa.shortcode') ?? '';
+        $this->passkey = config('mpesa.passkey') ?? '';
+        $this->callbackUrl = config('mpesa.callback_url') ?? '';
+        $this->baseUrl = config('mpesa.env') === 'production'
             ? 'https://api.safaricom.co.ke'
             : 'https://sandbox.safaricom.co.ke';
     }
 
-    public function initiateSTKPush(Application $application, string $phoneNumber, float $amount): array
+    public function initiateStkPush(string $phoneNumber, float $amount, string $reference)
     {
-        // Mock success for development if keys are missing
         if (empty($this->consumerKey)) {
             Log::warning("M-Pesa keys missing. Returning mock success.");
             return [
-                'success' => true,
-                'message' => 'Payment request sent (Mock).',
-                'checkout_request_id' => 'MOCK_' . uniqid(),
-                'payment_id' => 0,
+                'MerchantRequestID' => 'MOCK_' . uniqid(),
+                'CheckoutRequestID' => 'MOCK_' . uniqid(),
+                'ResponseCode' => '0',
+                'ResponseDescription' => 'Success (Mock)',
+                'CustomerMessage' => 'Success (Mock)',
             ];
         }
 
@@ -47,7 +47,7 @@ class MpesaService
             $accessToken = $this->getAccessToken();
             $timestamp = Carbon::now()->format('YmdHis');
             $password = base64_encode($this->shortcode . $this->passkey . $timestamp);
-            $transactionRef = 'APP' . str_pad($application->id, 8, '0', STR_PAD_LEFT) . time();
+            $formattedPhone = $this->formatPhoneNumber($phoneNumber);
 
             $response = Http::withToken($accessToken)
                 ->post("{$this->baseUrl}/mpesa/stkpush/v1/processrequest", [
@@ -56,56 +56,32 @@ class MpesaService
                     'Timestamp' => $timestamp,
                     'TransactionType' => 'CustomerPayBillOnline',
                     'Amount' => (int) $amount,
-                    'PartyA' => $this->formatPhoneNumber($phoneNumber),
+                    'PartyA' => $formattedPhone,
                     'PartyB' => $this->shortcode,
-                    'PhoneNumber' => $this->formatPhoneNumber($phoneNumber),
+                    'PhoneNumber' => $formattedPhone,
                     'CallBackURL' => $this->callbackUrl,
-                    'AccountReference' => $transactionRef,
-                    'TransactionDesc' => 'Application Fee - ' . $application->id,
+                    'AccountReference' => $reference,
+                    'TransactionDesc' => 'Payment ' . $reference,
                 ]);
 
             $result = $response->json();
-
-            if ($response->successful() && isset($result['CheckoutRequestID'])) {
-                $payment = Payment::create([
-                    'application_id' => $application->id,
-                    'checkout_request_id' => $result['CheckoutRequestID'],
-                    'merchant_request_id' => $result['MerchantRequestID'],
-                    'transaction_ref' => $transactionRef,
-                    'phone_number' => $phoneNumber,
-                    'amount' => $amount,
-                    'status' => 'pending',
-                    'initiated_at' => Carbon::now(),
-                    'payment_method' => 'mpesa'
-                ]);
-
-                return [
-                    'success' => true,
-                    'message' => 'Payment request sent. Please check your phone.',
-                    'checkout_request_id' => $result['CheckoutRequestID'],
-                    'payment_id' => $payment->id,
-                ];
+            
+            if (!$response->successful()) {
+                Log::error('M-Pesa STK Push Failed', $result);
+                // We could throw exception here, but returning result allows controller to handle
             }
 
-            return [
-                'success' => false,
-                'message' => $result['errorMessage'] ?? 'Payment initiation failed',
-                'error_code' => $result['errorCode'] ?? 'UNKNOWN'
-            ];
+            return $result;
 
         } catch (\Exception $e) {
             Log::error('M-Pesa STK Push error: ' . $e->getMessage());
-            return [
-                'success' => false,
-                'message' => 'Payment service error',
-                'error_code' => 'SERVICE_ERROR'
-            ];
+            throw $e;
         }
     }
 
-    public function handleCallback(array $callbackData): void
+    public function processCallback(array $payload)
     {
-        $body = $callbackData['Body']['stkCallback'] ?? null;
+        $body = $payload['Body']['stkCallback'] ?? null;
 
         if (!$body) {
             Log::error('Invalid M-Pesa callback structure');
@@ -115,9 +91,13 @@ class MpesaService
         $checkoutRequestId = $body['CheckoutRequestID'];
         $resultCode = $body['ResultCode'];
 
+        // Find payment by checkout_request_id
         $payment = Payment::where('checkout_request_id', $checkoutRequestId)->first();
 
-        if (!$payment) return;
+        if (!$payment) {
+            Log::warning("Payment not found for Callback CheckoutRequestID: $checkoutRequestId");
+            return;
+        }
 
         if ($resultCode == 0) {
             $metadata = collect($body['CallbackMetadata']['Item'] ?? [])->pluck('Value', 'Name')->toArray();
@@ -125,17 +105,49 @@ class MpesaService
             $payment->update([
                 'status' => 'completed',
                 'mpesa_receipt_number' => $metadata['MpesaReceiptNumber'] ?? null,
-                'paid_amount' => $metadata['Amount'] ?? $payment->amount,
-                'completed_at' => Carbon::now(),
+                'transaction_code' => $metadata['MpesaReceiptNumber'] ?? null, // Aligning transaction_code
+                'amount' => $metadata['Amount'] ?? $payment->amount,
+                'result_desc' => 'Success',
             ]);
+            
+            // Update application status as per AC
+            if ($payment->application) {
+                // 'payment_received' is not in enum, using 'pending_approval'
+                $payment->application->update(['status' => 'pending_approval']);
+            }
 
-            $payment->application->update(['payment_status' => 'paid']);
         } else {
             $payment->update([
                 'status' => 'failed',
-                'failure_reason' => $body['ResultDesc'] ?? 'Unknown error'
+                'result_desc' => $body['ResultDesc'] ?? 'Unknown error'
             ]);
         }
+    }
+
+    public function recordManualPayment(Application $application, array $data): Payment
+    {
+        $path = null;
+        if (isset($data['proof_document']) && $data['proof_document'] instanceof \Illuminate\Http\UploadedFile) {
+            $path = $data['proof_document']->store('payment_proofs', 'private');
+        }
+
+        $payment = Payment::where('application_id', $application->id)
+            ->where('status', Payment::STATUS_PENDING)
+            ->first();
+
+        if (!$payment) {
+            $payment = new Payment();
+            $payment->application_id = $application->id;
+        }
+
+        $payment->status = Payment::STATUS_PENDING_VERIFICATION;
+        $payment->transaction_code = $data['transaction_code'];
+        $payment->amount = $data['amount'] ?? $payment->amount ?? 0;
+        $payment->proof_document_path = $path;
+        $payment->manual_submission = true;
+        $payment->save();
+
+        return $payment;
     }
 
     private function getAccessToken(): string
@@ -157,3 +169,4 @@ class MpesaService
         return $phone;
     }
 }
+

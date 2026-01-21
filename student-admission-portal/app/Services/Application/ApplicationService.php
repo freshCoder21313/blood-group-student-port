@@ -122,7 +122,7 @@ class ApplicationService
         }
 
         // Check payment
-        if (!$application->payment || $application->payment->status !== 'submitted') {
+        if (!$application->payment || !in_array($application->payment->status, ['submitted', 'completed'])) {
             throw new \Exception("Please submit payment proof before submitting application");
         }
 

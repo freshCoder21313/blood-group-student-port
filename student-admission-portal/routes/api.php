@@ -5,7 +5,6 @@ use App\Http\Controllers\Api\V1\StudentController;
 use App\Http\Controllers\Api\V1\StatusController;
 use App\Http\Controllers\Api\V1\DocumentController;
 use App\Http\Controllers\Api\V1\WebhookController;
-use App\Http\Controllers\Api\V1\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,12 +13,6 @@ use App\Http\Controllers\Api\V1\PaymentController;
 */
 
 Route::prefix('v1')->middleware(['api'])->group(function () { 
-
-    // PAYMENT
-    Route::post('/payments/initiate', [PaymentController::class, 'initiate']); // M-Pesa STK Push
-    Route::post('/payments/callback', [PaymentController::class, 'callback']); // M-Pesa Callback
-    Route::post('/payments/submit', [PaymentController::class, 'submitPayment']); // Manual Upload
-    Route::get('/payments/history/{application_id}', [PaymentController::class, 'history']);
 
     Route::middleware(\App\Http\Middleware\ApiAuthentication::class)->group(function () {
         
@@ -86,4 +79,11 @@ Route::prefix('v1')->middleware(['api'])->group(function () {
 
 // Include Legacy Auth Routes (formerly routes/auth.php)
 require __DIR__ . '/api_auth.php';
+
+// M-Pesa Callback (Public) - For Web Portal
+Route::post('/payment/callback', [\App\Http\Controllers\PaymentController::class, 'callback'])
+    ->name('payment.callback')
+    ->middleware(\App\Http\Middleware\VerifyMpesaIp::class);
+
+
 

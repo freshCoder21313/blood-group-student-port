@@ -125,9 +125,9 @@ class ApplicationFormController extends Controller
 
         if ($action === 'next') {
             try {
-                // This validates required docs and marks complete
+                // Validate documents and mark step 4 complete
                 $this->applicationService->saveStep($application, 4, [], true);
-                return redirect()->route('dashboard')->with('status', 'application-submitted');
+                return redirect()->route('application.payment', $application);
             } catch (\Exception $e) {
                 return back()->withErrors(['error' => $e->getMessage()]);
             }
@@ -136,5 +136,27 @@ class ApplicationFormController extends Controller
         // Save Draft
         $this->applicationService->saveStep($application, 4, [], false);
         return back()->with('status', 'documents-updated');
+    }
+
+    public function payment(Application $application): View
+    {
+        $this->authorize('update', $application);
+
+        return view('application.payment', [
+            'application' => $application,
+            'payment' => $application->payment()->latest()->first(), // Get latest payment
+        ]);
+    }
+
+    public function submit(Application $application): RedirectResponse
+    {
+        $this->authorize('update', $application);
+
+        try {
+            $this->applicationService->submit($application);
+            return redirect()->route('dashboard')->with('status', 'application-submitted');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
     }
 }

@@ -17,7 +17,7 @@ test('createDraft sets status to draft and defaults', function () {
         ->and($application->program_id)->toBeNull()
         ->and($application->block_id)->toBeNull()
         ->and($application->current_step)->toBe(1)
-        ->and($application->total_steps)->toBe(4);
+        ->and($application->total_steps)->toBe(5);
 });
 
 test('createDraft generates unique application number', function () {

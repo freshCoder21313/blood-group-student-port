@@ -28,8 +28,16 @@ Route::middleware(['auth', 'otp.verified'])->group(function () {
     Route::get('/application/{application}/documents', [ApplicationFormController::class, 'documents'])->name('application.documents');
     Route::post('/application/{application}/documents', [ApplicationFormController::class, 'updateDocuments'])->name('application.documents.update');
 
+    Route::get('/application/{application}/payment', [ApplicationFormController::class, 'payment'])->name('application.payment');
+    Route::post('/application/{application}/submit', [ApplicationFormController::class, 'submit'])->name('application.submit');
+
     Route::get('/documents/{document}', [DocumentController::class, 'download'])->name('documents.show');
     Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
+
+    // Payment Routes
+    Route::post('/payment/{application}/initiate', [\App\Http\Controllers\PaymentController::class, 'store'])->name('payment.initiate');
+    Route::post('/payment/{application}/manual', [\App\Http\Controllers\PaymentController::class, 'storeManual'])->name('payment.manual.store');
+    Route::get('/payment/{application}/status', [\App\Http\Controllers\PaymentController::class, 'checkStatus'])->name('payment.status');
 });
 
 Route::middleware('auth')->group(function () {
