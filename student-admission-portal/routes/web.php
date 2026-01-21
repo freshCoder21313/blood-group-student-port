@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ApplicationFormController;
+use App\Http\Controllers\DocumentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,6 +24,12 @@ Route::middleware(['auth', 'otp.verified'])->group(function () {
 
     Route::get('/application/{application}/program', [ApplicationFormController::class, 'program'])->name('application.program');
     Route::post('/application/{application}/program', [ApplicationFormController::class, 'updateProgram'])->name('application.program.update');
+
+    Route::get('/application/{application}/documents', [ApplicationFormController::class, 'documents'])->name('application.documents');
+    Route::post('/application/{application}/documents', [ApplicationFormController::class, 'updateDocuments'])->name('application.documents.update');
+
+    Route::get('/documents/{document}', [DocumentController::class, 'download'])->name('documents.show');
+    Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
 });
 
 Route::middleware('auth')->group(function () {

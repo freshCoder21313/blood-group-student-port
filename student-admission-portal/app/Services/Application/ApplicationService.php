@@ -88,6 +88,10 @@ class ApplicationService
                                ->where('step_number', $stepNumber)
                                ->firstOrFail();
 
+        if ($isCompleted && $stepNumber === 4) {
+            $this->validateDocuments($application);
+        }
+
         $step->update([
             'data' => array_merge($step->data ?? [], $data),
             'is_completed' => $isCompleted,
@@ -213,5 +217,30 @@ class ApplicationService
             // Only mark complete if program_id is selected
             $this->saveStep($application, 3, ['program_id' => $programId], !is_null($programId));
         });
+    }
+
+    /**
+     * Get application documents
+     */
+    public function getDocuments(Application $application)
+    {
+        return $application->documents;
+    }
+
+    /**
+     * Validate documents
+     */
+    private function validateDocuments(Application $application): void
+    {
+        $documents = $this->getDocuments($application);
+        $types = $documents->pluck('type')->toArray();
+        
+        $required = ['national_id', 'transcript'];
+        
+        foreach ($required as $type) {
+            if (!in_array($type, $types)) {
+                throw new \Exception("Required documents missing: $type");
+            }
+        }
     }
 }

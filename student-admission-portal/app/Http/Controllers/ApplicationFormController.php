@@ -8,13 +8,16 @@ use App\Http\Requests\ProgramSelectionRequest;
 use App\Models\Application;
 use App\Models\Program;
 use App\Services\Application\ApplicationService;
+use App\Services\DocumentService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ApplicationFormController extends Controller
 {
     public function __construct(
-        private ApplicationService $applicationService
+        private ApplicationService $applicationService,
+        private DocumentService $documentService
     ) {}
 
     public function personal(Application $application): View
@@ -85,11 +88,53 @@ class ApplicationFormController extends Controller
         $this->applicationService->updateProgram($application, $request->validated());
 
         if ($request->input('action') === 'next') {
-            // Next step is Documents (Story 2.4)
-            // For now, return to dashboard or stub route
-            return redirect()->route('dashboard')->with('status', 'program-updated');
+            return redirect()->route('application.documents', $application);
         }
 
         return back()->with('status', 'program-updated');
+    }
+
+    public function documents(Application $application): View
+    {
+        $this->authorize('update', $application);
+
+        $documents = $this->applicationService->getDocuments($application);
+
+        return view('application.documents', [
+            'application' => $application,
+            'documents' => $documents,
+        ]);
+    }
+
+    public function updateDocuments(Request $request, Application $application): RedirectResponse
+    {
+        $this->authorize('update', $application);
+
+        // Handle file uploads
+        if ($request->hasFile('national_id')) {
+            $request->validate(['national_id' => 'file|mimes:jpeg,png,pdf|max:5120']);
+            $this->documentService->store($application, $request->file('national_id'), 'national_id');
+        }
+
+        if ($request->hasFile('transcript')) {
+            $request->validate(['transcript' => 'file|mimes:jpeg,png,pdf|max:5120']);
+            $this->documentService->store($application, $request->file('transcript'), 'transcript');
+        }
+
+        $action = $request->input('action');
+
+        if ($action === 'next') {
+            try {
+                // This validates required docs and marks complete
+                $this->applicationService->saveStep($application, 4, [], true);
+                return redirect()->route('dashboard')->with('status', 'application-submitted');
+            } catch (\Exception $e) {
+                return back()->withErrors(['error' => $e->getMessage()]);
+            }
+        }
+
+        // Save Draft
+        $this->applicationService->saveStep($application, 4, [], false);
+        return back()->with('status', 'documents-updated');
     }
 }

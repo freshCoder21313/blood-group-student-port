@@ -12,9 +12,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('application_id')->constrained()->cascadeOnDelete();
             $table->string('type'); // e.g. 'transcript', 'photo'
-            $table->string('file_path');
-            $table->string('original_name')->nullable();
-            $table->string('status')->default('pending'); // pending, approved, rejected
+            $table->string('path');
+            $table->string('original_name');
+            $table->string('mime_type');
+            $table->integer('size');
             $table->timestamps();
         });
     }
