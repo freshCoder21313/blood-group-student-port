@@ -155,33 +155,47 @@ class ApplicationService
     {
         switch ($stepNumber) {
             case 1: // Personal Info
-                $student->update([
-                    'first_name' => $data['first_name'] ?? $student->first_name,
-                    'middle_name' => $data['middle_name'] ?? null,
-                    'last_name' => $data['last_name'] ?? $student->last_name,
-                    'date_of_birth' => $data['date_of_birth'] ?? $student->date_of_birth,
-                    'gender' => $data['gender'] ?? $student->gender,
-                    'nationality' => $data['nationality'] ?? 'Kenya',
-                    'national_id' => $data['national_id'] ?? null,
-                    'address' => $data['address'] ?? $student->address,
-                    'city' => $data['city'] ?? $student->city,
-                    'county' => $data['county'] ?? null,
-                ]);
+                $this->updatePersonalDetails($student, $data);
                 break;
 
             case 2: // Parent Info
-                $student->parentInfo()->updateOrCreate(
-                    ['student_id' => $student->id],
-                    [
-                        'relation_type' => $data['relation_type'] ?? 'parent',
-                        'full_name' => $data['parent_name'] ?? '',
-                        'phone' => $data['parent_phone'] ?? '',
-                        'email' => $data['parent_email'] ?? null,
-                        'occupation' => $data['parent_occupation'] ?? null,
-                        'address' => $data['parent_address'] ?? '',
-                    ]
-                );
+                $this->updateParentDetails($student, $data);
                 break;
         }
+    }
+
+    /**
+     * Update student personal details
+     */
+    public function updatePersonalDetails(Student $student, array $data): void
+    {
+        $fields = [
+            'first_name', 'middle_name', 'last_name', 'date_of_birth',
+            'gender', 'nationality', 'national_id', 'passport_number',
+            'address', 'city', 'county', 'postal_code'
+        ];
+
+        $updateData = array_intersect_key($data, array_flip($fields));
+
+        if (!empty($updateData)) {
+            $student->update($updateData);
+        }
+    }
+
+    /**
+     * Update student parent details
+     */
+    public function updateParentDetails(Student $student, array $data): void
+    {
+        $fields = [
+            'relationship', 'guardian_name', 'guardian_phone', 'guardian_email'
+        ];
+
+        $updateData = array_intersect_key($data, array_flip($fields));
+
+        $student->parentInfo()->updateOrCreate(
+            ['student_id' => $student->id],
+            $updateData
+        );
     }
 }

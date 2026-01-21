@@ -2,23 +2,25 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ApplicationFormController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'otp.verified'])
-    ->name('dashboard');
+// Route::middleware(['auth', 'otp.verified'])->group(function () {
+Route::middleware(['auth', 'otp.verified'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/applications', [DashboardController::class, 'store'])->name('application.create');
 
-Route::post('/applications', [DashboardController::class, 'store'])
-    ->middleware(['auth', 'otp.verified'])
-    ->name('application.create');
-
-Route::get('/application/step/{step}', function ($step) {
-    return view('application.wizard', ['step' => $step]);
-})->middleware(['auth', 'otp.verified'])->name('application.step');
+    // Application Forms
+    Route::get('/application/{application}/personal', [ApplicationFormController::class, 'personal'])->name('application.personal');
+    Route::post('/application/{application}/personal', [ApplicationFormController::class, 'updatePersonal'])->name('application.personal.update');
+    
+    Route::get('/application/{application}/parent', [ApplicationFormController::class, 'parent'])->name('application.parent');
+    Route::post('/application/{application}/parent', [ApplicationFormController::class, 'updateParent'])->name('application.parent.update');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

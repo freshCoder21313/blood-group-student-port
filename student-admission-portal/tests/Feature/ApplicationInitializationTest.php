@@ -12,7 +12,8 @@ test('user can initialize application via http endpoint', function () {
     $response = $this->actingAs($user)
         ->post(route('application.create'));
 
-    $response->assertRedirect(route('application.step', ['step' => 1]));
+    $application = Application::whereHas('student', fn($q) => $q->where('user_id', $user->id))->first();
+    $response->assertRedirect(route('application.personal', $application));
 
     $this->assertDatabaseHas('applications', [
         'student_id' => $user->student->id, // Student created via service

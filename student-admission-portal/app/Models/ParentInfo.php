@@ -13,12 +13,10 @@ class ParentInfo extends Model
 
     protected $fillable = [
         'student_id',
-        'relation_type',
-        'full_name',
-        'phone',
-        'email',
-        'occupation',
-        'address',
+        'relationship',
+        'guardian_name',
+        'guardian_phone',
+        'guardian_email',
     ];
 
     public function student()

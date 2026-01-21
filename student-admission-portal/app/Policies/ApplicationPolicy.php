@@ -39,7 +39,7 @@ class ApplicationPolicy
      */
     public function update(User $user, Application $application): bool
     {
-        return false;
+        return $user->id === $application->student->user_id;
     }
 
     /**

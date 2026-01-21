@@ -25,7 +25,20 @@
                             <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ ($application->current_step / $application->total_steps) * 100 }}%"></div>
                         </div>
 
-                        <a href="{{ route('application.step', ['step' => $application->current_step]) }}">
+                        @php
+                            $continueRoute = '#';
+                            if(isset($application)) {
+                                switch($application->current_step) {
+                                    case 1: $continueRoute = route('application.personal', $application); break;
+                                    case 2: $continueRoute = route('application.parent', $application); break;
+                                    case 3: $continueRoute = '#'; break; // Program Selection (Next Story)
+                                    case 4: $continueRoute = '#'; break; // Documents (Next Story)
+                                    default: $continueRoute = route('dashboard');
+                                }
+                            }
+                        @endphp
+
+                        <a href="{{ $continueRoute }}">
                             <x-ui.primary-button>
                                 {{ __('Continue Application') }}
                             </x-ui.primary-button>
@@ -48,23 +61,39 @@
 
             <!-- 4-Card Overview -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <x-card title="Personal Info" description="Basic details about you">
-                     <x-slot name="icon">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                     </x-slot>
-                     @if(isset($application) && $application && $application->current_step > 1)
-                        <span class="text-green-500 text-sm">✓ Completed</span>
-                     @endif
-                </x-card>
+                <!-- Personal Info -->
+                <a href="{{ (isset($application) && $application) ? route('application.personal', $application) : '#' }}" class="block hover:shadow-lg transition duration-200">
+                    <x-card title="Personal Info" description="Basic details about you">
+                         <x-slot name="icon">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                         </x-slot>
+                         @if(isset($application) && $application)
+                             @if($application->current_step > 1)
+                                <span class="text-green-500 text-sm font-bold">✓ Completed</span>
+                             @else
+                                <span class="text-blue-500 text-sm">In Progress</span>
+                             @endif
+                         @endif
+                    </x-card>
+                </a>
                 
-                <x-card title="Parent Info" description="Guardian contact details">
-                     <x-slot name="icon">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                     </x-slot>
-                     @if(isset($application) && $application && $application->current_step > 2)
-                        <span class="text-green-500 text-sm">✓ Completed</span>
-                     @endif
-                </x-card>
+                <!-- Parent Info -->
+                <a href="{{ (isset($application) && $application) ? route('application.parent', $application) : '#' }}" class="block hover:shadow-lg transition duration-200">
+                    <x-card title="Parent Info" description="Guardian contact details">
+                         <x-slot name="icon">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                         </x-slot>
+                         @if(isset($application) && $application)
+                             @if($application->current_step > 2)
+                                <span class="text-green-500 text-sm font-bold">✓ Completed</span>
+                             @elseif($application->current_step == 2)
+                                <span class="text-blue-500 text-sm">In Progress</span>
+                             @else
+                                <span class="text-gray-400 text-sm">Pending</span>
+                             @endif
+                         @endif
+                    </x-card>
+                </a>
                 
                 <x-card title="Program" description="Select your course">
                      <x-slot name="icon">
