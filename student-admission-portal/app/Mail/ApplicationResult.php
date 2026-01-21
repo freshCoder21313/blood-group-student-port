@@ -21,8 +21,8 @@ class ApplicationResult extends Mailable
     public function envelope(): Envelope
     {
         $subject = $this->type === 'approved' 
-            ? 'Chúc mừng! Hồ sơ nhập học của bạn đã được duyệt' 
-            : 'Thông báo về hồ sơ nhập học';
+            ? 'Congratulations! Your application has been approved' 
+            : 'Admission Application Update';
 
         return new Envelope(
             subject: $subject,
@@ -34,9 +34,9 @@ class ApplicationResult extends Mailable
         return new Content(
             view: 'emails.application_result',
             with: [
-                'name' => $this->application->student->full_name ?? 'Sinh viên',
+                'name' => $this->application->student->full_name ?? 'Student',
                 'status' => $this->type,
-                'program' => $this->application->program->name ?? 'Chương trình học',
+                'program' => $this->application->program->name ?? 'Academic Program',
             ],
         );
     }

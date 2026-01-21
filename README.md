@@ -1,40 +1,40 @@
 # Student Admission Portal (PHP Web Service)
 
-Hệ thống cổng thông tin tuyển sinh trực tuyến, tích hợp với hệ thống nội bộ ASP.NET. Dự án này cung cấp API RESTful cho việc đăng ký nhập học, nộp hồ sơ, và đồng bộ dữ liệu hai chiều với hệ thống quản lý đào tạo (ASP System).
+Online student admission portal system, integrated with the internal ASP.NET system. This project provides RESTful APIs for student enrollment, application submission, and two-way data synchronization with the training management system (ASP System).
 
-## 🚀 Yêu Cầu Hệ Thống
+## 🚀 System Requirements
 
-Đảm bảo máy của bạn đã cài đặt các công cụ sau:
+Ensure your machine has the following tools installed:
 
-*   **PHP**: >= 8.2 (Khuyên dùng 8.3)
-*   **Composer**: Công cụ quản lý dependency cho PHP.
-*   **Database**: MySQL 8.0+ hoặc MariaDB 10.11+.
-*   **Web Server**: Nginx/Apache hoặc dùng PHP built-in server.
+*   **PHP**: >= 8.2 (8.3 Recommended)
+*   **Composer**: Dependency manager for PHP.
+*   **Database**: MySQL 8.0+ or MariaDB 10.11+.
+*   **Web Server**: Nginx/Apache or use PHP built-in server.
 *   **Extensions**: `bcmath`, `ctype`, `fileinfo`, `json`, `mbstring`, `openssl`, `pdo`, `tokenizer`, `xml`, `curl`.
 
-## 📦 Cài Đặt & Cấu Hình
+## 📦 Installation & Configuration
 
-Làm theo các bước sau để thiết lập dự án trên môi trường local:
+Follow these steps to set up the project in your local environment:
 
-### 1. Clone và Cài đặt Dependencies
+### 1. Clone and Install Dependencies
 
-Di chuyển vào thư mục dự án và cài đặt các thư viện PHP:
+Navigate to the project directory and install PHP libraries:
 
 ```bash
 cd student-admission-portal
 composer install
 ```
 
-### 2. Cấu Hình Môi Trường (.env)
+### 2. Environment Configuration (.env)
 
-Sao chép file cấu hình mẫu và tạo key ứng dụng:
+Copy the example configuration file and generate the application key:
 
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-Mở file `.env` và cấu hình thông tin Database:
+Open the `.env` file and configure the Database information:
 
 ```ini
 DB_CONNECTION=mysql
@@ -45,7 +45,7 @@ DB_USERNAME=root
 DB_PASSWORD=your_password
 ```
 
-Cấu hình tích hợp ASP System (Nếu cần test API nội bộ):
+Configure ASP System integration (If needing to test internal APIs):
 
 ```ini
 ASP_API_BASE_URL=https://internal-asp.school.local/api
@@ -53,68 +53,68 @@ ASP_API_KEY=your_test_key
 ASP_API_SECRET=your_test_secret
 ```
 
-### 3. Khởi Tạo Cơ Sở Dữ Liệu
+### 3. Initialize Database
 
-Chạy migration để tạo các bảng trong database (Users, Applications, Students, etc.):
+Run migrations to create tables in the database (Users, Applications, Students, etc.):
 
 ```bash
 php artisan migrate
 ```
 
-### 4. Seed Dữ Liệu Mẫu (Tùy chọn)
+### 4. Seed Sample Data (Optional)
 
-Nếu bạn muốn có dữ liệu mẫu để test (Chương trình học, Khối nhập học):
+If you want sample data for testing (Academic Programs, Admission Blocks):
 
 ```bash
 php artisan db:seed
 ```
 
-## 🛠️ Chạy Ứng Dụng
+## 🛠️ Running the Application
 
-Khởi chạy server phát triển local:
+Start the local development server:
 
 ```bash
 php artisan serve
 ```
 
-Ứng dụng sẽ chạy tại: `http://localhost:8000`
+The application will run at: `http://localhost:8000`
 
-## 🔌 Tài Liệu API
+## 🔌 API Documentation
 
-Hệ thống cung cấp các nhóm API chính:
+The system provides the following main API groups:
 
 ### 1. Authentication (Public)
-*   `POST /api/register`: Đăng ký tài khoản mới.
-*   `POST /api/login`: Đăng nhập lấy Token.
-*   `POST /api/verify-otp`: Xác thực OTP.
+*   `POST /api/register`: Register a new account.
+*   `POST /api/login`: Login to get Token.
+*   `POST /api/verify-otp`: Verify OTP.
 
-### 2. Internal Sync API (Dành cho ASP System)
+### 2. Internal Sync API (For ASP System)
 *Requires Headers:* `X-API-Key`, `X-Timestamp`, `X-Signature`
 
-*   `GET /api/v1/students`: Lấy danh sách hồ sơ (Filter theo status, date).
-*   `GET /api/v1/students/{id}`: Lấy chi tiết hồ sơ.
-*   `POST /api/v1/update-status`: Cập nhật trạng thái hồ sơ (Approved/Rejected).
-*   `POST /api/v1/bulk-update-status`: Cập nhật hàng loạt.
+*   `GET /api/v1/students`: Get list of applications (Filter by status, date).
+*   `GET /api/v1/students/{id}`: Get application details.
+*   `POST /api/v1/update-status`: Update application status (Approved/Rejected).
+*   `POST /api/v1/bulk-update-status`: Bulk update.
 
 ### 3. Student Data (Proxy to ASP)
-*   `GET /api/v1/students/{code}/grades`: Tra cứu điểm.
-*   `GET /api/v1/students/{code}/fees`: Tra cứu công nợ.
+*   `GET /api/v1/students/{code}/grades`: Look up grades.
+*   `GET /api/v1/students/{code}/fees`: Look up fees.
 
-## 📂 Cấu Trúc Dự Án Chính
+## 📂 Main Project Structure
 
-*   `app/Models`: Chứa các Entity (User, Student, Application...).
-*   `app/Http/Controllers/Api/V1`: Controllers xử lý logic API chính.
-*   `app/Services/Integration`: Service giao tiếp với ASP System.
-*   `app/Http/Middleware/ApiAuthentication.php`: Middleware bảo mật xác thực HMAC cho internal API.
-*   `database/migrations`: Định nghĩa cấu trúc Database.
+*   `app/Models`: Contains Entities (User, Student, Application...).
+*   `app/Http/Controllers/Api/V1`: Controllers handling main API logic.
+*   `app/Services/Integration`: Services communicating with ASP System.
+*   `app/Http/Middleware/ApiAuthentication.php`: Security middleware for HMAC authentication for internal API.
+*   `database/migrations`: Database structure definitions.
 
 ## 🧪 Testing
 
-Chạy Unit Test và Feature Test:
+Run Unit Tests and Feature Tests:
 
 ```bash
 php artisan test
 ```
 
 ---
-**Lưu ý:** Dự án này sử dụng Laravel 11.x. Vui lòng tham khảo [Laravel Documentation](https://laravel.com/docs) để biết thêm chi tiết về Framework.
+**Note:** This project uses Laravel 11.x. Please refer to [Laravel Documentation](https://laravel.com/docs) for more details about the Framework.

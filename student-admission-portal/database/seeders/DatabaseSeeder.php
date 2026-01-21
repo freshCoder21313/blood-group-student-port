@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            // 'name' => 'Test User', // Bảng users không có cột name
+            // 'name' => 'Test User', // Users table does not have a name column
             'email' => 'test@example.com',
             'phone' => '0123456789',
         ]);

@@ -8,7 +8,7 @@ use App\Http\Controllers\Api\V1\WebhookController;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes cho ASP.NET System
+| API Routes for ASP.NET System
 |--------------------------------------------------------------------------
 */
 
@@ -17,7 +17,7 @@ Route::prefix('v1')->middleware(['api'])->group(function () {
     Route::middleware(\App\Http\Middleware\ApiAuthentication::class)->group(function () {
         
         // ═══════════════════════════════════════════════════════════════
-        // STUDENTS - Lấy danh sách sinh viên/hồ sơ
+        // STUDENTS - Get list of students/applications
         // ═══════════════════════════════════════════════════════════════
         
         // GET /api/v1/students?status=pending_approval&page=1&per_page=50
@@ -37,7 +37,7 @@ Route::prefix('v1')->middleware(['api'])->group(function () {
             ->name('api.documents.download');
         
         // ═══════════════════════════════════════════════════════════════
-        // STATUS UPDATE - Cập nhật trạng thái từ ASP
+        // STATUS UPDATE - Update status from ASP
         // ═══════════════════════════════════════════════════════════════
         
         // POST /api/v1/update-status
@@ -49,7 +49,7 @@ Route::prefix('v1')->middleware(['api'])->group(function () {
             ->name('api.status.bulk-update');
         
         // ═══════════════════════════════════════════════════════════════
-        // STUDENT DATA - Dữ liệu cho Student Portal
+        // STUDENT DATA - Data for Student Portal
         // ═══════════════════════════════════════════════════════════════
         
         // GET /api/v1/students/{student_code}/grades
@@ -65,7 +65,7 @@ Route::prefix('v1')->middleware(['api'])->group(function () {
             ->name('api.students.fees');
         
         // ═══════════════════════════════════════════════════════════════
-        // WEBHOOKS - Nhận thông báo từ ASP
+        // WEBHOOKS - Receive notifications from ASP
         // ═══════════════════════════════════════════════════════════════
         
         Route::post('/webhooks/status-changed', [WebhookController::class, 'statusChanged'])

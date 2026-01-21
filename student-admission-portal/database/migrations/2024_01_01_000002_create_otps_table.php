@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('otps', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->string('identifier'); // email hoặc phone
+            $table->string('identifier'); // email or phone
             $table->string('otp_code', 6);
             $table->enum('type', ['email', 'sms']);
             $table->enum('purpose', ['registration', 'login', 'password_reset']);

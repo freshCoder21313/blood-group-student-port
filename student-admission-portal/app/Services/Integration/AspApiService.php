@@ -22,7 +22,7 @@ class AspApiService
     }
 
     /**
-     * Lấy điểm sinh viên từ ASP
+     * Get student grades from ASP
      */
     public function getStudentGrades(string $studentCode): array
     {
@@ -35,7 +35,7 @@ class AspApiService
     }
 
     /**
-     * Lấy thời khóa biểu từ ASP
+     * Get student timetable from ASP
      */
     public function getStudentTimetable(string $studentCode): array
     {
@@ -48,7 +48,7 @@ class AspApiService
     }
 
     /**
-     * Lấy công nợ học phí từ ASP
+     * Get student fees from ASP
      */
     public function getStudentFees(string $studentCode): array
     {
@@ -61,7 +61,7 @@ class AspApiService
     }
 
     /**
-     * Thực hiện request đến ASP API
+     * Make request to ASP API
      */
     private function makeRequest(string $method, string $endpoint, array $data = []): array
     {
@@ -104,7 +104,7 @@ class AspApiService
     }
 
     /**
-     * Xây dựng headers cho request
+     * Build headers for request
      */
     private function buildHeaders(int $timestamp, array $data): array
     {

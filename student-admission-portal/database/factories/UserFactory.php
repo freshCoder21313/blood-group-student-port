@@ -24,7 +24,7 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'name' => fake()->name(), // Cột này không có trong bảng users hiện tại
+            // 'name' => fake()->name(), // This column is not in the current users table
             'email' => fake()->unique()->safeEmail(),
             'phone' => fake()->unique()->phoneNumber(),
             'email_verified_at' => now(),

@@ -16,7 +16,7 @@ class SmsChannel
 
     public function send(string $recipient, string $code): bool
     {
-        // Trong môi trường local/testing, chúng ta sẽ log ra thay vì gửi thật để tiết kiệm chi phí
+        // In local/testing environment, we log instead of sending to save costs
         if (app()->environment('local', 'testing')) {
             Log::info("Mock SMS sent to {$recipient}: {$code}");
             return true;

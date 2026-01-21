@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('student_code', 20)->unique()->nullable(); // Cấp sau khi approved
+            $table->string('student_code', 20)->unique()->nullable(); // Assigned after approval
             $table->string('first_name', 100);
             $table->string('middle_name', 100)->nullable();
             $table->string('last_name', 100);

@@ -85,7 +85,7 @@ class AspApiServiceTest extends TestCase
 
         $result = $this->service->getStudentGrades('STU_INVALID');
 
-        // Logic hiện tại trả về mảng rỗng khi không có data hoặc lỗi
+        // Current logic returns empty array when no data or error
         $this->assertIsArray($result);
         $this->assertEmpty($result);
     }

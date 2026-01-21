@@ -18,7 +18,7 @@ class StudentController extends Controller
     ) {}
 
     /**
-     * Lấy danh sách sinh viên theo trạng thái
+     * Get list of students by status
      * 
      * GET /api/v1/students?status=pending_approval&page=1&per_page=50
      */
@@ -71,7 +71,7 @@ class StudentController extends Controller
     }
 
     /**
-     * Lấy chi tiết một hồ sơ
+     * Get application details
      * 
      * GET /api/v1/students/{id}
      */
@@ -95,7 +95,7 @@ class StudentController extends Controller
     }
 
     /**
-     * Lấy điểm sinh viên từ ASP
+     * Get student grades from ASP
      * 
      * GET /api/v1/students/{student_code}/grades
      */
@@ -105,7 +105,7 @@ class StudentController extends Controller
                          ->whereHas('application', fn($q) => $q->where('status', 'approved'))
                          ->firstOrFail();
 
-        // Gọi API ASP để lấy điểm
+        // Call ASP API to get grades
         $grades = $this->aspService->getStudentGrades($studentCode);
 
         return response()->json([
@@ -115,7 +115,7 @@ class StudentController extends Controller
     }
 
     /**
-     * Lấy thời khóa biểu từ ASP
+     * Get student timetable from ASP
      * 
      * GET /api/v1/students/{student_code}/timetable
      */
@@ -134,7 +134,7 @@ class StudentController extends Controller
     }
 
     /**
-     * Lấy thông tin học phí từ ASP
+     * Get student fees from ASP
      * 
      * GET /api/v1/students/{student_code}/fees
      */

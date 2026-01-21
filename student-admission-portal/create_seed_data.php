@@ -41,14 +41,14 @@ try {
     );
     echo "Student ID: {$student->id}\n";
 
-    // 3. Create Program (Ngành học)
+    // 3. Create Program (Academic Program)
     $program = Program::firstOrCreate(
         ['code' => 'IT01'],
         ['name' => 'Information Technology', 'duration_years' => 4, 'type' => 'degree']
     );
     echo "Program ID: {$program->id}\n";
 
-    // 4. Create Academic Block (Khóa học/Đợt tuyển sinh)
+    // 4. Create Academic Block (Intake/Cohort)
     $block = AcademicBlock::firstOrCreate(
         ['name' => 'January 2024 Intake'],
         [

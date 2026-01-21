@@ -22,7 +22,7 @@ class StatusController extends Controller
     ) {}
 
     /**
-     * Cập nhật trạng thái hồ sơ từ ASP
+     * Update application status from ASP
      * 
      * POST /api/v1/update-status
      * 
@@ -30,8 +30,8 @@ class StatusController extends Controller
      * {
      *   "application_id": 123,
      *   "status": "approved",
-     *   "student_code": "STU2024001",  // Chỉ khi approved
-     *   "notes": "Hồ sơ hợp lệ",
+     *   "student_code": "STU2024001",  // Only when approved
+     *   "notes": "Valid application",
      *   "changed_by": "admin@school.edu"
      * }
      */
@@ -45,11 +45,11 @@ class StatusController extends Controller
             $application = Application::findOrFail($validated['application_id']);
             $oldStatus = $application->status;
 
-            // Cập nhật trạng thái
+            // Update status
             $application->status = $validated['status'];
             $application->admin_notes = $validated['notes'] ?? null;
 
-            // Nếu approved, cấp mã sinh viên
+            // If approved, assign student code
             if ($validated['status'] === 'approved') {
                 $application->approved_at = now();
                 $application->approved_by = $validated['changed_by'] ?? 'system';
@@ -61,14 +61,14 @@ class StatusController extends Controller
                 }
             }
 
-            // Nếu rejected hoặc request_info
+            // If rejected or request_info
             if (in_array($validated['status'], ['rejected', 'request_info'])) {
                 $application->rejection_reason = $validated['notes'] ?? null;
             }
 
             $application->save();
 
-            // Lưu lịch sử thay đổi
+            // Save change history
             StatusHistory::create([
                 'application_id' => $application->id,
                 'from_status' => $oldStatus,
@@ -80,7 +80,7 @@ class StatusController extends Controller
 
             DB::commit();
 
-            // Dispatch events và jobs
+            // Dispatch events and jobs
             match($validated['status']) {
                 'approved' => event(new ApplicationApproved($application)),
                 'rejected' => event(new ApplicationRejected($application)),
@@ -123,7 +123,7 @@ class StatusController extends Controller
     }
 
     /**
-     * Cập nhật hàng loạt
+     * Bulk update
      * 
      * POST /api/v1/bulk-update-status
      */

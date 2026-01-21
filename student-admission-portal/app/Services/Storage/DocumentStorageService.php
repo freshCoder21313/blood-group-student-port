@@ -15,7 +15,7 @@ class DocumentStorageService
 
     public function __construct()
     {
-        // Ưu tiên S3 ở production, local dùng public disk
+        // Prioritize S3 in production, use public disk locally
         $this->disk = app()->environment('production') ? 's3' : 'public';
         
         $this->allowedMimeTypes = [
@@ -32,10 +32,10 @@ class DocumentStorageService
         $this->validateFile($file);
 
         $filename = $this->generateSecureFilename($file);
-        // Cấu trúc thư mục: applications/{id}/{type}/{hash}.ext
+        // Folder structure: applications/{id}/{type}/{hash}.ext
         $path = "applications/{$applicationId}/{$documentType}/{$filename}";
 
-        // Upload lên disk đã chọn
+        // Upload to selected disk
         Storage::disk($this->disk)->put($path, file_get_contents($file));
 
         return Document::create([
@@ -45,19 +45,19 @@ class DocumentStorageService
             'file_path' => $path,
             'file_size' => $file->getSize(),
             'mime_type' => $file->getMimeType(),
-            'disk' => $this->disk, // Lưu disk để sau này truy xuất đúng chỗ
+            'disk' => $this->disk, // Save disk to retrieve from correct place later
             'uploaded_at' => now(),
         ]);
     }
 
     public function getTemporaryUrl(Document $document, int $expiryMinutes = 60): string
     {
-        // Nếu là local/public disk
+        // If local/public disk
         if ($document->disk === 'public') {
             return asset('storage/' . $document->file_path);
         }
 
-        // Nếu là S3, tạo presigned URL
+        // If S3, create presigned URL
         return Storage::disk($document->disk)->temporaryUrl(
             $document->file_path,
             now()->addMinutes($expiryMinutes)

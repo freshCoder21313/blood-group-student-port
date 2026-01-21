@@ -16,7 +16,7 @@ class DocumentController extends Controller
     ) {}
 
     /**
-     * Lấy danh sách tài liệu của hồ sơ
+     * Get document list for an application
      */
     public function index(int $applicationId): JsonResponse
     {
@@ -36,7 +36,7 @@ class DocumentController extends Controller
     }
 
     /**
-     * Upload tài liệu mới
+     * Upload new document
      */
     public function store(Request $request): JsonResponse
     {
@@ -70,7 +70,7 @@ class DocumentController extends Controller
     }
 
     /**
-     * Download (redirect tới presigned url)
+     * Download (redirect to presigned url)
      */
     public function download(int $id)
     {

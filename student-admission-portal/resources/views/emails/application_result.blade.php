@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Thông báo kết quả xét tuyển</title>
+    <title>{{ __('Admission Result Notification') }}</title>
 </head>
 <body>
-    <h1>Xin chào {{ $name }},</h1>
+    <h1>{{ __('Dear') }} {{ $name }},</h1>
 
     @if($status === 'approved')
-        <p style="color: green; font-weight: bold;">Chúc mừng bạn! Hồ sơ đăng ký vào chương trình {{ $program }} của bạn đã được DUYỆT.</p>
-        <p>Vui lòng đăng nhập vào cổng thông tin để hoàn tất thủ tục nhập học.</p>
+        <p style="color: green; font-weight: bold;">
+            {{ __('Congratulations! Your application for the :program program has been APPROVED.', ['program' => $program]) }}
+        </p>
+        <p>{{ __('Please log in to the portal to complete the enrollment process.') }}</p>
     @else
-        <p style="color: red;">Rất tiếc, hồ sơ của bạn vào chương trình {{ $program }} chưa đạt yêu cầu hoặc cần bổ sung thông tin.</p>
-        <p>Vui lòng kiểm tra lại thông tin hoặc liên hệ phòng tuyển sinh.</p>
+        <p style="color: red;">
+            {{ __('We regret to inform you that your application for the :program program has not met the requirements or requires additional information.', ['program' => $program]) }}
+        </p>
+        <p>{{ __('Please check your information or contact the Admissions Office.') }}</p>
     @endif
 
-    <p>Trân trọng,<br>Phòng Tuyển Sinh</p>
+    <p>{{ __('Sincerely') }},<br>{{ __('Admissions Office') }}</p>
 </body>
 </html>

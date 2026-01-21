@@ -9,15 +9,15 @@ class EmailChannel
 {
     public function send(string $recipient, string $code): bool
     {
-        // Trong môi trường local, log ra để dev dễ debug
+        // In local environment, log for easy debugging
         if (app()->environment('local', 'testing')) {
             Log::info("Mock Email sent to {$recipient}: {$code}");
-            // Vẫn return true để flow không bị gãy
+            // Still return true to keep flow unbroken
             return true;
         }
 
         try {
-            // Ở production sẽ dùng Mailable class thật
+            // In production, use real Mailable class
             // Mail::to($recipient)->send(new OtpVerificationMail($code));
             Log::info("Email sent to {$recipient} with code {$code}");
             return true;

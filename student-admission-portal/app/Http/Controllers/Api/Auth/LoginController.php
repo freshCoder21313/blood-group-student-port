@@ -22,16 +22,16 @@ class LoginController extends Controller
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
-                'email' => ['Thông tin đăng nhập không chính xác.'],
+                'email' => ['Login information is incorrect.'],
             ]);
         }
 
-        // Tùy chọn: Kiểm tra xem user có active không
+        // Optional: Check if user is active
         if ($user->status === 'inactive') {
-             return response()->json(['message' => 'Tài khoản đã bị khóa.'], 403);
+             return response()->json(['message' => 'Account is locked.'], 403);
         }
 
-        // Tạo token
+        // Create token
         $token = $user->createToken($request->device_name ?? 'web_app')->plainTextToken;
 
         return response()->json([

@@ -30,9 +30,9 @@
                         @auth
                             <a href="{{ url('/dashboard') }}" class="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">Dashboard</a>
                         @else
-                            <a href="{{ route('login') }}" class="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">Đăng nhập</a>
+                            <a href="{{ route('login') }}" class="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">{{ __('Log in') }}</a>
                             @if (Route::has('register'))
-                                <a href="{{ route('register') }}" class="ml-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition duration-150 ease-in-out shadow-sm">Đăng ký hồ sơ</a>
+                                <a href="{{ route('register') }}" class="ml-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition duration-150 ease-in-out shadow-sm">{{ __('Apply Now') }}</a>
                             @endif
                         @endauth
                     @endif
@@ -48,22 +48,22 @@
             <!-- Left Content -->
             <div class="text-center lg:text-left space-y-6">
                 <h1 class="text-4xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white leading-tight">
-                    Khởi đầu hành trình <br>
-                    <span class="text-blue-600 dark:text-blue-400">Tương lai của bạn</span>
+                    {{ __('Start Your Journey') }} <br>
+                    <span class="text-blue-600 dark:text-blue-400">{{ __('To Your Future') }}</span>
                 </h1>
                 <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto lg:mx-0">
-                    Chào mừng bạn đến với Cổng thông tin tuyển sinh trực tuyến. Nộp hồ sơ, theo dõi kết quả và nhập học nhanh chóng, tiện lợi chỉ với vài bước đơn giản.
+                    {{ __('Welcome to the Online Admission Portal. Submit your application, track results, and enroll quickly and conveniently in just a few simple steps.') }}
                 </p>
                 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
                     @if (Route::has('register'))
                     <a href="{{ route('register') }}" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white text-base font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
-                        <span>Nộp hồ sơ ngay</span>
+                        <span>{{ __('Apply Now') }}</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                     </a>
                     @endif
                     <a href="#guide" class="px-8 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-base font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-200">
-                        Hướng dẫn quy trình
+                        {{ __('Process Guide') }}
                     </a>
                 </div>
 
@@ -71,15 +71,15 @@
                 <div class="pt-8 border-t border-gray-100 dark:border-gray-700 flex justify-center lg:justify-start gap-8 lg:gap-12">
                     <div>
                         <p class="text-3xl font-bold text-gray-900 dark:text-white">5+</p>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Chương trình đào tạo</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Academic Programs') }}</p>
                     </div>
                     <div>
                         <p class="text-3xl font-bold text-gray-900 dark:text-white">24/7</p>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Hỗ trợ trực tuyến</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Online Support') }}</p>
                     </div>
                     <div>
                         <p class="text-3xl font-bold text-gray-900 dark:text-white">100%</p>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Quy trình số hóa</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Digital Process') }}</p>
                     </div>
                 </div>
             </div>
@@ -97,8 +97,8 @@
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
                             <div>
-                                <p class="font-semibold text-gray-900 dark:text-white">Trạng thái hồ sơ</p>
-                                <p class="text-sm text-gray-500">Cập nhật realtime từ hệ thống đào tạo</p>
+                                <p class="font-semibold text-gray-900 dark:text-white">{{ __('Application Status') }}</p>
+                                <p class="text-sm text-gray-500">{{ __('Real-time updates from the system') }}</p>
                             </div>
                         </div>
                     </div>
@@ -116,9 +116,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p class="text-sm text-gray-500 dark:text-gray-400">© {{ date('Y') }} Student Admission Portal. All rights reserved.</p>
             <div class="flex gap-6 text-sm text-gray-500 dark:text-gray-400">
-                <a href="#" class="hover:text-gray-900 dark:hover:text-white">Điều khoản</a>
-                <a href="#" class="hover:text-gray-900 dark:hover:text-white">Bảo mật</a>
-                <a href="#" class="hover:text-gray-900 dark:hover:text-white">Liên hệ</a>
+                <a href="#" class="hover:text-gray-900 dark:hover:text-white">{{ __('Terms') }}</a>
+                <a href="#" class="hover:text-gray-900 dark:hover:text-white">{{ __('Privacy') }}</a>
+                <a href="#" class="hover:text-gray-900 dark:hover:text-white">{{ __('Contact') }}</a>
             </div>
         </div>
     </footer>
