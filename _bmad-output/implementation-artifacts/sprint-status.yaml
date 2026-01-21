@@ -46,8 +46,8 @@ development_status:
   1-3-web-based-otp-integration: done
   epic-1-retrospective: optional
 
-  epic-2: backlog
-  2-1-dashboard-application-initialization: backlog
+  epic-2: in-progress
+  2-1-dashboard-application-initialization: done
   2-2-personal-parent-info-forms: backlog
   2-3-program-selection-logic: backlog
   2-4-document-upload-component-storage: backlog

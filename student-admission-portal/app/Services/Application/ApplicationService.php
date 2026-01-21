@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Application;
 
 use App\Models\Application;
 use App\Models\ApplicationStep;
 use App\Models\Student;
-// use App\Enums\ApplicationStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -24,36 +25,36 @@ class ApplicationService
     }
 
     /**
-     * Tạo application mới
+     * Create a new draft application
      */
-    public function create(int $userId): Application
+    public function createDraft(int $userId): Application
     {
         return DB::transaction(function () use ($userId) {
-            // Tạo student record nếu chưa có
+            // Create student record if not exists
             $student = Student::firstOrCreate(
                 ['user_id' => $userId],
                 [
-                    'first_name' => '',
-                    'last_name' => '',
-                    'date_of_birth' => now(),
+                    'first_name' => null,
+                    'last_name' => null,
+                    'date_of_birth' => null,
                     'gender' => 'other',
-                    'address' => '',
-                    'city' => ''
+                    'address' => null,
+                    'city' => null
                 ]
             );
 
-            // Tạo application
+            // Create application
             $application = Application::create([
                 'student_id' => $student->id,
-                'program_id' => null, // Placeholder, requires DB change to be nullable or set later
-                'block_id' => null, // Placeholder
+                'program_id' => null,
+                'block_id' => null,
                 'application_number' => $this->generateApplicationNumber(),
                 'status' => 'draft',
                 'current_step' => 1,
                 'total_steps' => count($this->stepConfig)
             ]);
 
-            // Tạo các bước
+            // Create steps
             foreach ($this->stepConfig as $stepNumber => $config) {
                 ApplicationStep::create([
                     'application_id' => $application->id,
@@ -69,7 +70,17 @@ class ApplicationService
     }
 
     /**
-     * Lưu dữ liệu một bước
+     * Get current application for user
+     */
+    public function getCurrentApplication(int $userId): ?Application
+    {
+        return Application::whereHas('student', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->latest()->first();
+    }
+
+    /**
+     * Save step data
      */
     public function saveStep(Application $application, int $stepNumber, array $data): ApplicationStep
     {
@@ -83,10 +94,10 @@ class ApplicationService
             'completed_at' => now()
         ]);
 
-        // Cập nhật thông tin student nếu cần
+        // Update student info if needed
         $this->updateStudentFromStep($application->student, $stepNumber, $data);
 
-        // Cập nhật current_step
+        // Update current_step
         if ($stepNumber >= $application->current_step) {
             $application->update(['current_step' => min($stepNumber + 1, $application->total_steps)]);
         }
@@ -95,18 +106,18 @@ class ApplicationService
     }
 
     /**
-     * Nộp hồ sơ
+     * Submit application
      */
     public function submit(Application $application): Application
     {
-        // Kiểm tra đã hoàn thành tất cả các bước
+        // Check if all steps completed
         $incompleteSteps = $application->steps()->where('is_completed', false)->count();
         
         if ($incompleteSteps > 0) {
             throw new \Exception("Please complete all steps before submitting");
         }
 
-        // Kiểm tra đã thanh toán
+        // Check payment
         if (!$application->payment || $application->payment->status !== 'submitted') {
             throw new \Exception("Please submit payment proof before submitting application");
         }
@@ -116,14 +127,11 @@ class ApplicationService
             'submitted_at' => now()
         ]);
 
-        // Dispatch event
-        // event(new \App\Events\ApplicationSubmitted($application));
-
         return $application->fresh();
     }
 
     /**
-     * Tạo mã hồ sơ
+     * Generate application number
      */
     private function generateApplicationNumber(): string
     {
@@ -131,7 +139,7 @@ class ApplicationService
         $random = strtoupper(Str::random(6));
         $number = "APP-{$year}-{$random}";
 
-        // Đảm bảo unique
+        // Ensure unique
         while (Application::where('application_number', $number)->exists()) {
             $random = strtoupper(Str::random(6));
             $number = "APP-{$year}-{$random}";
@@ -141,7 +149,7 @@ class ApplicationService
     }
 
     /**
-     * Cập nhật thông tin student từ step data
+     * Update student info from step data
      */
     private function updateStudentFromStep(Student $student, int $stepNumber, array $data): void
     {
