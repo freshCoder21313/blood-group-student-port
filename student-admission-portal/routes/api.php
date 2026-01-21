@@ -5,11 +5,6 @@ use App\Http\Controllers\Api\V1\StudentController;
 use App\Http\Controllers\Api\V1\StatusController;
 use App\Http\Controllers\Api\V1\DocumentController;
 use App\Http\Controllers\Api\V1\WebhookController;
-
-
-use App\Http\Controllers\Api\Auth\RegisterController;
-use App\Http\Controllers\Api\Auth\LoginController;
-use App\Http\Controllers\Api\Auth\OtpController;
 use App\Http\Controllers\Api\V1\PaymentController;
 
 /*
@@ -17,13 +12,6 @@ use App\Http\Controllers\Api\V1\PaymentController;
 | API Routes cho ASP.NET System
 |--------------------------------------------------------------------------
 */
-
-Route::prefix('auth')->group(function () {
-    Route::post('/register', RegisterController::class);
-    Route::post('/login', LoginController::class);
-    Route::post('/otp/send', [OtpController::class, 'send']);
-    Route::post('/otp/verify', [OtpController::class, 'verify']);
-});
 
 Route::prefix('v1')->middleware(['api'])->group(function () { 
 
@@ -33,8 +21,6 @@ Route::prefix('v1')->middleware(['api'])->group(function () {
     Route::post('/payments/submit', [PaymentController::class, 'submitPayment']); // Manual Upload
     Route::get('/payments/history/{application_id}', [PaymentController::class, 'history']);
 
-    // ... (Old Routes below)
-    
     Route::middleware(\App\Http\Middleware\ApiAuthentication::class)->group(function () {
         
         // ═══════════════════════════════════════════════════════════════
@@ -97,11 +83,7 @@ Route::prefix('v1')->middleware(['api'])->group(function () {
     });
 });
 
-// Health check endpoint (không cần auth)
-Route::get('/health', function () {
-    return response()->json([
-        'status' => 'ok',
-        'timestamp' => now()->toIso8601String(),
-        'version' => config('app.version', '1.0.0')
-    ]);
-});
+
+// Include Legacy Auth Routes (formerly routes/auth.php)
+require __DIR__ . '/api_auth.php';
+
