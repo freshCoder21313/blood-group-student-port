@@ -24,6 +24,7 @@ Route::prefix('v1')->middleware(['api'])->group(function () {
 
     Route::middleware(['auth:sanctum', 'ability:asp:sync'])->prefix('sync')->group(function () {
         Route::get('/pending', [\App\Http\Controllers\Api\V1\AspSyncController::class, 'pending']);
+        Route::post('/status', [\App\Http\Controllers\Api\V1\AspSyncController::class, 'updateStatus']);
     });
 
     Route::middleware(\App\Http\Middleware\ApiAuthentication::class)->group(function () {

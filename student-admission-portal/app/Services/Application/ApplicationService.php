@@ -7,7 +7,9 @@ namespace App\Services\Application;
 use App\Models\Application;
 use App\Models\ApplicationStep;
 use App\Models\Student;
+use App\Models\StatusHistory;
 use App\Events\ApplicationSubmitted;
+use App\Events\ApplicationStatusChanged;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
@@ -156,6 +158,40 @@ class ApplicationService
         ApplicationSubmitted::dispatch($application);
 
         return $application->fresh();
+    }
+
+    /**
+     * Update application status (from ASP sync)
+     */
+    public function updateStatus(Application $application, string $status, ?string $notes = null, string $source = 'system'): Application
+    {
+        if ($application->status !== 'pending_approval') {
+             throw new \Exception("Application status cannot be updated. Current status: {$application->status}");
+        }
+
+        return DB::transaction(function () use ($application, $status, $notes, $source) {
+            $oldStatus = $application->status;
+
+            // Update application
+            $application->update([
+                'status' => $status
+            ]);
+
+            // Create history
+            StatusHistory::create([
+                'application_id' => $application->id,
+                'from_status' => $oldStatus,
+                'to_status' => $status,
+                'source' => $source,
+                'changed_by' => 'system',
+                'notes' => $notes
+            ]);
+
+            // Fire event
+            ApplicationStatusChanged::dispatch($application, $oldStatus, $status);
+
+            return $application;
+        });
     }
 
     /**
