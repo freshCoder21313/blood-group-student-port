@@ -40,11 +40,13 @@ class ManualPaymentSubmissionTest extends TestCase
             'application_id' => $application->id,
             'transaction_code' => 'QDH1234567',
             'status' => Payment::STATUS_PENDING_VERIFICATION,
+            'manual_submission' => true,
         ]);
         
         // Verify file stored?
         $payment = Payment::where('transaction_code', 'QDH1234567')->first();
         Storage::disk('private')->assertExists($payment->proof_document_path);
+        $this->assertTrue($payment->manual_submission);
     }
     
     public function test_manual_payment_validation()

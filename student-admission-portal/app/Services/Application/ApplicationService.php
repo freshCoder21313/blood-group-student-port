@@ -122,7 +122,7 @@ class ApplicationService
         }
 
         // Check payment
-        if (!$application->payment || !in_array($application->payment->status, ['submitted', 'completed'])) {
+        if (!$application->payment || !in_array($application->payment->status, ['submitted', 'completed', 'pending_verification', 'verified'])) {
             throw new \Exception("Please submit payment proof before submitting application");
         }
 
@@ -242,5 +242,13 @@ class ApplicationService
                 throw new \Exception("Required documents missing: $type");
             }
         }
+    }
+
+    /**
+     * Get admission fee amount
+     */
+    public function getAdmissionFee(): float
+    {
+        return (float) config('admission.payment.amount', 1000);
     }
 }

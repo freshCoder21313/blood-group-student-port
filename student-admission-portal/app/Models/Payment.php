@@ -28,10 +28,12 @@ class Payment extends Model
         'mpesa_receipt_number',
         'result_desc',
         'proof_document_path',
+        'manual_submission',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
+        'manual_submission' => 'boolean',
     ];
 
     public function application()

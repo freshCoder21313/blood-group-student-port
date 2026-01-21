@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Application;
 use App\Models\Payment;
+use App\Services\Application\ApplicationService;
 use App\Services\Payment\MpesaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
-    public function __construct(protected MpesaService $mpesaService)
-    {
+    public function __construct(
+        protected MpesaService $mpesaService,
+        protected ApplicationService $applicationService
+    ) {
     }
 
     public function store(Request $request, Application $application)
@@ -21,7 +24,7 @@ class PaymentController extends Controller
         ]);
 
         $phoneNumber = $request->phone_number;
-        $amount = config('admission.payment.amount', 1000); 
+        $amount = $this->applicationService->getAdmissionFee(); 
         $reference = 'APP-' . $application->application_number;  
 
         // Initiate STK Push
@@ -56,12 +59,11 @@ class PaymentController extends Controller
         ]);
 
         $data = $request->only(['transaction_code', 'proof_document']);
-        $data['amount'] = config('admission.payment.amount', 1000); 
+        $data['amount'] = $this->applicationService->getAdmissionFee(); 
 
         $this->mpesaService->recordManualPayment($application, $data);
 
-        return redirect()->route('application.payment', $application)
-            ->with('status', 'payment-verification-pending');
+        return redirect()->route('application.payment', $application);
     }
 
     public function checkStatus(Application $application)

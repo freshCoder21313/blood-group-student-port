@@ -2,13 +2,18 @@
     <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900" x-data="paymentHandler({{ $application->id }}, '{{ $payment?->status ?? 'none' }}')">
-                <h2 class="text-xl font-bold mb-4">Step 5: Payment</h2>
+                <h2 class="text-xl font-bold mb-4">Step 4: Payment</h2>
 
-                <!-- Success State -->
-                <template x-if="status === 'completed'">
+                <!-- Success/Verification State -->
+                <template x-if="status === 'completed' || status === 'pending_verification'">
                     <div>
                         @if($payment && $payment->status === 'completed')
                             <x-mpesa-receipt :payment="$payment" />
+                        @elseif($payment && $payment->status === 'pending_verification')
+                             <div class="p-4 mb-4 bg-yellow-100 text-yellow-700 rounded border border-yellow-200">
+                                <h3 class="font-bold text-lg mb-2">Payment Under Verification</h3>
+                                <p>We have received your manual payment details. Please submit your application below to proceed.</p>
+                             </div>
                         @else
                             <div class="p-4 mb-4 bg-green-100 text-green-700 rounded">
                                 Payment Completed! Please refresh the page if receipt is not shown.
@@ -20,14 +25,6 @@
                             <x-ui.primary-button class="mt-4">Submit Application</x-ui.primary-button>
                         </form>
                     </div>
-                </template>
-
-                <!-- Pending Verification State -->
-                <template x-if="status === 'pending_verification'">
-                     <div class="p-4 mb-4 bg-yellow-100 text-yellow-700 rounded border border-yellow-200">
-                        <h3 class="font-bold text-lg mb-2">Payment Under Verification</h3>
-                        <p>We have received your manual payment details. Please wait while we verify the transaction.</p>
-                     </div>
                 </template>
 
                 <!-- Payment Form -->
@@ -76,7 +73,8 @@
                                  @csrf
                                  <div class="mb-4 max-w-md">
                                      <x-ui.input-label for="transaction_code" value="M-Pesa Transaction Code" />
-                                     <x-ui.text-input id="transaction_code" name="transaction_code" class="block mt-1 w-full" type="text" placeholder="e.g. QDH..." required value="{{ old('transaction_code') }}" />
+                                    <x-ui.text-input id="transaction_code" name="transaction_code" class="block mt-1 w-full" type="text" placeholder="e.g. QDH..." required value="{{ old('transaction_code') }}" pattern="[A-Z0-9]{10}" title="10-character uppercase alphanumeric code" x-on:input="$el.value = $el.value.toUpperCase()" />
+                                    <p class="text-xs text-gray-500 mt-1">Format: 10 characters, Uppercase (e.g. QDH1234567)</p>
                                      @error('transaction_code') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                                  </div>
                                  <div class="mb-4 max-w-md">

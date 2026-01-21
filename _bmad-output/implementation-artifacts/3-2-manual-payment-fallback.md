@@ -1,6 +1,6 @@
 # Story 3.2: Manual Payment Fallback
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -129,3 +129,30 @@ So that I can still complete my application.
 - student-admission-portal/resources/views/application/payment.blade.php
 - student-admission-portal/config/mpesa.php
 - student-admission-portal/resources/views/components/mpesa-receipt.blade.php
+- student-admission-portal/app/Services/Application/ApplicationService.php
+
+## Senior Developer Review (AI)
+
+### Review Findings
+
+1.  **High Severity:** `PaymentController` was using a hardcoded configuration value for the payment amount (`1000`). This is brittle and difficult to maintain.
+    -   *Action:* Refactored `ApplicationService` to include a `getAdmissionFee()` method and updated `PaymentController` to use this service.
+2.  **Medium Severity:** `payment.blade.php` lacked client-side validation for the Transaction Code.
+    -   *Action:* Added `pattern="[A-Z0-9]{10}"` and `title` attribute to the input field.
+3.  **Medium Severity:** `ManualPaymentSubmissionTest` did not verify the `manual_submission` flag was correctly set in the database.
+    -   *Action:* Added assertions to `ManualPaymentSubmissionTest.php` and added `manual_submission` to the `Payment` model's `$casts` array.
+4.  **Low Severity:** Inconsistent Step Numbering in the UI (Step 5 vs Step 4).
+    -   *Action:* Corrected the header in `payment.blade.php`.
+
+### Review Findings (Round 2)
+
+1.  **High Severity:** Manual Payment flow dead-ended at "Payment Under Verification" without allowing Application Submission.
+    -   *Action:* Updated `ApplicationService` to allow submission for `pending_verification` status.
+    -   *Action:* Updated `payment.blade.php` to show "Submit Application" button for `pending_verification` status.
+2.  **Medium Severity:** Strict validation on Transaction Code without UX helper.
+    -   *Action:* Added `x-on:input` to auto-uppercase input and added helper text in `payment.blade.php`.
+
+### Outcome
+
+**Status:** Approved (Auto-Fixed)
+**Date:** 2026-01-21
