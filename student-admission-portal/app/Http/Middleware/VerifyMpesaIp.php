@@ -9,13 +9,6 @@ use Symfony\Component\HttpFoundation\IpUtils;
 
 class VerifyMpesaIp
 {
-    private array $whitelistedIps = [
-        '196.201.214.0/24',
-        '196.201.213.0/24',
-        '196.201.212.0/24',
-        '196.201.211.0/24',
-    ];
-
     public function handle(Request $request, Closure $next): Response
     {
         if (config('mpesa.env') !== 'production') {
@@ -23,8 +16,9 @@ class VerifyMpesaIp
         }
 
         $ip = $request->ip();
+        $whitelistedIps = config('mpesa.whitelisted_ips', []);
         
-        if (IpUtils::checkIp($ip, $this->whitelistedIps)) {
+        if (IpUtils::checkIp($ip, $whitelistedIps)) {
             return $next($request);
         }
 

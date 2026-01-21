@@ -57,11 +57,11 @@ development_status:
   3-1-m-pesa-stk-push-integration-web: done
   3-2-manual-payment-fallback: done
   3-3-final-submission-logic: review
-  3-4-payment-callback-handling: backlog
+  3-4-payment-callback-handling: done
   epic-3-retrospective: optional
 
-  epic-4: backlog
-  4-1-asp-api-authentication-sanctum: backlog
+  epic-4: in-progress
+  4-1-asp-api-authentication-sanctum: done
   4-2-pending-applications-endpoint: backlog
   4-3-status-update-endpoint: backlog
   4-4-sync-resilience-logging: backlog

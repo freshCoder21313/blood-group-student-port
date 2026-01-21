@@ -82,8 +82,18 @@ class PaymentController extends Controller
 
     public function callback(Request $request)
     {
-        // Log callback for debugging/audit
-        Log::info('M-Pesa Callback', $request->all());
+        // Log callback for debugging/audit (Redacting PII)
+        $payload = $request->all();
+        
+        if (isset($payload['Body']['stkCallback']['CallbackMetadata']['Item'])) {
+            foreach ($payload['Body']['stkCallback']['CallbackMetadata']['Item'] as &$item) {
+                if (isset($item['Name']) && in_array($item['Name'], ['PhoneNumber', 'PartyA', 'PartyB'])) {
+                    $item['Value'] = '******'; 
+                }
+            }
+        }
+
+        Log::info('M-Pesa Callback', $payload);
 
         $this->mpesaService->processCallback($request->all());
 

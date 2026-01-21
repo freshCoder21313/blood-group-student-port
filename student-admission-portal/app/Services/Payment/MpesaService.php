@@ -102,19 +102,28 @@ class MpesaService
         if ($resultCode == 0) {
             $metadata = collect($body['CallbackMetadata']['Item'] ?? [])->pluck('Value', 'Name')->toArray();
             
+            $receiptNumber = $metadata['MpesaReceiptNumber'] ?? null;
+            
+            if (!$receiptNumber) {
+                Log::error("M-Pesa Success Callback missing Receipt Number", $body);
+                $payment->update([
+                    'status' => 'failed',
+                    'result_desc' => 'Missing Receipt Number in Success Callback'
+                ]);
+                return;
+            }
+
             $payment->update([
                 'status' => 'completed',
-                'mpesa_receipt_number' => $metadata['MpesaReceiptNumber'] ?? null,
-                'transaction_code' => $metadata['MpesaReceiptNumber'] ?? null, // Aligning transaction_code
+                'mpesa_receipt_number' => $receiptNumber,
+                'transaction_code' => $receiptNumber, // Aligning transaction_code
                 'amount' => $metadata['Amount'] ?? $payment->amount,
                 'result_desc' => 'Success',
+                'manual_submission' => false, // Verified electronically, clear manual flag
             ]);
             
-            // Update application status as per AC
-            if ($payment->application) {
-                // 'payment_received' is not in enum, using 'pending_approval'
-                $payment->application->update(['status' => 'pending_approval']);
-            }
+            // Application status update removed. 
+            // Application remains in 'draft' until user manually submits (Story 3.3).
 
         } else {
             $payment->update([

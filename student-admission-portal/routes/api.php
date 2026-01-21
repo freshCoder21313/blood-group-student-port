@@ -12,7 +12,15 @@ use App\Http\Controllers\Api\V1\WebhookController;
 |--------------------------------------------------------------------------
 */
 
+// ═══════════════════════════════════════════════════════════════
+// ASP SYSTEM AUTHENTICATION (SANCTUM)
+// ═══════════════════════════════════════════════════════════════
+
 Route::prefix('v1')->middleware(['api'])->group(function () { 
+
+    Route::middleware(['auth:sanctum', 'ability:asp:sync'])->prefix('asp')->group(function () {
+        Route::get('/ping', [\App\Http\Controllers\Api\V1\AspSyncController::class, 'ping']);
+    });
 
     Route::middleware(\App\Http\Middleware\ApiAuthentication::class)->group(function () {
         

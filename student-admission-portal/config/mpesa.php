@@ -8,4 +8,10 @@ return [
     'shortcode' => env('MPESA_SHORTCODE'),
     'paybill' => env('MPESA_PAYBILL', '888888'),
     'callback_url' => env('MPESA_CALLBACK_URL'),
+    'whitelisted_ips' => [
+        '196.201.214.0/24',
+        '196.201.213.0/24',
+        '196.201.212.0/24',
+        '196.201.211.0/24',
+    ],
 ];
