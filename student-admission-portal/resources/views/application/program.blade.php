@@ -1,4 +1,7 @@
 <x-app-layout>
+    @php
+        $readonly = Gate::denies('update', $application);
+    @endphp
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Application - Program Selection') }}
@@ -7,7 +10,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <x-card>
+            <x-ui.card>
                 @if (session('status') === 'program-updated')
                     <div class="mb-4 text-sm font-medium text-green-600">
                         {{ __('Program selection saved successfully.') }}
@@ -21,7 +24,7 @@
                         <!-- Program -->
                         <div>
                             <x-ui.input-label for="program_id" :value="__('Select Program')" />
-                            <x-ui.select id="program_id" name="program_id" class="block mt-1 w-full">
+                            <x-ui.select :disabled="$readonly" id="program_id" name="program_id" class="block mt-1 w-full">
                                 <option value="">{{ __('Select a program...') }}</option>
                                 @foreach($programs as $program)
                                     <option value="{{ $program->id }}" {{ old('program_id', $application->program_id) == $program->id ? 'selected' : '' }}>
@@ -33,6 +36,7 @@
                         </div>
                     </div>
 
+                    @if(!$readonly)
                     <div class="flex items-center justify-end mt-4 gap-4">
                         <x-ui.secondary-button type="submit" name="action" value="save">
                             {{ __('Save Draft') }}
@@ -42,8 +46,13 @@
                             {{ __('Save & Next') }}
                         </x-ui.primary-button>
                     </div>
+                    @else
+                     <div class="mt-2 text-gray-500">
+                         <a href="{{ route('application.documents', $application) }}" class="text-blue-600 hover:underline">Next Step &rarr;</a>
+                     </div>
+                    @endif
                 </form>
-            </x-card>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

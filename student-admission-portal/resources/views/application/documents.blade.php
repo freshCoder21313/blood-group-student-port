@@ -1,4 +1,7 @@
 <x-app-layout>
+    @php
+        $readonly = Gate::denies('update', $application);
+    @endphp
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Application - Document Upload') }}
@@ -7,7 +10,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <x-card>
+            <x-ui.card>
                 @if (session('status') === 'documents-updated')
                     <div class="mb-4 text-sm font-medium text-green-600">
                         {{ __('Documents saved successfully.') }}
@@ -38,7 +41,7 @@
                             $nationalIdIsImage = $nationalId ? Str::startsWith($nationalId->mime_type, 'image/') : true;
                         @endphp
                         <div>
-                            <x-image-uploader 
+                            <x-ui.image-uploader :disabled="$readonly" 
                                 name="national_id" 
                                 label="National ID (Scanned Copy)" 
                                 accept="image/*,.pdf"
@@ -56,7 +59,7 @@
                             $transcriptIsImage = $transcript ? Str::startsWith($transcript->mime_type, 'image/') : true;
                         @endphp
                         <div>
-                            <x-image-uploader 
+                            <x-ui.image-uploader :disabled="$readonly" 
                                 name="transcript" 
                                 label="High School Transcript" 
                                 accept="image/*,.pdf"
@@ -67,6 +70,7 @@
                         </div>
                     </div>
 
+                    @if(!$readonly)
                     <div class="flex items-center justify-end mt-4 gap-4">
                         <x-ui.secondary-button type="submit" name="action" value="save">
                             {{ __('Save Draft') }}
@@ -76,8 +80,13 @@
                             {{ __('Review & Submit') }}
                         </x-ui.primary-button>
                     </div>
+                    @else
+                     <div class="mt-2 text-gray-500">
+                         <a href="{{ route('application.payment', $application) }}" class="text-blue-600 hover:underline">Next Step &rarr;</a>
+                     </div>
+                    @endif
                 </form>
-            </x-card>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

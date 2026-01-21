@@ -39,7 +39,8 @@ class ApplicationPolicy
      */
     public function update(User $user, Application $application): bool
     {
-        return $user->id === $application->student->user_id;
+        return $user->id === $application->student->user_id
+            && !in_array($application->status, ['pending_approval', 'approved', 'submitted']);
     }
 
     /**

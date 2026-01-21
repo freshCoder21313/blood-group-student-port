@@ -23,7 +23,7 @@ class ApplicationFormController extends Controller
     public function personal(Application $application): View
     {
         // Simple auth check, though Policy is better.
-        $this->authorize('update', $application);
+        $this->authorize('view', $application);
 
         return view('application.personal', [
             'application' => $application,
@@ -47,7 +47,7 @@ class ApplicationFormController extends Controller
 
     public function parent(Application $application): View
     {
-        $this->authorize('update', $application);
+        $this->authorize('view', $application);
 
         return view('application.parent', [
             'application' => $application,
@@ -71,7 +71,7 @@ class ApplicationFormController extends Controller
 
     public function program(Application $application): View
     {
-        $this->authorize('update', $application);
+        $this->authorize('view', $application);
 
         $programs = Program::where('is_active', true)->get();
 
@@ -96,7 +96,7 @@ class ApplicationFormController extends Controller
 
     public function documents(Application $application): View
     {
-        $this->authorize('update', $application);
+        $this->authorize('view', $application);
 
         $documents = $this->applicationService->getDocuments($application);
 
@@ -140,7 +140,7 @@ class ApplicationFormController extends Controller
 
     public function payment(Application $application): View
     {
-        $this->authorize('update', $application);
+        $this->authorize('view', $application);
 
         return view('application.payment', [
             'application' => $application,
@@ -155,6 +155,8 @@ class ApplicationFormController extends Controller
         try {
             $this->applicationService->submit($application);
             return redirect()->route('dashboard')->with('status', 'application-submitted');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
         } catch (\Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()]);
         }

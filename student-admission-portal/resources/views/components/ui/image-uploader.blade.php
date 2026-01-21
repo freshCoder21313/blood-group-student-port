@@ -1,11 +1,11 @@
-@props(['name', 'label', 'accept' => 'image/*,.pdf', 'value' => null, 'deleteUrl' => null, 'initialIsImage' => true])
+@props(['name', 'label', 'accept' => 'image/*,.pdf', 'value' => null, 'deleteUrl' => null, 'initialIsImage' => true, 'disabled' => false])
 
-<div x-data="imageUploader('{{ $value }}', '{{ $deleteUrl }}', {{ $initialIsImage ? 'true' : 'false' }})" class="w-full">
+<div x-data="imageUploader('{{ $value }}', '{{ $deleteUrl }}', {{ $initialIsImage ? 'true' : 'false' }}, {{ $disabled ? 'true' : 'false' }})" class="w-full">
     <label class="block text-sm font-medium text-gray-700 mb-1">{{ $label }}</label>
     
     <!-- Drop Zone -->
     <div 
-        x-show="!previewUrl"
+        x-show="!previewUrl && !disabled"
         @dragover.prevent="dragover = true"
         @dragleave.prevent="dragover = false"
         @drop.prevent="handleDrop($event)"
@@ -56,6 +56,7 @@
 
         <button 
             type="button" 
+            x-show="!disabled"
             @click="removeFile"
             class="ml-2 p-1 text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-100"
         >
@@ -71,7 +72,7 @@
 
 <script>
     document.addEventListener('alpine:init', () => {
-        Alpine.data('imageUploader', (initialValue, deleteUrl, initialIsImage) => ({
+        Alpine.data('imageUploader', (initialValue, deleteUrl, initialIsImage, disabled = false) => ({
             dragover: false,
             previewUrl: initialValue || null,
             deleteUrl: deleteUrl || null,
@@ -81,6 +82,7 @@
             isImage: initialIsImage,
             error: null,
             initialValue: initialValue || null,
+            disabled: disabled,
             
             init() {
                 if (this.previewUrl) {

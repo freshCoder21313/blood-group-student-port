@@ -17,6 +17,25 @@ test('submit throws exception if payment not completed', function () {
     $student = Student::factory()->create(['user_id' => $user->id]);
     $application = Application::factory()->create(['student_id' => $student->id]);
     
+    // Add required data for strict validation
+    $program = \App\Models\Program::factory()->create();
+    $application->update(['program_id' => $program->id]);
+    
+    $student->update([
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'date_of_birth' => '2000-01-01',
+        'gender' => 'Male',
+        'nationality' => 'Kenyan',
+        'national_id' => '12345678',
+    ]);
+    
+    $student->parentInfo()->create([
+        'guardian_name' => 'Jane Doe',
+        'guardian_phone' => '0700000000',
+        'relationship' => 'Parent',
+    ]);
+    
     // Create completed steps
     foreach (range(1, 4) as $step) {
         $application->steps()->create([

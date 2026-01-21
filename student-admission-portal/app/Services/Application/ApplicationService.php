@@ -7,8 +7,11 @@ namespace App\Services\Application;
 use App\Models\Application;
 use App\Models\ApplicationStep;
 use App\Models\Student;
+use App\Events\ApplicationSubmitted;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class ApplicationService
 {
@@ -126,10 +129,31 @@ class ApplicationService
             throw new \Exception("Please submit payment proof before submitting application");
         }
 
+        // Strict Validation
+        $application->load(['student.parentInfo']);
+        
+        $validator = Validator::make($application->toArray(), [
+            'student.first_name' => 'required',
+            'student.last_name' => 'required',
+            'student.date_of_birth' => 'required',
+            'student.gender' => 'required',
+            'student.nationality' => 'required',
+            'student.national_id' => 'required',
+            'student.parent_info.guardian_name' => 'required',
+            'student.parent_info.guardian_phone' => 'required',
+            'program_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
         $application->update([
             'status' => 'pending_approval',
             'submitted_at' => now()
         ]);
+
+        ApplicationSubmitted::dispatch($application);
 
         return $application->fresh();
     }

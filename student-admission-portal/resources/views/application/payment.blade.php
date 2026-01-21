@@ -1,8 +1,20 @@
 <x-app-layout>
+    @php
+        $readonly = Gate::denies('update', $application);
+    @endphp
     <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            @if($readonly)
+                 <div class="p-6 text-center">
+                     <div class="p-4 bg-green-50 rounded border border-green-200 inline-block text-left max-w-lg">
+                         <h3 class="font-bold text-lg text-green-800 mb-2">Application Submitted</h3>
+                         <p class="text-green-700 mb-4">Your application has been submitted and is currently under review. You cannot make further changes.</p>
+                         <a href="{{ route('dashboard') }}" class="text-blue-600 hover:underline">&larr; Return to Dashboard</a>
+                     </div>
+                 </div>
+            @else
             <div class="p-6 text-gray-900" x-data="paymentHandler({{ $application->id }}, '{{ $payment?->status ?? 'none' }}')">
-                <h2 class="text-xl font-bold mb-4">Step 4: Payment</h2>
+                <h2 class="text-xl font-bold mb-4">Step 5: Payment</h2>
 
                 <!-- Success/Verification State -->
                 <template x-if="status === 'completed' || status === 'pending_verification'">
@@ -20,9 +32,12 @@
                             </div>
                         @endif
 
-                        <form method="POST" action="{{ route('application.submit', $application) }}">
+                        <form method="POST" action="{{ route('application.submit', $application) }}" @submit="submitting = true">
                             @csrf
-                            <x-ui.primary-button class="mt-4">Submit Application</x-ui.primary-button>
+                            <x-ui.primary-button class="mt-4" ::disabled="submitting">
+                                <span x-show="!submitting">Submit Application</span>
+                                <span x-show="submitting">Submitting...</span>
+                            </x-ui.primary-button>
                         </form>
                     </div>
                 </template>
@@ -91,6 +106,7 @@
                     </div>
                 </template>
             </div>
+            @endif
         </div>
     </div>
 
@@ -104,6 +120,7 @@
                 error: '',
                 pollInterval: null,
                 manualPayment: false,
+                submitting: false,
 
                 init() {
                     // Pre-fill phone from student info if available?
