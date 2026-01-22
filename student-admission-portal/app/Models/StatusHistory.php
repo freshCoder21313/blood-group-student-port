@@ -14,7 +14,7 @@ class StatusHistory extends Model
         'from_status',
         'to_status',
         'changed_by',
-        'notes',
+        'comment',
         'source',
     ];
 

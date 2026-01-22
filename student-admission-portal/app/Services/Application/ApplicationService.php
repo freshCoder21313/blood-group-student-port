@@ -150,14 +150,28 @@ class ApplicationService
             throw new ValidationException($validator);
         }
 
-        $application->update([
-            'status' => 'pending_approval',
-            'submitted_at' => now()
-        ]);
+        return DB::transaction(function () use ($application) {
+            $oldStatus = $application->status;
 
-        ApplicationSubmitted::dispatch($application);
+            $application->update([
+                'status' => 'pending_approval',
+                'submitted_at' => now()
+            ]);
 
-        return $application->fresh();
+            StatusHistory::create([
+                'application_id' => $application->id,
+                'from_status' => $oldStatus,
+                'to_status' => 'pending_approval',
+                'source' => 'system',
+                'changed_by' => 'student',
+                'comment' => 'Application submitted'
+            ]);
+
+            ApplicationSubmitted::dispatch($application);
+            ApplicationStatusChanged::dispatch($application, $oldStatus, 'pending_approval');
+
+            return $application->fresh();
+        });
     }
 
     /**
@@ -184,7 +198,7 @@ class ApplicationService
                 'to_status' => $status,
                 'source' => $source,
                 'changed_by' => 'system',
-                'notes' => $notes
+                'comment' => $notes
             ]);
 
             // Fire event

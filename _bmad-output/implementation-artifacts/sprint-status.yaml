@@ -64,5 +64,5 @@ development_status:
   4-1-asp-api-authentication-sanctum: done
   4-2-pending-applications-endpoint: done
   4-3-status-update-endpoint: done
-  4-4-sync-resilience-logging: backlog
+  4-4-sync-resilience-logging: done
   epic-4-retrospective: optional

@@ -31,29 +31,12 @@ class AspSyncController extends Controller
      */
     public function pending(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        $statusCode = 200;
-        $errorMessage = null;
+        $applications = Application::query()
+            ->where('status', 'pending_approval')
+            ->with(['student', 'documents'])
+            ->paginate(50);
 
-        try {
-            $applications = Application::query()
-                ->where('status', 'pending_approval')
-                ->with(['student', 'documents'])
-                ->paginate(50);
-
-            return ApplicationResource::collection($applications);
-        } catch (\Throwable $e) {
-            $statusCode = 500;
-            $errorMessage = $e->getMessage();
-            throw $e;
-        } finally {
-            \App\Models\ApiLog::create([
-                'endpoint' => $request->path(),
-                'method' => $request->method(),
-                'status_code' => $statusCode,
-                'ip_address' => $request->ip(),
-                'error_message' => $errorMessage,
-            ]);
-        }
+        return ApplicationResource::collection($applications);
     }
 
     /**
@@ -61,9 +44,6 @@ class AspSyncController extends Controller
      */
     public function updateStatus(UpdateApplicationStatusRequest $request): JsonResponse
     {
-        $statusCode = 200;
-        $errorMessage = null;
-
         try {
             $application = Application::findOrFail($request->validated('application_id'));
 
@@ -79,17 +59,7 @@ class AspSyncController extends Controller
                 'data' => new ApplicationResource($updatedApplication)
             ]);
         } catch (\Exception $e) {
-            $statusCode = 422;
-            $errorMessage = $e->getMessage();
             return response()->json(['message' => $e->getMessage()], 422);
-        } finally {
-            \App\Models\ApiLog::create([
-                'endpoint' => $request->path(),
-                'method' => $request->method(),
-                'status_code' => $statusCode,
-                'ip_address' => $request->ip(),
-                'error_message' => $errorMessage,
-            ]);
         }
     }
 }

@@ -101,7 +101,7 @@ test('successfully updates status with comment', function () {
     $this->assertDatabaseHas('status_histories', [
         'application_id' => $application->id,
         'to_status' => 'rejected',
-        'notes' => 'Missing documents',
+        'comment' => 'Missing documents',
     ]);
 });
 
