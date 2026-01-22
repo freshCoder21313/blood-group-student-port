@@ -50,14 +50,18 @@
                     </div>
 
                     <!-- Actions -->
-                    @if($application->status === 'pending_approval')
+                    @if($application->status !== 'draft')
                         <div class="mt-8 border-t pt-6 flex space-x-4">
-                            <form action="{{ route('admin.applications.approve', $application) }}" method="POST">
-                                @csrf
-                                <x-ui.primary-button class="bg-green-600 hover:bg-green-700">Approve Application</x-ui.primary-button>
-                            </form>
+                            @if($application->status !== 'approved')
+                                <form action="{{ route('admin.applications.approve', $application) }}" method="POST">
+                                    @csrf
+                                    <x-ui.primary-button class="bg-green-600 hover:bg-green-700">Approve Application</x-ui.primary-button>
+                                </form>
+                            @endif
 
-                            <button onclick="document.getElementById('reject-form').classList.toggle('hidden')" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">Reject</button>
+                            @if($application->status !== 'rejected')
+                                <button onclick="document.getElementById('reject-form').classList.toggle('hidden')" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">Reject</button>
+                            @endif
                         </div>
 
                         <div id="reject-form" class="mt-4 hidden bg-red-50 p-4 rounded">

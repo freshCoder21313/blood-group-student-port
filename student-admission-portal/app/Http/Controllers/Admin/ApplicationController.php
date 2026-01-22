@@ -38,8 +38,9 @@ class ApplicationController extends Controller
             abort(403);
         }
 
-        if ($application->status !== 'pending_approval') {
-            return back()->with('error', 'Application cannot be approved from current status.');
+        // Allow admins to approve from any status except draft
+        if ($application->status === 'draft') {
+            return back()->with('error', 'Cannot approve a draft application.');
         }
 
         $application->update([

@@ -25,6 +25,10 @@
                             :active="request()->routeIs('admin.applications.*')">
                             {{ __('Applications') }}
                         </x-ui.nav-link>
+                        <x-ui.nav-link :href="route('admin.activity-logs.index')"
+                            :active="request()->routeIs('admin.activity-logs.*')">
+                            {{ __('Activity Logs') }}
+                        </x-ui.nav-link>
                     @endif
 
                     <!-- 
@@ -112,6 +116,18 @@
             <x-ui.responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-ui.responsive-nav-link>
+
+            @if(Auth::user()->isAdmin())
+                <x-ui.responsive-nav-link :href="route('admin.payments.index')" :active="request()->routeIs('admin.payments.*')">
+                    {{ __('Payments') }}
+                </x-ui.responsive-nav-link>
+                <x-ui.responsive-nav-link :href="route('admin.applications.index')" :active="request()->routeIs('admin.applications.*')">
+                    {{ __('Applications') }}
+                </x-ui.responsive-nav-link>
+                <x-ui.responsive-nav-link :href="route('admin.activity-logs.index')" :active="request()->routeIs('admin.activity-logs.*')">
+                    {{ __('Activity Logs') }}
+                </x-ui.responsive-nav-link>
+            @endif
 
             @if(Auth::user()->student && Auth::user()->student->application && Auth::user()->student->application->status === 'approved')
                 <x-ui.responsive-nav-link :href="route('student.grades')" :active="request()->routeIs('student.grades')">
