@@ -40,6 +40,14 @@ Route::middleware(['auth', 'otp.verified'])->group(function () {
     Route::get('/payment/{application}/status', [\App\Http\Controllers\PaymentController::class, 'checkStatus'])->name('payment.status');
 });
 
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/payments', [\App\Http\Controllers\Admin\PaymentController::class, 'index'])->name('payments.index');
+    Route::get('/payments/{payment}', [\App\Http\Controllers\Admin\PaymentController::class, 'show'])->name('payments.show');
+    Route::get('/payments/{payment}/proof', [\App\Http\Controllers\Admin\PaymentController::class, 'downloadProof'])->name('payments.proof');
+    Route::post('/payments/{payment}/approve', [\App\Http\Controllers\Admin\PaymentController::class, 'approve'])->name('payments.approve');
+    Route::post('/payments/{payment}/reject', [\App\Http\Controllers\Admin\PaymentController::class, 'reject'])->name('payments.reject');
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -67,8 +67,8 @@ development_status:
   4-4-sync-resilience-logging: done
   epic-4-retrospective: optional
 
-  epic-5: backlog
-  5-1-admin-payment-verification-panel: backlog
+  epic-5: in-progress
+  5-1-admin-payment-verification-panel: done
   5-2-student-dashboard-transformation: backlog
   5-3-student-information-service-mock-strategy: backlog
   5-4-view-grades-schedule: backlog
