@@ -1,6 +1,13 @@
 # Student Admission Portal (PHP Web Service)
 
+![Laravel Version](https://img.shields.io/badge/Laravel-11.x-red) ![PHP Version](https://img.shields.io/badge/PHP-8.2%2B-blue)
+
 Online student admission portal system, integrated with the internal ASP.NET system. This project provides RESTful APIs for student enrollment, application submission, and two-way data synchronization with the training management system (ASP System).
+
+## 📂 Repository Structure
+
+*   **`student-admission-portal/`**: The core application source code.
+*   **`_bmad/`**: Configuration for BMAD AI agents.
 
 ## 🚀 System Requirements
 
@@ -18,7 +25,7 @@ Follow these steps to set up the project in your local environment:
 
 ### 1. Clone and Install Dependencies
 
-Navigate to the project directory and install PHP libraries:
+Navigate to the project directory (specifically the inner folder) and install PHP libraries:
 
 ```bash
 cd student-admission-portal
@@ -99,14 +106,6 @@ The system provides the following main API groups:
 ### 3. Student Data (Proxy to ASP)
 *   `GET /api/v1/students/{code}/grades`: Look up grades.
 *   `GET /api/v1/students/{code}/fees`: Look up fees.
-
-## 📂 Main Project Structure
-
-*   `app/Models`: Contains Entities (User, Student, Application...).
-*   `app/Http/Controllers/Api/V1`: Controllers handling main API logic.
-*   `app/Services/Integration`: Services communicating with ASP System.
-*   `app/Http/Middleware/ApiAuthentication.php`: Security middleware for HMAC authentication for internal API.
-*   `database/migrations`: Database structure definitions.
 
 ## 🧪 Testing
 
