@@ -11,6 +11,7 @@ class AcademicBlockSeeder extends Seeder
     {
         AcademicBlock::firstOrCreate([
             'name' => 'Sep 2024 Intake',
+            'code' => 'BLOCK-SEP-2024',
             'year' => 2024,
             'intake' => 'September',
         ], [
@@ -18,9 +19,10 @@ class AcademicBlockSeeder extends Seeder
             'end_date' => '2024-12-31',
             'is_active' => true,
         ]);
-        
+
         AcademicBlock::firstOrCreate([
             'name' => 'Jan 2025 Intake',
+            'code' => 'BLOCK-JAN-2025',
             'year' => 2025,
             'intake' => 'January',
         ], [
@@ -31,6 +33,7 @@ class AcademicBlockSeeder extends Seeder
 
         AcademicBlock::firstOrCreate([
             'name' => 'May 2025 Intake',
+            'code' => 'BLOCK-MAY-2025',
             'year' => 2025,
             'intake' => 'May',
         ], [
@@ -41,6 +44,7 @@ class AcademicBlockSeeder extends Seeder
 
         AcademicBlock::firstOrCreate([
             'name' => 'Sep 2025 Intake',
+            'code' => 'BLOCK-SEP-2025',
             'year' => 2025,
             'intake' => 'September',
         ], [

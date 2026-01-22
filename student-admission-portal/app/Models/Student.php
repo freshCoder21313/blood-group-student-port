@@ -43,7 +43,7 @@ class Student extends Model
             if ($student->isDirty('national_id')) {
                 $student->national_id_index = $student->generateBlindIndex($student->national_id);
             }
-            
+
             if ($student->isDirty('passport_number')) {
                 $student->passport_number_index = $student->generateBlindIndex($student->passport_number);
             }
@@ -52,7 +52,7 @@ class Student extends Model
 
     public function generateBlindIndex(?string $value): ?string
     {
-        if (! $value) {
+        if (!$value) {
             return null;
         }
 
@@ -74,9 +74,14 @@ class Student extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function applications()
+    {
+        return $this->hasMany(Application::class);
+    }
+
     public function application()
     {
-        return $this->hasOne(Application::class);
+        return $this->hasOne(Application::class)->latestOfMany();
     }
 
     public function parentInfo()

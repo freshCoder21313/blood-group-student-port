@@ -23,6 +23,7 @@ class Application extends Model
         'submitted_at',
         'approved_at',
         'approved_by',
+        'student_code',
     ];
 
     protected $casts = [

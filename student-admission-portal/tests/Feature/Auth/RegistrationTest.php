@@ -18,6 +18,7 @@ test('new users can register and are redirected to otp verification', function (
     $this->mock(SmsChannel::class)->shouldReceive('send')->andReturn(true);
 
     $response = $this->post('/register', [
+        'name' => 'Test User',
         'email' => 'test@example.com',
         'phone' => '0712345678',
         'password' => 'password',
@@ -26,10 +27,10 @@ test('new users can register and are redirected to otp verification', function (
 
     $this->assertGuest();
     $response->assertRedirect(route('otp.verify'));
-    
+
     $this->assertDatabaseHas('users', ['email' => 'test@example.com']);
     $this->assertDatabaseHas('otps', [
-        'identifier' => 'test@example.com', 
+        'identifier' => 'test@example.com',
         'purpose' => 'registration'
     ]);
 });

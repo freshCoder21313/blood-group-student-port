@@ -10,7 +10,27 @@ use Illuminate\Support\Facades\Gate;
 
 class ApplicationController extends Controller
 {
-    // ...
+    public function index()
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $applications = Application::with('student')->latest()->paginate(20);
+
+        return view('admin.applications.index', compact('applications'));
+    }
+
+    public function show(Application $application)
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $application->load(['student.parentInfo', 'documents', 'payment', 'statusHistories']);
+
+        return view('admin.applications.show', compact('application'));
+    }
 
     public function approve(Application $application)
     {

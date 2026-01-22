@@ -12,7 +12,8 @@ class DashboardController extends Controller
 {
     public function __construct(
         private ApplicationService $applicationService
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): View
     {
@@ -40,19 +41,18 @@ class DashboardController extends Controller
 
         $student = $user->student;
 
-        // Check if user is an admitted student (has student_code)
-        if ($student && $student->student_code) {
-            // Optimization: Use eager loaded application from student relationship
-            // $application = $this->applicationService->getCurrentApplication($user->id);
-            
+        // Check if user is an admitted student (has student_code or approved application)
+        $approvedApplication = $user->student ? $user->student->applications()->where('status', 'approved')->first() : null;
+
+        if (($student && $student->student_code) || $approvedApplication) {
             return view('student.dashboard', [
-                // 'application' => $application, // Unused in view
-                'student' => $student
+                'student' => $student,
+                'application' => $approvedApplication
             ]);
         }
 
         $application = $this->applicationService->getCurrentApplication($user->id);
-        
+
         return view('dashboard', [
             'application' => $application
         ]);
@@ -61,9 +61,9 @@ class DashboardController extends Controller
     public function store(Request $request)
     {
         $this->authorize('create', \App\Models\Application::class);
-        
+
         $application = $this->applicationService->createDraft($request->user()->id);
-        
+
         return redirect()->route('application.personal', $application);
     }
 }

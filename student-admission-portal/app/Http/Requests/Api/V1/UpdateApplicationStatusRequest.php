@@ -20,6 +20,7 @@ class UpdateApplicationStatusRequest extends FormRequest
             'application_id' => ['required', 'integer', 'exists:applications,id'],
             'status' => ['required', 'string', Rule::in(['approved', 'rejected', 'request_info'])],
             'comment' => ['nullable', 'string'],
+            'student_code' => ['nullable', 'string', 'max:50'],
         ];
     }
 }

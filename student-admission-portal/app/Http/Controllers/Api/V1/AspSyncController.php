@@ -48,11 +48,15 @@ class AspSyncController extends Controller
             $application = Application::findOrFail($request->validated('application_id'));
 
             $updatedApplication = $this->service->updateStatus(
-                $application, 
+                $application,
                 $request->validated('status'),
                 $request->validated('comment'), // notes
                 'ASP' // source
             );
+
+            if ($request->validated('student_code')) {
+                $updatedApplication->update(['student_code' => $request->validated('student_code')]);
+            }
 
             return response()->json([
                 'message' => 'Status updated',
