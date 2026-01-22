@@ -12,14 +12,14 @@
         <!-- OTP Code -->
         <div>
             <x-ui.input-label for="code" :value="__('Verification Code')" />
-            <x-ui.text-input id="code" class="block mt-1 w-full" type="text" name="code" :value="old('code')" required autofocus />
+            <x-ui.input id="code" class="block mt-1 w-full" type="text" name="code" :value="old('code')" required autofocus />
             <x-ui.input-error :messages="$errors->get('code')" class="mt-2" />
         </div>
 
         <div class="flex items-center justify-end mt-4">
-            <x-ui.primary-button class="ms-3">
+            <x-ui.button variant="primary" class="ms-3">
                 {{ __('Verify') }}
-            </x-ui.primary-button>
+            </x-ui.button>
         </div>
     </form>
     

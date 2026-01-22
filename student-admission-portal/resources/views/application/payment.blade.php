@@ -34,10 +34,10 @@
 
                         <form method="POST" action="{{ route('application.submit', $application) }}" @submit="submitting = true">
                             @csrf
-                            <x-ui.primary-button class="mt-4" ::disabled="submitting">
+                            <x-ui.button variant="primary" class="mt-4" ::disabled="submitting">
                                 <span x-show="!submitting">Submit Application</span>
                                 <span x-show="submitting">Submitting...</span>
-                            </x-ui.primary-button>
+                            </x-ui.button>
                         </form>
                     </div>
                 </template>
@@ -50,15 +50,15 @@
 
                             <div class="mb-4 max-w-md">
                                 <x-ui.input-label for="phone_number" value="M-Pesa Phone Number" />
-                                <x-ui.text-input id="phone_number" class="block mt-1 w-full" type="text" x-model="phoneNumber" placeholder="0712345678" />
+                                <x-ui.input id="phone_number" class="block mt-1 w-full" type="text" x-model="phoneNumber" placeholder="0712345678" />
                                 <p class="text-sm text-red-600 mt-1" x-text="error"></p>
                             </div>
 
                             <div class="flex items-center space-x-4">
-                                <x-ui.primary-button @click="initiatePayment" ::disabled="loading">
+                                <x-ui.button variant="primary" @click="initiatePayment" ::disabled="loading">
                                     <span x-show="!loading">Pay Now</span>
                                     <span x-show="loading">Processing...</span>
-                                </x-ui.primary-button>
+                                </x-ui.button>
                                 
                                 <a href="{{ route('application.documents', $application) }}" class="text-gray-600 hover:text-gray-900">Back</a>
                             </div>
@@ -95,7 +95,7 @@
                                  @csrf
                                  <div class="mb-4 max-w-md">
                                      <x-ui.input-label for="transaction_code" value="M-Pesa Transaction Code" />
-                                    <x-ui.text-input id="transaction_code" name="transaction_code" class="block mt-1 w-full" type="text" placeholder="e.g. QDH..." required value="{{ old('transaction_code') }}" pattern="[A-Z0-9]{10}" title="10-character uppercase alphanumeric code" x-on:input="$el.value = $el.value.toUpperCase()" />
+                                    <x-ui.input id="transaction_code" name="transaction_code" class="block mt-1 w-full" type="text" placeholder="e.g. QDH..." required value="{{ old('transaction_code') }}" pattern="[A-Z0-9]{10}" title="10-character uppercase alphanumeric code" x-on:input="$el.value = $el.value.toUpperCase()" />
                                     <p class="text-xs text-gray-500 mt-1">Format: 10 characters, Uppercase (e.g. QDH1234567)</p>
                                      @error('transaction_code') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                                  </div>
@@ -105,7 +105,7 @@
                                      @error('proof_document') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                                  </div>
                                  <div class="flex items-center space-x-4">
-                                     <x-ui.primary-button>Confirm Payment</x-ui.primary-button>
+                                     <x-ui.button variant="primary">Confirm Payment</x-ui.button>
                                      <button type="button" @click="manualPayment = false" class="text-gray-600 hover:text-gray-900">Cancel</button>
                                  </div>
                              </form>

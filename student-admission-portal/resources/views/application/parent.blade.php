@@ -24,28 +24,28 @@
                         <!-- Guardian Name -->
                         <div>
                             <x-ui.input-label for="guardian_name" :value="__('Guardian Name')" />
-                            <x-ui.text-input :disabled="$readonly" id="guardian_name" class="block mt-1 w-full" type="text" name="guardian_name" :value="old('guardian_name', $parentInfo->guardian_name ?? '')" />
+                            <x-ui.input :disabled="$readonly" id="guardian_name" class="block mt-1 w-full" type="text" name="guardian_name" :value="old('guardian_name', $parentInfo->guardian_name ?? '')" />
                             <x-ui.input-error :messages="$errors->get('guardian_name')" class="mt-2" />
                         </div>
 
                         <!-- Relationship -->
                         <div>
                             <x-ui.input-label for="relationship" :value="__('Relationship')" />
-                             <x-ui.text-input :disabled="$readonly" id="relationship" class="block mt-1 w-full" type="text" name="relationship" :value="old('relationship', $parentInfo->relationship ?? '')" placeholder="e.g. Father, Mother" />
+                             <x-ui.input :disabled="$readonly" id="relationship" class="block mt-1 w-full" type="text" name="relationship" :value="old('relationship', $parentInfo->relationship ?? '')" placeholder="e.g. Father, Mother" />
                             <x-ui.input-error :messages="$errors->get('relationship')" class="mt-2" />
                         </div>
 
                         <!-- Phone -->
                         <div>
                             <x-ui.input-label for="guardian_phone" :value="__('Phone Number')" />
-                            <x-ui.text-input :disabled="$readonly" id="guardian_phone" class="block mt-1 w-full" type="text" name="guardian_phone" :value="old('guardian_phone', $parentInfo->guardian_phone ?? '')" />
+                            <x-ui.input :disabled="$readonly" id="guardian_phone" class="block mt-1 w-full" type="text" name="guardian_phone" :value="old('guardian_phone', $parentInfo->guardian_phone ?? '')" />
                             <x-ui.input-error :messages="$errors->get('guardian_phone')" class="mt-2" />
                         </div>
 
                         <!-- Email -->
                         <div>
                             <x-ui.input-label for="guardian_email" :value="__('Email (Optional)')" />
-                            <x-ui.text-input :disabled="$readonly" id="guardian_email" class="block mt-1 w-full" type="email" name="guardian_email" :value="old('guardian_email', $parentInfo->guardian_email ?? '')" />
+                            <x-ui.input :disabled="$readonly" id="guardian_email" class="block mt-1 w-full" type="email" name="guardian_email" :value="old('guardian_email', $parentInfo->guardian_email ?? '')" />
                             <x-ui.input-error :messages="$errors->get('guardian_email')" class="mt-2" />
                         </div>
                     </div>
@@ -57,13 +57,13 @@
 
                         @if(!$readonly)
                         <div class="flex gap-4">
-                            <x-ui.secondary-button type="submit" name="action" value="save">
+                            <x-ui.button variant="secondary" type="submit" name="action" value="save">
                                 {{ __('Save Draft') }}
-                            </x-ui.secondary-button>
+                            </x-ui.button>
 
-                            <x-ui.primary-button type="submit" name="action" value="next">
+                            <x-ui.button variant="primary" type="submit" name="action" value="next">
                                 {{ __('Save & Next') }}
-                            </x-ui.primary-button>
+                            </x-ui.button>
                         </div>
                         @else
                          <div class="mt-2 text-gray-500">

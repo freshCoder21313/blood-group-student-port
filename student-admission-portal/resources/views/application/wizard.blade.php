@@ -75,16 +75,16 @@
                             <!-- Personal Details Fields (Same as before) -->
                             <div>
                                 <x-ui.input-label for="first_name" :value="__('First Name')" />
-                                <x-ui.text-input :disabled="$readonly" id="first_name" class="block mt-1 w-full" type="text" name="first_name" :value="old('first_name', $student->first_name)" />
+                                <x-ui.input :disabled="$readonly" id="first_name" class="block mt-1 w-full" type="text" name="first_name" :value="old('first_name', $student->first_name)" />
                             </div>
                             <div>
                                 <x-ui.input-label for="last_name" :value="__('Last Name')" />
-                                <x-ui.text-input :disabled="$readonly" id="last_name" class="block mt-1 w-full" type="text" name="last_name" :value="old('last_name', $student->last_name)" />
+                                <x-ui.input :disabled="$readonly" id="last_name" class="block mt-1 w-full" type="text" name="last_name" :value="old('last_name', $student->last_name)" />
                             </div>
                              <!-- More fields from original personal.blade.php -->
                              <div>
                                 <x-ui.input-label for="date_of_birth" :value="__('Date of Birth')" />
-                                <x-ui.text-input :disabled="$readonly" id="date_of_birth" class="block mt-1 w-full" type="date" name="date_of_birth" :value="old('date_of_birth', optional($student->date_of_birth)->format('Y-m-d'))" />
+                                <x-ui.input :disabled="$readonly" id="date_of_birth" class="block mt-1 w-full" type="date" name="date_of_birth" :value="old('date_of_birth', optional($student->date_of_birth)->format('Y-m-d'))" />
                             </div>
                              <div>
                                 <x-ui.input-label for="gender" :value="__('Gender')" />
@@ -96,7 +96,7 @@
                             </div>
                             <div>
                                 <x-ui.input-label for="national_id" :value="__('National ID')" />
-                                <x-ui.text-input :disabled="$readonly" id="national_id" class="block mt-1 w-full" type="text" name="national_id" :value="old('national_id', $student->national_id)" />
+                                <x-ui.input :disabled="$readonly" id="national_id" class="block mt-1 w-full" type="text" name="national_id" :value="old('national_id', $student->national_id)" />
                             </div>
                              <div class="col-span-1 md:col-span-2">
                                 <x-ui.input-label for="address" :value="__('Address')" />
@@ -105,9 +105,9 @@
                         </div>
 
                         <div class="flex items-center justify-end mt-6">
-                            <x-ui.primary-button type="submit" name="action" value="next">
+                            <x-ui.button variant="primary" type="submit" name="action" value="next">
                                 {{ __('Save & Continue') }}
-                            </x-ui.primary-button>
+                            </x-ui.button>
                         </div>
                     </form>
                 </div>
@@ -119,18 +119,18 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <x-ui.input-label for="guardian_name" :value="__('Guardian Name')" />
-                                <x-ui.text-input :disabled="$readonly" id="guardian_name" class="block mt-1 w-full" type="text" name="guardian_name" :value="old('guardian_name', $parentInfo->guardian_name ?? '')" />
+                                <x-ui.input :disabled="$readonly" id="guardian_name" class="block mt-1 w-full" type="text" name="guardian_name" :value="old('guardian_name', $parentInfo->guardian_name ?? '')" />
                             </div>
                             <div>
                                 <x-ui.input-label for="guardian_phone" :value="__('Guardian Phone')" />
-                                <x-ui.text-input :disabled="$readonly" id="guardian_phone" class="block mt-1 w-full" type="text" name="guardian_phone" :value="old('guardian_phone', $parentInfo->guardian_phone ?? '')" />
+                                <x-ui.input :disabled="$readonly" id="guardian_phone" class="block mt-1 w-full" type="text" name="guardian_phone" :value="old('guardian_phone', $parentInfo->guardian_phone ?? '')" />
                             </div>
                         </div>
                         <div class="flex items-center justify-between mt-6">
                             <button type="button" @click="step = 1" class="text-gray-600 hover:underline">Back</button>
-                            <x-ui.primary-button type="submit" name="action" value="next">
+                            <x-ui.button variant="primary" type="submit" name="action" value="next">
                                 {{ __('Save & Continue') }}
-                            </x-ui.primary-button>
+                            </x-ui.button>
                         </div>
                     </form>
                 </div>
@@ -143,6 +143,7 @@
                             <x-ui.input-label for="program_id" :value="__('Select Program')" />
                             <x-ui.select :disabled="$readonly" id="program_id" name="program_id" class="block mt-1 w-full">
                                 <option value="">{{ __('Select a program...') }}</option>
+                                <option value="1" {{ old('program_id', $application->program_id) == 1 ? 'selected' : '' }}>Software Engineering</option>
                                 @foreach($programs as $program)
                                     <option value="{{ $program->id }}" {{ old('program_id', $application->program_id) == $program->id ? 'selected' : '' }}>
                                         {{ $program->code }} - {{ $program->name }}
@@ -152,9 +153,9 @@
                         </div>
                          <div class="flex items-center justify-between mt-6">
                             <button type="button" @click="step = 2" class="text-gray-600 hover:underline">Back</button>
-                            <x-ui.primary-button type="submit" name="action" value="next">
+                            <x-ui.button variant="primary" type="submit" name="action" value="next">
                                 {{ __('Save & Continue') }}
-                            </x-ui.primary-button>
+                            </x-ui.button>
                         </div>
                     </form>
                 </div>
@@ -195,9 +196,9 @@
 
                          <div class="flex items-center justify-between mt-6">
                             <button type="button" @click="step = 3" class="text-gray-600 hover:underline">Back</button>
-                            <x-ui.primary-button type="submit" name="action" value="finish">
+                            <x-ui.button variant="primary" type="submit" name="action" value="finish">
                                 {{ __('Finish & Proceed to Payment') }}
-                            </x-ui.primary-button>
+                            </x-ui.button>
                         </div>
                     </form>
                 </div>

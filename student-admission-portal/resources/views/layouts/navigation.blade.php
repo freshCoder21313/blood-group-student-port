@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ open: false }" class="bg-white border-b border-gray-200">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-primary-600" />
+                        <x-application-logo class="block h-10 w-auto text-primary-600" />
                     </a>
                 </div>
 
@@ -30,17 +30,7 @@
                             {{ __('Activity Logs') }}
                         </x-ui.nav-link>
                     @endif
-
-                    <!-- 
-            @if(Auth::user()->isAdmin())
-                <x-ui.responsive-nav-link :href="route('admin.payments.index')" :active="request()->routeIs('admin.payments.*')">
-                    {{ __('Payments') }}
-                </x-ui.responsive-nav-link>
-                <x-ui.responsive-nav-link :href="route('admin.applications.index')" :active="request()->routeIs('admin.applications.*')">
-                    {{ __('Applications') }}
-                </x-ui.responsive-nav-link>
-            @endif -->
-
+                    
                     @if(Auth::user()->student && Auth::user()->student->application && Auth::user()->student->application->status === 'approved')
                         <x-ui.nav-link :href="route('student.grades')" :active="request()->routeIs('student.grades')">
                             {{ __('Grades') }}

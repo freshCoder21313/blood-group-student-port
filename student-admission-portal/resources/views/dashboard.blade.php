@@ -5,7 +5,7 @@
                 {{ __('Dashboard') }}
             </h2>
             @if(isset($application) && $application)
-                <x-ui.status-badge :status="$application->status" />
+                <x-ui.badge :status="$application->status" />
             @endif
         </div>
     </x-slot>
@@ -123,9 +123,9 @@
                             @endphp
 
                             <a href="{{ $continueRoute }}">
-                                <x-ui.primary-button>
+                                <x-ui.button variant="primary">
                                     {{ __('Continue Application') }}
-                                </x-ui.primary-button>
+                                </x-ui.button>
                             </a>
                         @endif
                     </div>
@@ -136,9 +136,9 @@
 
                         <form method="POST" action="{{ route('application.create') }}">
                             @csrf
-                            <x-ui.primary-button>
+                            <x-ui.button variant="primary">
                                 {{ __('Apply Now') }}
-                            </x-ui.primary-button>
+                            </x-ui.button>
                         </form>
                     </div>
                 @endif

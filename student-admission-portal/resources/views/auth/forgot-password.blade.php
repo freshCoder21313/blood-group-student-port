@@ -12,14 +12,14 @@
         <!-- Email Address -->
         <div>
             <x-ui.input-label for="email" :value="__('Email')" />
-            <x-ui.text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
+            <x-ui.input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
             <x-ui.input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
         <div class="flex items-center justify-end mt-4">
-            <x-ui.primary-button>
+            <x-ui.button variant="primary">
                 {{ __('Email Password Reset Link') }}
-            </x-ui.primary-button>
+            </x-ui.button>
         </div>
     </form>
 </x-guest-layout>

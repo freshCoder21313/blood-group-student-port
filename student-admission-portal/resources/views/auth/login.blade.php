@@ -8,7 +8,7 @@
         <!-- Email Address -->
         <div>
             <x-ui.input-label for="email" :value="__('Email')" />
-            <x-ui.text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+            <x-ui.input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
             <x-ui.input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
@@ -16,7 +16,7 @@
         <div class="mt-4">
             <x-ui.input-label for="password" :value="__('Password')" />
 
-            <x-ui.text-input id="password" class="block mt-1 w-full"
+            <x-ui.input id="password" class="block mt-1 w-full"
                             type="password"
                             name="password"
                             required autocomplete="current-password" />
@@ -39,9 +39,9 @@
                 </a>
             @endif
 
-            <x-ui.primary-button class="ms-3">
+            <x-ui.button variant="primary" class="ms-3">
                 {{ __('Log in') }}
-            </x-ui.primary-button>
+            </x-ui.button>
         </div>
     </form>
 </x-guest-layout>

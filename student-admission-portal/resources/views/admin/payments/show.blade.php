@@ -46,16 +46,16 @@
                                 <div class="flex space-x-4">
                                     <form action="{{ route('admin.payments.approve', $payment) }}" method="POST">
                                         @csrf
-                                        <x-ui.primary-button class="bg-green-600 hover:bg-green-700">
+                                        <x-ui.button variant="primary" class="bg-green-600 hover:bg-green-700">
                                             Approve Payment
-                                        </x-ui.primary-button>
+                                        </x-ui.button>
                                     </form>
 
                                     <form action="{{ route('admin.payments.reject', $payment) }}" method="POST">
                                         @csrf
-                                        <x-ui.danger-button>
+                                        <x-ui.button variant="danger">
                                             Reject Payment
-                                        </x-ui.danger-button>
+                                        </x-ui.button>
                                     </form>
                                 </div>
                             </div>

@@ -38,13 +38,13 @@
 
                     @if(!$readonly)
                     <div class="flex items-center justify-end mt-4 gap-4">
-                        <x-ui.secondary-button type="submit" name="action" value="save">
+                        <x-ui.button variant="secondary" type="submit" name="action" value="save">
                             {{ __('Save Draft') }}
-                        </x-ui.secondary-button>
+                        </x-ui.button>
 
-                        <x-ui.primary-button type="submit" name="action" value="next">
+                        <x-ui.button variant="primary" type="submit" name="action" value="next">
                             {{ __('Save & Next') }}
-                        </x-ui.primary-button>
+                        </x-ui.button>
                     </div>
                     @else
                      <div class="mt-2 text-gray-500">

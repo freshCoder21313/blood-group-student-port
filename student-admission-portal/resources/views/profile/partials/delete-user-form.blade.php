@@ -9,10 +9,10 @@
         </p>
     </header>
 
-    <x-ui.danger-button
+    <x-ui.button variant="danger"
         x-data=""
         x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
-    >{{ __('Delete Account') }}</x-ui.danger-button>
+    >{{ __('Delete Account') }}</x-ui.button>
 
     <x-ui.modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
         <form method="post" action="{{ route('profile.destroy') }}" class="p-6">
@@ -30,7 +30,7 @@
             <div class="mt-6">
                 <x-ui.input-label for="password" value="{{ __('Password') }}" class="sr-only" />
 
-                <x-ui.text-input
+                <x-ui.input
                     id="password"
                     name="password"
                     type="password"
@@ -42,13 +42,13 @@
             </div>
 
             <div class="mt-6 flex justify-end">
-                <x-ui.secondary-button x-on:click="$dispatch('close')">
+                <x-ui.button variant="secondary" x-on:click="$dispatch('close')">
                     {{ __('Cancel') }}
-                </x-ui.secondary-button>
+                </x-ui.button>
 
-                <x-ui.danger-button class="ms-3">
+                <x-ui.button variant="danger" class="ms-3">
                     {{ __('Delete Account') }}
-                </x-ui.danger-button>
+                </x-ui.button>
             </div>
         </form>
     </x-ui.modal>
