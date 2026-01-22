@@ -22,9 +22,9 @@ class ApiAuthenticationTest extends TestCase
         parent::setUp();
         
         // Mock configuration
-        Config::set('asp_integration.api_key', $this->apiKey);
-        Config::set('asp_integration.api_secret', $this->apiSecret);
-        Config::set('asp_integration.verify_signature', true);
+        Config::set('services.asp.api_key', $this->apiKey);
+        Config::set('services.asp.api_secret', $this->apiSecret);
+        // Config::set('asp_integration.verify_signature', true); // Not used in middleware
         
         $this->middleware = new ApiAuthentication();
     }

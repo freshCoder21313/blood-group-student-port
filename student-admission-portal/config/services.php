@@ -71,4 +71,9 @@ return [
         'timeout' => env('ASP_TIMEOUT', 30),
     ],
 
+    'student_info' => [
+        'driver' => env('STUDENT_INFO_DRIVER', 'mock'),
+    ],
+
+
 ];
