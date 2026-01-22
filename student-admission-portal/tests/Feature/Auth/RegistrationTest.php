@@ -15,7 +15,7 @@ test('registration screen can be rendered', function () {
 
 test('new users can register and are redirected to otp verification', function () {
     $this->mock(EmailChannel::class)->shouldReceive('send');
-    $this->mock(SmsChannel::class);
+    $this->mock(SmsChannel::class)->shouldReceive('send')->andReturn(true);
 
     $response = $this->post('/register', [
         'email' => 'test@example.com',

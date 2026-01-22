@@ -22,6 +22,12 @@ class StudentCanSelectProgramTest extends TestCase
             'status' => 'draft',
             'current_step' => 3
         ]);
+        \App\Models\ApplicationStep::create([
+            'application_id' => $application->id,
+            'step_number' => 3,
+            'step_name' => 'program_selection',
+            'is_completed' => false
+        ]);
 
         $response = $this->actingAs($user)->get(route('application.program', $application));
 
@@ -40,13 +46,21 @@ class StudentCanSelectProgramTest extends TestCase
             'status' => 'draft',
             'current_step' => 3
         ]);
+        \App\Models\ApplicationStep::create([
+            'application_id' => $application->id,
+            'step_number' => 3,
+            'step_name' => 'program_selection',
+            'is_completed' => false
+        ]);
         $program = Program::factory()->create();
 
-        $response = $this->actingAs($user)->post(route('application.program.update', $application), [
+        $response = $this->actingAs($user)
+            ->from(route('application.program', $application))
+            ->post(route('application.program.update', $application), [
             'program_id' => $program->id,
         ]);
 
-        $response->assertRedirect(route('dashboard')); // Or next step
+        $response->assertRedirect(route('application.program', $application)); // Stays on page if not 'next'
         $this->assertDatabaseHas('applications', [
             'id' => $application->id,
             'program_id' => $program->id,
@@ -62,8 +76,16 @@ class StudentCanSelectProgramTest extends TestCase
             'status' => 'draft',
             'current_step' => 3
         ]);
+        \App\Models\ApplicationStep::create([
+            'application_id' => $application->id,
+            'step_number' => 3,
+            'step_name' => 'program_selection',
+            'is_completed' => false
+        ]);
 
-        $response = $this->actingAs($user)->post(route('application.program.update', $application), [
+        $response = $this->actingAs($user)
+            ->from(route('application.program', $application))
+            ->post(route('application.program.update', $application), [
             'program_id' => null, // Empty selection
         ]);
 

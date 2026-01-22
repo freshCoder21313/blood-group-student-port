@@ -53,10 +53,10 @@ development_status:
   2-4-document-upload-component-storage: done
   epic-2-retrospective: optional
 
-  epic-3: in-progress
+  epic-3: done
   3-1-m-pesa-stk-push-integration-web: done
   3-2-manual-payment-fallback: done
-  3-3-final-submission-logic: review
+  3-3-final-submission-logic: done
   3-4-payment-callback-handling: done
   epic-3-retrospective: optional
 

@@ -12,7 +12,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->mock(EmailChannel::class);
-    $this->mock(SmsChannel::class);
+    $this->mock(SmsChannel::class)->shouldReceive('send')->andReturn(true);
 });
 
 test('it can generate an otp for a user', function () {
