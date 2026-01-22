@@ -16,15 +16,16 @@ class DashboardController extends Controller
 
     public function index(Request $request): View
     {
-        $user = $request->user()->load('student');
+        $user = $request->user()->load('student.application');
         $student = $user->student;
 
         // Check if user is an admitted student (has student_code)
         if ($student && $student->student_code) {
-            $application = $this->applicationService->getCurrentApplication($user->id);
+            // Optimization: Use eager loaded application from student relationship
+            // $application = $this->applicationService->getCurrentApplication($user->id);
             
             return view('student.dashboard', [
-                'application' => $application,
+                // 'application' => $application, // Unused in view
                 'student' => $student
             ]);
         }
@@ -38,14 +39,7 @@ class DashboardController extends Controller
 
     public function store(Request $request)
     {
-        // $this->authorize('create', \App\Models\Application::class); // Policy might not be registered yet, skipping strict check or assuming policy exists
-        // Use generic check if policy missing or ensure policy is registered.
-        // Story 2.1 might have registered it. I'll leave authorize if it works.
-        // But tests failed ApplicationPolicyTest.
-        
-        // I'll keep authorize but comment out if it fails.
-        // Assuming it works or I should fix it.
-        // For now, update redirect.
+        $this->authorize('create', \App\Models\Application::class);
         
         $application = $this->applicationService->createDraft($request->user()->id);
         

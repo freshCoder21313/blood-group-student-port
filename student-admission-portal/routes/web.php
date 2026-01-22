@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ApplicationFormController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -55,9 +56,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth'])->prefix('student')->name('student.')->group(function () {
-    Route::get('/grades', function() { abort(404, 'Student Grades Coming Soon'); })->name('grades');
-    Route::get('/schedule', function() { abort(404, 'Class Schedule Coming Soon'); })->name('schedule');
-    Route::get('/fees', function() { abort(404, 'Fee Statement Coming Soon'); })->name('fees');
+    Route::get('/grades', [StudentController::class, 'grades'])->name('grades');
+    Route::get('/schedule', [StudentController::class, 'schedule'])->name('schedule');
+    Route::get('/fees', [StudentController::class, 'fees'])->name('fees');
 });
 
 require __DIR__.'/auth.php';

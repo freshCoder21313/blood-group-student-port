@@ -103,10 +103,15 @@ opencode (Manual)
 - **Fixed Hardcoded URLs**: Replaced raw URLs with named routes in `dashboard.blade.php` and added placeholder routes in `web.php`.
 - **Improved Performance**: Added eager loading for `student` relationship in `DashboardController` to prevent N+1 queries.
 - **Enhanced Testing**: Added test case for "Approved student with new draft application" scenario.
+- **Security Fix**: Uncommented and enforced `ApplicationPolicy` authorization in `DashboardController::store` to prevent unauthorized draft creation.
+- **Performance Fix**: Removed redundant database query for `$application` in `DashboardController::index` when rendering the student dashboard, and implemented eager loading for `student.application`.
+- **Architecture Improvement**: Created `StudentController` to handle student-specific routes (`grades`, `schedule`, `fees`) instead of using closure-based routes, ensuring compatibility with `php artisan route:cache`.
+- **UI Logic Fix**: Updated `student/dashboard.blade.php` to use dynamic status from the application model instead of a hardcoded 'approved' badge.
 
 ### File List
 
 - `app/Http/Controllers/DashboardController.php`
+- `app/Http/Controllers/StudentController.php`
 - `resources/views/student/dashboard.blade.php`
 - `tests/Feature/Student/StudentDashboardTest.php`
 - `routes/web.php`
