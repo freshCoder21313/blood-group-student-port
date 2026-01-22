@@ -126,6 +126,10 @@ The internal ASP system can sync 'Pending' applications and push 'Approved/Rejec
 Implement the "Missing Link" for manual payment verification and expand the portal to support the post-admission student experience.
 **FRs covered:** FR22, FR23, FR24
 
+### Epic 6: Real-time ASP Integration for Student Portal
+Transition the Student Portal from using Mock data to fetching real-time Grades, Schedule, and Fee information from the external ASP system API.
+**FRs covered:** FR23, FR24 (Real Data)
+
 ## Epic 1: Foundation & Identity Management
 
 Users can securely register, verify identity via OTP, and manage their session, establishing the secure entry point for the portal.
@@ -403,3 +407,49 @@ So that I can plan my academic activities.
 - [ ] Page: `/student/grades` lists courses and grades (from Service).
 - [ ] Page: `/student/schedule` lists weekly timetable (from Service).
 - [ ] Page: `/student/fees` lists outstanding balance (from Service).
+
+## Epic 6: Real-time ASP Integration for Student Portal
+
+Transition the Student Portal from using Mock data to fetching real-time Grades, Schedule, and Fee information from the external ASP system API.
+
+### Story 6.1: HTTP Client & Authentication Layer
+
+As a Developer,
+I want a robust HTTP client setup for communicating with the ASP system,
+So that all requests are authenticated and handle network errors gracefully.
+
+**Acceptance Criteria:**
+
+- [ ] Service `AspStudentInformationService` created implementing `StudentInformationServiceInterface`.
+- [ ] Constructor loads config from `asp_integration.php` (Url, Key, Secret).
+- [ ] Helper method created to construct Http requests with `X-API-KEY` and `X-API-SECRET` headers.
+- [ ] Error handling: Catch `ConnectionException` and `RequestException`.
+- [ ] Logging: Log failed outgoing requests to `api_logs` (or system log) for troubleshooting.
+
+### Story 6.2: Implement Data Fetching Methods
+
+As a Student,
+I want to see my actual data from the university system,
+So that the information on the portal is accurate.
+
+**Acceptance Criteria:**
+
+- [ ] Implement `getGrades($studentCode)`: Call `GET /api/student/{code}/grades` on ASP.
+- [ ] Implement `getSchedule($studentCode)`: Call `GET /api/student/{code}/schedule` on ASP.
+- [ ] Implement `getFees($studentCode)`: Call `GET /api/student/{code}/fees` on ASP.
+- [ ] Data Mapping: Map ASP JSON response to the array structure defined in the Interface.
+- [ ] Fallback: Return empty arrays (or safe defaults) on API failure to prevent Dashboard crash.
+
+### Story 6.3: Driver Switchover
+
+As a System Admin,
+I want to switch between Mock and Real modes via configuration,
+So that I can test safely and go live when ready.
+
+**Acceptance Criteria:**
+
+- [ ] Update `AppServiceProvider`: Check `config('services.student_info.driver')`.
+- [ ] If `asp`, bind `AspStudentInformationService`.
+- [ ] If `mock`, bind `MockStudentInformationService`.
+- [ ] Verify `.env` configuration `STUDENT_INFO_DRIVER=asp` works.
+

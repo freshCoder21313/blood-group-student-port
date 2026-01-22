@@ -40,13 +40,13 @@ tracking_system: file-system
 story_location: /media/truc2tz/SantaSSD/SKS/Sources/repos/PHP/blood-group-student-port/_bmad-output/implementation-artifacts
 
 development_status:
-  epic-1: in-progress
+  epic-1: done
   1-1-install-configure-breeze-blade: done
   1-2-pii-encryption-schema-migration: done
   1-3-web-based-otp-integration: done
   epic-1-retrospective: optional
 
-  epic-2: in-progress
+  epic-2: done
   2-1-dashboard-application-initialization: done
   2-2-personal-parent-info-forms: done
   2-3-program-selection-logic: done
@@ -60,16 +60,22 @@ development_status:
   3-4-payment-callback-handling: done
   epic-3-retrospective: optional
 
-  epic-4: in-progress
+  epic-4: done
   4-1-asp-api-authentication-sanctum: done
   4-2-pending-applications-endpoint: done
   4-3-status-update-endpoint: done
   4-4-sync-resilience-logging: done
   epic-4-retrospective: optional
 
-  epic-5: in-progress
+  epic-5: done
   5-1-admin-payment-verification-panel: done
   5-2-student-dashboard-transformation: done
   5-3-student-information-service-mock-strategy: done
   5-4-view-grades-schedule: done
   epic-5-retrospective: optional
+
+  epic-6: backlog
+  6-1-http-client-authentication-layer: backlog
+  6-2-implement-data-fetching-methods: backlog
+  6-3-driver-switchover: backlog
+  epic-6-retrospective: optional
