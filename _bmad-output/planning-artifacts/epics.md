@@ -41,6 +41,9 @@ This document provides the complete epic and story breakdown for blood-group-stu
 *   **FR19:** System must log all API requests for audit purposes.
 *   **FR20:** System must send an email confirmation upon successful registration.
 *   **FR21:** System must send an email notification when Application Status changes.
+*   **FR22:** Finance Admin can verify manual payments.
+*   **FR23:** Approved students can access a dedicated dashboard with student services.
+*   **FR24:** Students can view their grades and class schedule.
 
 ### NonFunctional Requirements
 
@@ -97,6 +100,9 @@ FR18: Epic 4 - ASP Status Update
 FR19: Epic 4 - API Audit Logging
 FR20: Epic 1 - Welcome Email
 FR21: Epic 4 - Status Change Notification
+FR22: Epic 5 - Admin Payment Verification
+FR23: Epic 5 - Student Dashboard
+FR24: Epic 5 - Grades and Schedule
 
 ## Epic List
 
@@ -115,6 +121,10 @@ Applicants can securely pay the admission fee via M-Pesa (STK Push or Manual) an
 ### Epic 4: Admissions Integration & Review
 The internal ASP system can sync 'Pending' applications and push 'Approved/Rejected' status updates back to the portal to keep students informed.
 **FRs covered:** FR17, FR18, FR19, FR21
+
+### Epic 5: Admin & Student Portal Features
+Implement the "Missing Link" for manual payment verification and expand the portal to support the post-admission student experience.
+**FRs covered:** FR22, FR23, FR24
 
 ## Epic 1: Foundation & Identity Management
 
@@ -337,3 +347,59 @@ So that I can troubleshoot failures and track data movement.
 **When** the request completes
 **Then** a record is written to `api_logs` with timestamp, IP, endpoint, and response code
 **And** status changes are recorded in `status_histories`
+
+## Epic 5: Admin & Student Portal Features
+
+Implement the "Missing Link" for manual payment verification and expand the portal to support the post-admission student experience.
+
+### Story 5.1: Admin Payment Verification Panel
+
+As a Finance Admin,
+I want to view and approve manual payment receipts,
+So that applications with manual payments can proceed to the "Submitted" state and be synced to ASP.
+
+**Acceptance Criteria:**
+
+- [ ] Admin route `/admin/payments` created (protected by middleware).
+- [ ] List all payments with status `pending_verification`.
+- [ ] View details: Student Name, Transaction Code, Proof Image.
+- [ ] Action: "Approve" -> Sets payment status `paid` -> Triggers `ApplicationService::submit` (if app was waiting).
+- [ ] Action: "Reject" -> Sets payment status `failed` -> Email user to retry.
+
+### Story 5.2: Student Dashboard Transformation
+
+As a Approved Student,
+I want to see a dedicated Student Dashboard instead of the Admission Status,
+So that I can access my student services.
+
+**Acceptance Criteria:**
+
+- [ ] Logic: If `application.status` == `approved`, redirect `/dashboard` to specific Student View.
+- [ ] View: Display "Welcome, [Student Name]".
+- [ ] View: Display Student ID (synced from ASP).
+- [ ] Navigation: Links to "My Grades", "Class Schedule", "Fee Statement".
+
+### Story 5.3: Student Information Service (Mock Strategy)
+
+As a Developer,
+I want a decoupled service for fetching student data,
+So that I can build the UI now using Mock data and swap to Realtime ASP API later.
+
+**Acceptance Criteria:**
+
+- [ ] Interface: `StudentInformationServiceInterface`.
+- [ ] Implementation: `MockStudentInformationService` (returns hardcoded JSON).
+- [ ] Binding: Bind interface to implementation in `AppServiceProvider`.
+- [ ] Config: Toggle in `.env` (`STUDENT_INFO_DRIVER=mock`).
+
+### Story 5.4: View Grades & Schedule
+
+As a Student,
+I want to view my grades and class schedule,
+So that I can plan my academic activities.
+
+**Acceptance Criteria:**
+
+- [ ] Page: `/student/grades` lists courses and grades (from Service).
+- [ ] Page: `/student/schedule` lists weekly timetable (from Service).
+- [ ] Page: `/student/fees` lists outstanding balance (from Service).

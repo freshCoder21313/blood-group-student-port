@@ -1,4 +1,4 @@
-# generated: 2026-01-20
+# generated: 2026-01-22
 # project: blood-group-student-port
 # project_key: blood-group-student-port
 # tracking_system: file-system
@@ -33,7 +33,7 @@
 # - SM typically creates next story after previous one is 'done' to incorporate learnings
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
-generated: 2026-01-20
+generated: 2026-01-22
 project: blood-group-student-port
 project_key: blood-group-student-port
 tracking_system: file-system
@@ -66,3 +66,10 @@ development_status:
   4-3-status-update-endpoint: done
   4-4-sync-resilience-logging: done
   epic-4-retrospective: optional
+
+  epic-5: backlog
+  5-1-admin-payment-verification-panel: backlog
+  5-2-student-dashboard-transformation: backlog
+  5-3-student-information-service-mock-strategy: backlog
+  5-4-view-grades-schedule: backlog
+  epic-5-retrospective: optional
