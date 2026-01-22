@@ -54,4 +54,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware(['auth'])->prefix('student')->name('student.')->group(function () {
+    Route::get('/grades', function() { abort(404, 'Student Grades Coming Soon'); })->name('grades');
+    Route::get('/schedule', function() { abort(404, 'Class Schedule Coming Soon'); })->name('schedule');
+    Route::get('/fees', function() { abort(404, 'Fee Statement Coming Soon'); })->name('fees');
+});
+
 require __DIR__.'/auth.php';

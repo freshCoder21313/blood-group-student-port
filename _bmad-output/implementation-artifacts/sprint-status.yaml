@@ -69,7 +69,7 @@ development_status:
 
   epic-5: in-progress
   5-1-admin-payment-verification-panel: done
-  5-2-student-dashboard-transformation: backlog
-  5-3-student-information-service-mock-strategy: backlog
+  5-2-student-dashboard-transformation: done
+  5-3-student-information-service-mock-strategy: ready-for-dev
   5-4-view-grades-schedule: backlog
   epic-5-retrospective: optional

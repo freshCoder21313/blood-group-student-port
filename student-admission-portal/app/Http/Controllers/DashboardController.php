@@ -16,7 +16,20 @@ class DashboardController extends Controller
 
     public function index(Request $request): View
     {
-        $application = $this->applicationService->getCurrentApplication($request->user()->id);
+        $user = $request->user()->load('student');
+        $student = $user->student;
+
+        // Check if user is an admitted student (has student_code)
+        if ($student && $student->student_code) {
+            $application = $this->applicationService->getCurrentApplication($user->id);
+            
+            return view('student.dashboard', [
+                'application' => $application,
+                'student' => $student
+            ]);
+        }
+
+        $application = $this->applicationService->getCurrentApplication($user->id);
         
         return view('dashboard', [
             'application' => $application
