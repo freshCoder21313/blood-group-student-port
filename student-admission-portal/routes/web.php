@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ApplicationFormController;
+use App\Http\Controllers\ApplicationWizardController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
@@ -16,18 +17,30 @@ Route::middleware(['auth', 'otp.verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/applications', [DashboardController::class, 'store'])->name('application.create');
 
-    // Application Forms
-    Route::get('/application/{application}/personal', [ApplicationFormController::class, 'personal'])->name('application.personal');
-    Route::post('/application/{application}/personal', [ApplicationFormController::class, 'updatePersonal'])->name('application.personal.update');
+    // Application Forms (Original routes kept for backward compatibility if needed, but we prefer wizard)
+    // Route::get('/application/{application}/personal', [ApplicationFormController::class, 'personal'])->name('application.personal');
+    // ...
+
+    // New Wizard Routes
+    Route::get('/application/{application}/wizard', [ApplicationWizardController::class, 'show'])->name('application.wizard');
+    Route::post('/application/{application}/wizard/{step}', [ApplicationWizardController::class, 'save'])->name('application.wizard.save');
     
-    Route::get('/application/{application}/parent', [ApplicationFormController::class, 'parent'])->name('application.parent');
-    Route::post('/application/{application}/parent', [ApplicationFormController::class, 'updateParent'])->name('application.parent.update');
+    // Redirect old routes to wizard for seamless UX
+    Route::get('/application/{application}/personal', function ($application) {
+        return redirect()->route('application.wizard', ['application' => $application])->withFragment('#step-1');
+    })->name('application.personal');
+    
+    Route::get('/application/{application}/parent', function ($application) {
+        return redirect()->route('application.wizard', ['application' => $application])->withFragment('#step-2');
+    })->name('application.parent');
+    
+    Route::get('/application/{application}/program', function ($application) {
+        return redirect()->route('application.wizard', ['application' => $application])->withFragment('#step-3');
+    })->name('application.program');
 
-    Route::get('/application/{application}/program', [ApplicationFormController::class, 'program'])->name('application.program');
-    Route::post('/application/{application}/program', [ApplicationFormController::class, 'updateProgram'])->name('application.program.update');
-
-    Route::get('/application/{application}/documents', [ApplicationFormController::class, 'documents'])->name('application.documents');
-    Route::post('/application/{application}/documents', [ApplicationFormController::class, 'updateDocuments'])->name('application.documents.update');
+    Route::get('/application/{application}/documents', function ($application) {
+        return redirect()->route('application.wizard', ['application' => $application])->withFragment('#step-4');
+    })->name('application.documents');
 
     Route::get('/application/{application}/payment', [ApplicationFormController::class, 'payment'])->name('application.payment');
     Route::post('/application/{application}/submit', [ApplicationFormController::class, 'submit'])->name('application.submit');
@@ -39,6 +52,11 @@ Route::middleware(['auth', 'otp.verified'])->group(function () {
     Route::post('/payment/{application}/initiate', [\App\Http\Controllers\PaymentController::class, 'store'])->name('payment.initiate');
     Route::post('/payment/{application}/manual', [\App\Http\Controllers\PaymentController::class, 'storeManual'])->name('payment.manual.store');
     Route::get('/payment/{application}/status', [\App\Http\Controllers\PaymentController::class, 'checkStatus'])->name('payment.status');
+    
+    // Dev only route
+    if (app()->environment('local', 'testing')) {
+        Route::post('/payment/{application}/simulate-callback', [\App\Http\Controllers\PaymentController::class, 'simulateCallback'])->name('payment.simulate');
+    }
 });
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {

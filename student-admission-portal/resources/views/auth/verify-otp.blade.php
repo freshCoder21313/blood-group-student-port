@@ -26,7 +26,7 @@
     <div class="mt-4 flex justify-center">
         <form method="POST" action="{{ route('otp.resend') }}">
             @csrf
-            <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                 {{ __('Resend Code') }}
             </button>
         </form>

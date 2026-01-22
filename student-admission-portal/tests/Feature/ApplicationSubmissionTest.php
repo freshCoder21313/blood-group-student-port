@@ -133,7 +133,7 @@ test('user cannot edit application after submission', function () {
     ]);
     
     $response = $this->actingAs($user)
-        ->post(route('application.personal.update', $application), [
+        ->post(route('application.wizard.save', ['application' => $application, 'step' => 1]), [
             'first_name' => 'New Name',
             'last_name' => 'New Name',
             'date_of_birth' => '2000-01-01',

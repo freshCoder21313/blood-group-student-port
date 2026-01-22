@@ -45,7 +45,7 @@
                                                 {{ number_format($payment->amount, 2) }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <a href="{{ route('admin.payments.show', $payment) }}" class="text-indigo-600 hover:text-indigo-900">Verify</a>
+                                                <a href="{{ route('admin.payments.show', $payment) }}" class="text-primary-600 hover:text-primary-900">Verify</a>
                                             </td>
                                         </tr>
                                     @endforeach

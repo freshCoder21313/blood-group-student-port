@@ -52,7 +52,7 @@
                         <!-- Gender -->
                         <div>
                             <x-ui.input-label for="gender" :value="__('Gender')" />
-                            <select @disabled($readonly) id="gender" name="gender" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-1 w-full">
+                            <select @disabled($readonly) id="gender" name="gender" class="border-gray-300 focus:border-primary-500 focus:ring-primary-500 rounded-md shadow-sm block mt-1 w-full">
                                 <option value="">Select Gender</option>
                                 <option value="male" {{ old('gender', $student->gender) === 'male' ? 'selected' : '' }}>Male</option>
                                 <option value="female" {{ old('gender', $student->gender) === 'female' ? 'selected' : '' }}>Female</option>
@@ -86,7 +86,7 @@
                          <!-- Address -->
                         <div class="col-span-1 md:col-span-2">
                             <x-ui.input-label for="address" :value="__('Address')" />
-                            <textarea @disabled($readonly) id="address" name="address" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-1 w-full" rows="3">{{ old('address', $student->address) }}</textarea>
+                            <textarea @disabled($readonly) id="address" name="address" class="border-gray-300 focus:border-primary-500 focus:ring-primary-500 rounded-md shadow-sm block mt-1 w-full" rows="3">{{ old('address', $student->address) }}</textarea>
                             <x-ui.input-error :messages="$errors->get('address')" class="mt-2" />
                         </div>
                         
@@ -127,7 +127,7 @@
                      <div class="mt-6 p-4 bg-gray-50 border border-gray-200 rounded text-center text-gray-600">
                         This application has been submitted and cannot be edited.
                         <div class="mt-2">
-                            <a href="{{ route('application.parent', $application) }}" class="text-blue-600 hover:underline">Next Step &rarr;</a>
+                            <a href="{{ route('application.parent', $application) }}" class="text-primary-600 hover:underline">Next Step &rarr;</a>
                         </div>
                      </div>
                     @endif

@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                        <x-application-logo class="block h-9 w-auto fill-current text-primary-600" />
                     </a>
                 </div>
 
@@ -15,6 +15,20 @@
                     <x-ui.nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-ui.nav-link>
+
+                    @if(Auth::user()->student && Auth::user()->student->application && Auth::user()->student->application->status === 'approved')
+                        <x-ui.nav-link :href="route('student.grades')" :active="request()->routeIs('student.grades')">
+                            {{ __('Grades') }}
+                        </x-ui.nav-link>
+
+                        <x-ui.nav-link :href="route('student.schedule')" :active="request()->routeIs('student.schedule')">
+                            {{ __('Schedule') }}
+                        </x-ui.nav-link>
+
+                        <x-ui.nav-link :href="route('student.fees')" :active="request()->routeIs('student.fees')">
+                            {{ __('Fees') }}
+                        </x-ui.nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -64,12 +78,26 @@
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
+        <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-ui.responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-ui.responsive-nav-link>
+
+            @if(Auth::user()->student && Auth::user()->student->application && Auth::user()->student->application->status === 'approved')
+                <x-ui.responsive-nav-link :href="route('student.grades')" :active="request()->routeIs('student.grades')">
+                    {{ __('Grades') }}
+                </x-ui.responsive-nav-link>
+
+                <x-ui.responsive-nav-link :href="route('student.schedule')" :active="request()->routeIs('student.schedule')">
+                    {{ __('Schedule') }}
+                </x-ui.responsive-nav-link>
+
+                <x-ui.responsive-nav-link :href="route('student.fees')" :active="request()->routeIs('student.fees')">
+                    {{ __('Fees') }}
+                </x-ui.responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

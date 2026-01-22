@@ -82,21 +82,50 @@ class PaymentController extends Controller
 
     public function callback(Request $request)
     {
-        // Log callback for debugging/audit (Redacting PII)
-        $payload = $request->all();
-        
-        if (isset($payload['Body']['stkCallback']['CallbackMetadata']['Item'])) {
-            foreach ($payload['Body']['stkCallback']['CallbackMetadata']['Item'] as &$item) {
-                if (isset($item['Name']) && in_array($item['Name'], ['PhoneNumber', 'PartyA', 'PartyB'])) {
-                    $item['Value'] = '******'; 
-                }
-            }
-        }
-
-        Log::info('M-Pesa Callback', $payload);
-
+        // ... (existing code)
         $this->mpesaService->processCallback($request->all());
 
         return response()->json(['result' => 'ok']);
+    }
+
+    public function simulateCallback(Application $application)
+    {
+        if (!app()->environment('local', 'testing')) {
+            abort(404);
+        }
+
+        // Find pending payment
+        $payment = Payment::where('application_id', $application->id)
+            ->where('status', 'pending')
+            ->latest()
+            ->first();
+
+        if (!$payment) {
+            return response()->json(['message' => 'No pending payment found'], 404);
+        }
+
+        // Simulate successful callback payload
+        $mockPayload = [
+            'Body' => [
+                'stkCallback' => [
+                    'MerchantRequestID' => $payment->merchant_request_id,
+                    'CheckoutRequestID' => $payment->checkout_request_id,
+                    'ResultCode' => 0,
+                    'ResultDesc' => 'The service request is processed successfully.',
+                    'CallbackMetadata' => [
+                        'Item' => [
+                            ['Name' => 'Amount', 'Value' => $payment->amount],
+                            ['Name' => 'MpesaReceiptNumber', 'Value' => 'SIM' . strtoupper(uniqid())],
+                            ['Name' => 'TransactionDate', 'Value' => now()->format('YmdHis')],
+                            ['Name' => 'PhoneNumber', 'Value' => $payment->phone_number],
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $this->mpesaService->processCallback($mockPayload);
+
+        return response()->json(['success' => true]);
     }
 }

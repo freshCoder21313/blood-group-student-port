@@ -35,11 +35,11 @@ class StudentCanUpdateParentDetailsTest extends TestCase
         ];
 
         $response = $this->actingAs($user)
-            ->from(route('application.parent', $application))
-            ->post(route('application.parent.update', $application), $data);
+            ->from(route('application.wizard', $application))
+            ->post(route('application.wizard.save', ['application' => $application, 'step' => 2]), $data);
 
         $response->assertSessionHasNoErrors();
-        $response->assertRedirect(route('application.parent', $application));
+        $response->assertRedirect(route('application.wizard', $application)); // Stays on page with status (or redirect back)
 
         $this->assertDatabaseHas('parent_info', [
             'student_id' => $student->id,

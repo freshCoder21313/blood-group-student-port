@@ -26,6 +26,38 @@ class ProgramSeeder extends Seeder
                 'fee' => 45000.00,
                 'is_active' => true,
             ],
+            [
+                'code' => 'BBA',
+                'name' => 'Business Administration',
+                'description' => 'Bachelor of Business Administration',
+                'duration' => '4 years',
+                'fee' => 40000.00,
+                'is_active' => true,
+            ],
+            [
+                'code' => 'ENG',
+                'name' => 'Civil Engineering',
+                'description' => 'Bachelor of Science in Civil Engineering',
+                'duration' => '5 years',
+                'fee' => 55000.00,
+                'is_active' => true,
+            ],
+            [
+                'code' => 'MED',
+                'name' => 'Medicine',
+                'description' => 'Bachelor of Medicine and Bachelor of Surgery',
+                'duration' => '6 years',
+                'fee' => 70000.00,
+                'is_active' => true,
+            ],
+            [
+                'code' => 'PSY',
+                'name' => 'Psychology',
+                'description' => 'Bachelor of Arts in Psychology',
+                'duration' => '4 years',
+                'fee' => 38000.00,
+                'is_active' => true,
+            ],
         ];
 
         foreach ($programs as $program) {

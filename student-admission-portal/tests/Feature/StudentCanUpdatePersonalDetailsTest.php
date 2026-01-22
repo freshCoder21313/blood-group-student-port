@@ -22,10 +22,10 @@ class StudentCanUpdatePersonalDetailsTest extends TestCase
         $application = $service->createDraft($user->id);
 
         $response = $this->actingAs($user)
-            ->get(route('application.personal', $application));
+            ->get(route('application.wizard', $application));
 
         $response->assertStatus(200);
-        $response->assertViewIs('application.personal');
+        $response->assertViewIs('application.wizard');
     }
 
     #[Test]
@@ -45,7 +45,7 @@ class StudentCanUpdatePersonalDetailsTest extends TestCase
         ];
 
         $response = $this->actingAs($user)
-            ->post(route('application.personal.update', $application), $data);
+            ->post(route('application.wizard.save', ['application' => $application, 'step' => 1]), $data);
 
         $response->assertSessionHasNoErrors();
         $response->assertRedirect();
@@ -70,9 +70,10 @@ class StudentCanUpdatePersonalDetailsTest extends TestCase
         ];
 
         $response = $this->actingAs($user)
-            ->post(route('application.personal.update', $application), $data);
+            ->post(route('application.wizard.save', ['application' => $application, 'step' => 1]), $data);
             
-        $response->assertRedirect(route('application.parent', $application));
+        // Should redirect to wizard with step-2 hash
+        $response->assertRedirect(route('application.wizard', $application) . '#step-2');
         
         $application->refresh();
         $this->assertEquals(2, $application->current_step);

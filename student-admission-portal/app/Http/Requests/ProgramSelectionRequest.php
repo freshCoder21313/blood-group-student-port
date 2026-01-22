@@ -24,7 +24,7 @@ class ProgramSelectionRequest extends FormRequest
         // But if we were to submit later, it would be required.
         // The story says: "Given I am editing a "Draft" application... Then the system saves the change (field is nullable) without validation error"
 
-        $isDraft = $application->status === 'draft';
+        $isDraft = $application ? $application->status === 'draft' : true;
 
         return [
             'program_id' => [

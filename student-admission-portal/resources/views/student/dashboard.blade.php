@@ -16,10 +16,10 @@
                 <div class="text-center md:text-left flex flex-col md:flex-row justify-between items-center">
                     <div>
                         <h3 class="text-2xl font-bold text-gray-900">Welcome, {{ $student->first_name }}!</h3>
-                        <p class="text-gray-600 mt-1">Student ID: <span class="font-mono font-bold text-blue-600">{{ $student->student_code ?? 'Pending' }}</span></p>
+                        <p class="text-gray-600 mt-1">Student ID: <span class="font-mono font-bold text-primary-600">{{ $student->student_code ?? 'Pending' }}</span></p>
                     </div>
                     <div class="mt-4 md:mt-0">
-                         <span class="px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-semibold">
+                         <span class="px-4 py-2 bg-primary-50 text-primary-700 rounded-lg text-sm font-semibold">
                             Academic Year: {{ date('Y') }}
                          </span>
                     </div>

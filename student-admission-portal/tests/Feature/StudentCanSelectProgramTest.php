@@ -29,10 +29,10 @@ class StudentCanSelectProgramTest extends TestCase
             'is_completed' => false
         ]);
 
-        $response = $this->actingAs($user)->get(route('application.program', $application));
+        $response = $this->actingAs($user)->get(route('application.wizard', $application));
 
         $response->assertStatus(200);
-        $response->assertViewIs('application.program');
+        $response->assertViewIs('application.wizard');
         $response->assertViewHas('programs');
         $response->assertViewHas('application');
     }
@@ -55,12 +55,12 @@ class StudentCanSelectProgramTest extends TestCase
         $program = Program::factory()->create();
 
         $response = $this->actingAs($user)
-            ->from(route('application.program', $application))
-            ->post(route('application.program.update', $application), [
+            ->from(route('application.wizard', $application))
+            ->post(route('application.wizard.save', ['application' => $application, 'step' => 3]), [
             'program_id' => $program->id,
         ]);
 
-        $response->assertRedirect(route('application.program', $application)); // Stays on page if not 'next'
+        $response->assertRedirect(route('application.wizard', $application));
         $this->assertDatabaseHas('applications', [
             'id' => $application->id,
             'program_id' => $program->id,
@@ -84,12 +84,12 @@ class StudentCanSelectProgramTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)
-            ->from(route('application.program', $application))
-            ->post(route('application.program.update', $application), [
+            ->from(route('application.wizard', $application))
+            ->post(route('application.wizard.save', ['application' => $application, 'step' => 3]), [
             'program_id' => null, // Empty selection
         ]);
 
-        $response->assertRedirect(); // Should save and redirect
+        $response->assertRedirect();
         $this->assertDatabaseHas('applications', [
             'id' => $application->id,
             'program_id' => null,
@@ -108,7 +108,7 @@ class StudentCanSelectProgramTest extends TestCase
             'program_id' => $program->id, // Already selected
         ]);
 
-        $response = $this->actingAs($user)->get(route('application.program', $application));
+        $response = $this->actingAs($user)->get(route('application.wizard', $application));
 
         $response->assertStatus(200);
         $response->assertSee('value="' . $program->id . '" selected', false);

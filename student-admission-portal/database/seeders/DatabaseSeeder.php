@@ -17,15 +17,19 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            // 'name' => 'Test User', // Users table does not have a name column
-            'email' => 'test@example.com',
-            'phone' => '0123456789',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'phone' => '0123456789',
+                'password' => bcrypt('password'), // Ensure password is set if created
+                'status' => 'active'
+            ]
+        );
         
         $this->call([
             ProgramSeeder::class,
             AcademicBlockSeeder::class,
+            ApplicationSeeder::class,
         ]);
     }
 }

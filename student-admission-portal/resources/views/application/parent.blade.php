@@ -51,7 +51,7 @@
                     </div>
 
                     <div class="flex items-center justify-between mt-4">
-                         <a href="{{ route('application.personal', $application) }}" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                         <a href="{{ route('application.personal', $application) }}" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                             {{ __('Back to Personal Details') }}
                         </a>
 
@@ -67,7 +67,7 @@
                         </div>
                         @else
                          <div class="mt-2 text-gray-500">
-                             <a href="{{ route('application.program', $application) }}" class="text-blue-600 hover:underline">Next Step &rarr;</a>
+                             <a href="{{ route('application.program', $application) }}" class="text-primary-600 hover:underline">Next Step &rarr;</a>
                          </div>
                         @endif
                     </div>

@@ -10,7 +10,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="mb-6">
-                        <a href="{{ route('admin.payments.index') }}" class="text-indigo-600 hover:text-indigo-900">&larr; Back to List</a>
+                        <a href="{{ route('admin.payments.index') }}" class="text-primary-600 hover:text-primary-900">&larr; Back to List</a>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -64,8 +64,23 @@
                         <div>
                             <h3 class="text-lg font-medium mb-4">Proof of Payment</h3>
                             @if($payment->proof_document_path)
-                                <div class="border rounded-lg overflow-hidden">
-                                    <img src="{{ route('admin.payments.proof', $payment) }}" alt="Proof of Payment" class="w-full h-auto">
+                                @php
+                                    $extension = pathinfo($payment->proof_document_path, PATHINFO_EXTENSION);
+                                    $isPdf = strtolower($extension) === 'pdf';
+                                @endphp
+
+                                <div class="border rounded-lg overflow-hidden bg-gray-50">
+                                    @if($isPdf)
+                                        <iframe src="{{ route('admin.payments.proof', $payment) }}" class="w-full h-96"></iframe>
+                                        <div class="p-2 text-center border-t">
+                                            <a href="{{ route('admin.payments.proof', $payment) }}" target="_blank" class="text-primary-600 hover:underline text-sm">Open PDF in new tab</a>
+                                        </div>
+                                    @else
+                                        <img src="{{ route('admin.payments.proof', $payment) }}" alt="Proof of Payment" class="w-full h-auto object-contain max-h-96">
+                                        <div class="p-2 text-center border-t">
+                                            <a href="{{ route('admin.payments.proof', $payment) }}" target="_blank" class="text-primary-600 hover:underline text-sm">View Full Size</a>
+                                        </div>
+                                    @endif
                                 </div>
                             @else
                                 <div class="bg-gray-100 p-4 rounded text-center text-gray-500">

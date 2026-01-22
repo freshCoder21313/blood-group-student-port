@@ -17,10 +17,10 @@ test('documents page renders', function () {
     
     $this->actingAs($user);
     
-    $response = $this->get(route('application.documents', $application));
+    $response = $this->get(route('application.wizard', $application));
         
     $response->assertOk()
-        ->assertViewIs('application.documents')
+        ->assertViewIs('application.wizard')
         ->assertViewHas('documents');
 });
 
@@ -39,7 +39,7 @@ test('documents can be uploaded and next step validated', function () {
     $file2 = UploadedFile::fake()->create('trans.pdf', 100);
     
     // Upload ID
-    $response = $this->post(route('application.documents.update', $application), [
+    $response = $this->post(route('application.wizard.save', ['application' => $application, 'step' => 4]), [
         'national_id' => $file1,
         'action' => 'save'
     ]);
@@ -48,12 +48,12 @@ test('documents can be uploaded and next step validated', function () {
     $this->assertDatabaseHas('documents', ['application_id' => $application->id, 'type' => 'national_id']);
     
     // Upload Transcript and Next
-    $response = $this->post(route('application.documents.update', $application), [
+    $response = $this->post(route('application.wizard.save', ['application' => $application, 'step' => 4]), [
         'transcript' => $file2,
-        'action' => 'next'
+        'action' => 'finish'
     ]);
     
-    $response->assertRedirect(); 
+    $response->assertRedirect(route('application.payment', $application)); 
     $this->assertDatabaseHas('documents', ['application_id' => $application->id, 'type' => 'transcript']);
     
     $this->assertTrue(ApplicationStep::where('application_id', $application->id)->where('step_number', 4)->first()->is_completed);
@@ -70,7 +70,7 @@ test('upload fails with invalid file type', function () {
     
     $file = UploadedFile::fake()->create('bad.exe', 100);
     
-    $response = $this->post(route('application.documents.update', $application), [
+    $response = $this->post(route('application.wizard.save', ['application' => $application, 'step' => 4]), [
         'national_id' => $file,
         'action' => 'save'
     ]);

@@ -48,7 +48,7 @@
                     </div>
                     @else
                      <div class="mt-2 text-gray-500">
-                         <a href="{{ route('application.documents', $application) }}" class="text-blue-600 hover:underline">Next Step &rarr;</a>
+                         <a href="{{ route('application.documents', $application) }}" class="text-primary-600 hover:underline">Next Step &rarr;</a>
                      </div>
                     @endif
                 </form>

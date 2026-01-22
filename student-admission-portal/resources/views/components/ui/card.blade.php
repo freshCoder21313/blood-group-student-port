@@ -3,7 +3,7 @@
 <div {{ $attributes->merge(['class' => 'bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 hover:shadow-md transition-shadow duration-200 h-full flex flex-col']) }}>
     <div class="flex items-center mb-4">
         @if ($icon)
-            <div class="mr-3 text-indigo-500">
+            <div class="mr-3 text-primary-500">
                 {{ $icon }}
             </div>
         @endif

@@ -75,7 +75,7 @@ test('uploading duplicate document type replaces old one', function () {
     
     // Upload first file
     $file1 = UploadedFile::fake()->create('id_v1.jpg', 100);
-    $this->post(route('application.documents.update', $application), [
+    $this->post(route('application.wizard.save', ['application' => $application, 'step' => 4]), [
         'national_id' => $file1,
         'action' => 'save'
     ]);
@@ -86,7 +86,7 @@ test('uploading duplicate document type replaces old one', function () {
     
     // Upload second file (replacement)
     $file2 = UploadedFile::fake()->create('id_v2.jpg', 100);
-    $this->post(route('application.documents.update', $application), [
+    $this->post(route('application.wizard.save', ['application' => $application, 'step' => 4]), [
         'national_id' => $file2,
         'action' => 'save'
     ]);

@@ -44,7 +44,7 @@ try {
     // 3. Create Program (Academic Program)
     $program = Program::firstOrCreate(
         ['code' => 'IT01'],
-        ['name' => 'Information Technology', 'duration_years' => 4, 'type' => 'degree']
+        ['name' => 'Information Technology', 'duration' => '4 years', 'fee' => 50000]
     );
     echo "Program ID: {$program->id}\n";
 
