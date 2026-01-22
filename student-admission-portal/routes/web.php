@@ -57,6 +57,7 @@ Route::middleware(['auth', 'otp.verified'])->group(function () {
     if (app()->environment('local', 'testing')) {
         Route::post('/payment/{application}/simulate-callback', [\App\Http\Controllers\PaymentController::class, 'simulateCallback'])->name('payment.simulate');
     }
+    Route::get('/application/{application}/letter', [AdmissionLetterController::class, 'download'])->name('application.letter');
 });
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
@@ -65,6 +66,15 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/payments/{payment}/proof', [\App\Http\Controllers\Admin\PaymentController::class, 'downloadProof'])->name('payments.proof');
     Route::post('/payments/{payment}/approve', [\App\Http\Controllers\Admin\PaymentController::class, 'approve'])->name('payments.approve');
     Route::post('/payments/{payment}/reject', [\App\Http\Controllers\Admin\PaymentController::class, 'reject'])->name('payments.reject');
+
+    // Application Management
+    Route::get('/applications', [\App\Http\Controllers\Admin\ApplicationController::class, 'index'])->name('applications.index');
+    Route::get('/applications/{application}', [\App\Http\Controllers\Admin\ApplicationController::class, 'show'])->name('applications.show');
+    Route::post('/applications/{application}/approve', [\App\Http\Controllers\Admin\ApplicationController::class, 'approve'])->name('applications.approve');
+    Route::post('/applications/{application}/reject', [\App\Http\Controllers\Admin\ApplicationController::class, 'reject'])->name('applications.reject');
+
+    // Audit Log
+    Route::get('/activity-logs', [\App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('activity-logs.index');
 });
 
 Route::middleware('auth')->group(function () {

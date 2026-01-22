@@ -33,7 +33,7 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                 @if($payment->application && $payment->application->student)
-                                                    {{ $payment->application->student->first_name }} {{ $payment->application->student->last_name }}
+                                                    {{ $payment->application->student->first_name ?? '' }} {{ $payment->application->student->last_name ?? '' }}
                                                 @else
                                                     N/A
                                                 @endif

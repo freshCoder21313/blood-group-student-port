@@ -18,14 +18,25 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::firstOrCreate(
-            ['email' => 'test@example.com'],
+            ['email' => 'admin@school.edu'],
             [
-                'phone' => '0123456789',
-                'password' => bcrypt('password'), // Ensure password is set if created
-                'status' => 'active'
+                'phone' => '0700000000',
+                'password' => bcrypt('password'),
+                'status' => 'active',
+                'role' => 'admin'
             ]
         );
-        
+
+        User::firstOrCreate(
+            ['email' => 'tructtpk03625@gmail.com'],
+            [
+                'phone' => '0347018582',
+                'password' => bcrypt('password'), // Ensure password is set if created
+                'status' => 'active',
+                'role' => 'student'
+            ]
+        );
+
         $this->call([
             ProgramSeeder::class,
             AcademicBlockSeeder::class,

@@ -2,60 +2,148 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Student Dashboard') }}
+                {{ __('Dashboard') }}
             </h2>
-            <x-ui.status-badge :status="$student->application->status ?? 'approved'" />
+            @if(isset($application) && $application)
+                <x-ui.status-badge :status="$application->status" />
+            @endif
         </div>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
-            <!-- Welcome Section -->
+            <!-- Main Action Section -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <div class="text-center md:text-left flex flex-col md:flex-row justify-between items-center">
-                    <div>
-                        <h3 class="text-2xl font-bold text-gray-900">Welcome, {{ $student->first_name }}!</h3>
-                        <p class="text-gray-600 mt-1">Student ID: <span class="font-mono font-bold text-primary-600">{{ $student->student_code ?? 'Pending' }}</span></p>
+                @if(isset($application) && $application)
+                    <div class="text-center">
+                        @if(in_array($application->status, ['pending_approval', 'approved', 'rejected']))
+                             <h3 class="text-lg font-medium text-gray-900 mb-2">Application #{{ $application->application_number }}</h3>
+                             
+                             <div class="mb-4">
+                                <span class="px-3 py-1 text-sm font-bold rounded-full 
+                                    {{ $application->status === 'pending_approval' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                    {{ $application->status === 'approved' ? 'bg-green-100 text-green-800' : '' }}
+                                    {{ $application->status === 'rejected' ? 'bg-red-100 text-red-800' : '' }}">
+                                    @if($application->status === 'pending_approval')
+                                        Submitted - Under Review
+                                    @else
+                                        {{ ucfirst($application->status) }}
+                                    @endif
+                                </span>
+                             </div>
+                             
+                             @if($application->status === 'pending_approval')
+                                 <div class="p-4 bg-green-50 rounded border border-green-200 max-w-md mx-auto text-green-800">
+                                     <p>Your application has been submitted successfully. We will notify you once it is reviewed.</p>
+                                 </div>
+                             @endif
+                        @else
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">Application #{{ $application->application_number }}</h3>
+                            <p class="text-gray-600 mb-4">You have a draft application in progress.</p>
+                            
+                            <!-- Progress Bar (Simple) -->
+                            <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6 max-w-md mx-auto">
+                                <div class="bg-primary-600 h-2.5 rounded-full" style="width: {{ ($application->current_step / $application->total_steps) * 100 }}%"></div>
+                            </div>
+
+                            @php
+                                $continueRoute = '#';
+                                if(isset($application)) {
+                                    switch($application->current_step) {
+                                        case 1: $continueRoute = route('application.wizard', $application) . '#step-1'; break;
+                                        case 2: $continueRoute = route('application.wizard', $application) . '#step-2'; break;
+                                        case 3: $continueRoute = route('application.wizard', $application) . '#step-3'; break;
+                                        case 4: $continueRoute = route('application.wizard', $application) . '#step-4'; break;
+                                        default: $continueRoute = route('dashboard');
+                                    }
+                                }
+                            @endphp
+
+                            <a href="{{ $continueRoute }}">
+                                <x-ui.primary-button>
+                                    {{ __('Continue Application') }}
+                                </x-ui.primary-button>
+                            </a>
+                        @endif
                     </div>
-                    <div class="mt-4 md:mt-0">
-                         <span class="px-4 py-2 bg-primary-50 text-primary-700 rounded-lg text-sm font-semibold">
-                            Academic Year: {{ date('Y') }}
-                         </span>
+                @else
+                    <div class="text-center">
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Welcome!</h3>
+                        <p class="text-gray-600 mb-4">Start your admission process today.</p>
+                        
+                        <form method="POST" action="{{ route('application.create') }}">
+                            @csrf
+                            <x-ui.primary-button>
+                                {{ __('Apply Now') }}
+                            </x-ui.primary-button>
+                        </form>
                     </div>
-                </div>
+                @endif
             </div>
 
-            <!-- Services Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                <!-- Grades -->
-                <a href="{{ route('student.grades') }}" class="block hover:shadow-lg transition duration-200">
-                    <x-ui.card title="My Grades" description="View academic performance">
+            <!-- 4-Card Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Personal Info -->
+                <a href="{{ (isset($application) && $application) ? route('application.wizard', $application) . '#step-1' : '#' }}" class="block hover:shadow-lg transition duration-200">
+                    <x-ui.card title="Personal Info" description="Basic details about you">
                          <x-slot name="icon">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                          </x-slot>
+                         @if(isset($application) && $application)
+                             @if($application->current_step > 1)
+                                <span class="text-green-500 text-sm font-bold">✓ Completed</span>
+                             @else
+                                <span class="text-primary-500 text-sm">In Progress</span>
+                             @endif
+                         @endif
                     </x-ui.card>
                 </a>
                 
-                <!-- Schedule -->
-                <a href="{{ route('student.schedule') }}" class="block hover:shadow-lg transition duration-200">
-                    <x-ui.card title="Class Schedule" description="View weekly timetable">
+                <!-- Parent Info -->
+                <a href="{{ (isset($application) && $application) ? route('application.wizard', $application) . '#step-2' : '#' }}" class="block hover:shadow-lg transition duration-200">
+                    <x-ui.card title="Parent Info" description="Guardian contact details">
                          <x-slot name="icon">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                          </x-slot>
+                         @if(isset($application) && $application)
+                             @if($application->current_step > 2)
+                                <span class="text-green-500 text-sm font-bold">✓ Completed</span>
+                             @elseif($application->current_step == 2)
+                                <span class="text-primary-500 text-sm">In Progress</span>
+                             @else
+                                <span class="text-gray-400 text-sm">Pending</span>
+                             @endif
+                         @endif
                     </x-ui.card>
                 </a>
                 
-                <!-- Fees -->
-                <a href="{{ route('student.fees') }}" class="block hover:shadow-lg transition duration-200">
-                    <x-ui.card title="Fee Statement" description="Check outstanding balance">
+                <!-- Program Info -->
+                <a href="{{ (isset($application) && $application) ? route('application.wizard', $application) . '#step-3' : '#' }}" class="block hover:shadow-lg transition duration-200">
+                    <x-ui.card title="Program" description="Select your course">
                          <x-slot name="icon">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path></svg>
                          </x-slot>
+                         @if(isset($application) && $application)
+                             @if($application->current_step > 3)
+                                <span class="text-green-500 text-sm font-bold">✓ Completed</span>
+                             @elseif($application->current_step == 3)
+                                <span class="text-primary-500 text-sm">In Progress</span>
+                             @else
+                                <span class="text-gray-400 text-sm">Pending</span>
+                             @endif
+                         @endif
                     </x-ui.card>
                 </a>
-
+                
+                <x-ui.card title="Documents" description="Upload required files">
+                     <x-slot name="icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                     </x-slot>
+                     @if(isset($application) && $application && $application->current_step > 4)
+                        <span class="text-green-500 text-sm">✓ Completed</span>
+                     @endif
+                </x-ui.card>
             </div>
         </div>
     </div>

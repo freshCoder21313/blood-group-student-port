@@ -56,6 +56,30 @@ class ApplicationSeeder extends Seeder
         );
         $app->submitted_at = now();
         $app->save();
+        
+        // 3b. Ready for Admin Application (Step 5 completed, submitted)
+        // This user is specifically for you to login as Admin and approve
+        $app = $this->createApplication(
+            'ready@example.com',
+            'Ready Student',
+            'pending_approval',
+            5,
+            $programs->random(),
+            $blocks->random()
+        );
+        $app->submitted_at = now();
+        $app->save();
+        
+        // Create payment for this "ready" user to make it realistic
+        \App\Models\Payment::firstOrCreate([
+            'application_id' => $app->id
+        ], [
+            'amount' => 1000,
+            'status' => 'completed',
+            'transaction_code' => 'RDY' . Str::upper(Str::random(7)),
+            'phone_number' => '0700000000',
+            'result_desc' => 'Success'
+        ]);
 
         // 4. Approved Application
         $app = $this->createApplication(
@@ -122,8 +146,21 @@ class ApplicationSeeder extends Seeder
                 'last_name' => explode(' ', $name)[1] ?? 'User',
             ]);
         }
+
+        // Seed Parent Info (Step 2+)
+        if ($step >= 2) {
+            \App\Models\ParentInfo::firstOrCreate(
+                ['student_id' => $student->id],
+                [
+                    'guardian_name' => 'Parent of ' . $student->first_name,
+                    'guardian_phone' => '07' . rand(10000000, 99999999),
+                    'relationship' => 'Parent',
+                    'guardian_email' => 'parent.' . $student->id . '@example.com'
+                ]
+            );
+        }
        
-        return Application::firstOrCreate(
+        $app = Application::firstOrCreate(
             ['student_id' => $student->id],
             [
                 'program_id' => $program->id,
@@ -134,5 +171,55 @@ class ApplicationSeeder extends Seeder
                 'total_steps' => 5,
             ]
         );
+
+        // Seed Documents (Step 4+)
+        if ($step >= 4) {
+            $this->seedDocuments($app);
+        }
+
+        // Seed Payment (Step 5 completed or Submitted/Approved)
+        if ($step >= 5 || in_array($status, ['pending_approval', 'approved', 'rejected', 'student'])) {
+            $this->seedPayment($app);
+        }
+
+        return $app;
+    }
+
+    private function seedDocuments(Application $application)
+    {
+        $types = ['national_id', 'transcript'];
+        foreach ($types as $type) {
+            \App\Models\Document::firstOrCreate(
+                [
+                    'application_id' => $application->id,
+                    'type' => $type
+                ],
+                [
+                    'path' => 'documents/seed_' . $type . '.pdf',
+                    'original_name' => 'seed_' . $type . '.pdf',
+                    'mime_type' => 'application/pdf',
+                    'size' => 1024
+                ]
+            );
+        }
+    }
+
+    private function seedPayment(Application $application)
+    {
+        // Don't duplicate if already seeded in run()
+        if (\App\Models\Payment::where('application_id', $application->id)->exists()) {
+            return;
+        }
+
+        \App\Models\Payment::create([
+            'application_id' => $application->id,
+            'amount' => 1000,
+            'status' => 'completed',
+            'transaction_code' => 'SEED' . Str::upper(Str::random(6)),
+            'phone_number' => '07' . rand(10000000, 99999999),
+            'result_desc' => 'Success',
+            'merchant_request_id' => Str::random(10),
+            'checkout_request_id' => Str::random(10),
+        ]);
     }
 }

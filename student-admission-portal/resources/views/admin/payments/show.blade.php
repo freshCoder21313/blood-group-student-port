@@ -29,7 +29,7 @@
                                     <dt class="text-sm font-medium text-gray-500">Student</dt>
                                     <dd class="mt-1 text-sm text-gray-900">
                                         @if($payment->application && $payment->application->student)
-                                            {{ $payment->application->student->first_name }} {{ $payment->application->student->last_name }}
+                                            {{ $payment->application->student->first_name ?? '' }} {{ $payment->application->student->last_name ?? '' }}
                                         @else
                                             N/A
                                         @endif

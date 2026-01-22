@@ -17,6 +17,27 @@ class DashboardController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user()->load('student.application');
+
+        // Admin Dashboard
+        if ($user->isAdmin()) {
+            // Data for Charts
+            $appsByStatus = \App\Models\Application::selectRaw('status, count(*) as count')
+                ->groupBy('status')
+                ->pluck('count', 'status')
+                ->toArray();
+
+            $appsByProgram = \App\Models\Application::selectRaw('programs.code as program_code, count(*) as count')
+                ->join('programs', 'applications.program_id', '=', 'programs.id')
+                ->groupBy('programs.code')
+                ->pluck('count', 'program_code')
+                ->toArray();
+
+            return view('admin.dashboard', [
+                'appsByStatus' => $appsByStatus,
+                'appsByProgram' => $appsByProgram
+            ]);
+        }
+
         $student = $user->student;
 
         // Check if user is an admitted student (has student_code)

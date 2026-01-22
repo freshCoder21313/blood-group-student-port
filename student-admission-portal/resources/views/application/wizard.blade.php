@@ -31,6 +31,24 @@
                     </div>
                 @endif
 
+                <!-- Wizard Progress Bar -->
+                <div class="relative pt-1 mb-8">
+                    <div class="flex mb-2 items-center justify-between">
+                        <div>
+                            <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-primary-600 bg-primary-200">
+                                Step <span x-text="step"></span> of 4
+                            </span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-semibold inline-block text-primary-600" x-text="Math.round((step / 4) * 100) + '%'">
+                            </span>
+                        </div>
+                    </div>
+                    <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-primary-200">
+                        <div :style="'width: ' + ((step / 4) * 100) + '%'" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary-500 transition-all duration-500 ease-out"></div>
+                    </div>
+                </div>
+
                 <!-- Wizard Tabs -->
                 <div class="mb-8 border-b border-gray-200">
                     <nav class="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs">

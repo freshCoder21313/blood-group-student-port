@@ -45,6 +45,12 @@ class Application extends Model
         return $this->belongsTo(AcademicBlock::class);
     }
 
+    // Alias for block for easier understanding
+    public function academicBlock()
+    {
+        return $this->belongsTo(AcademicBlock::class, 'block_id');
+    }
+
     public function steps()
     {
         return $this->hasMany(ApplicationStep::class);

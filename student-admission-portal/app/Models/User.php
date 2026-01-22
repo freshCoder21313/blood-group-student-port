@@ -17,6 +17,7 @@ class User extends Authenticatable
         'phone',
         'password',
         'status',
+        'role', // Added role
         'email_verified_at',
         'phone_verified_at',
     ];
@@ -31,6 +32,11 @@ class User extends Authenticatable
         'phone_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
 
     public function student()
     {
