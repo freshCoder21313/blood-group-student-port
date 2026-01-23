@@ -48,6 +48,7 @@ class OtpVerificationController extends Controller
         // Mark user as verified
         $user->update([
             'email_verified_at' => now(),
+            'status' => 'active',
         ]);
         
         // Login if not already logged in

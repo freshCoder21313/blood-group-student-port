@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DocumentsUploadRequest;
 use App\Http\Requests\ParentDetailsRequest;
 use App\Http\Requests\PersonalDetailsRequest;
 use App\Http\Requests\ProgramSelectionRequest;
@@ -106,18 +107,16 @@ class ApplicationFormController extends Controller
         ]);
     }
 
-    public function updateDocuments(Request $request, Application $application): RedirectResponse
+    public function updateDocuments(DocumentsUploadRequest $request, Application $application): RedirectResponse
     {
         $this->authorize('update', $application);
 
         // Handle file uploads
         if ($request->hasFile('national_id')) {
-            $request->validate(['national_id' => 'file|mimes:jpeg,png,pdf|max:5120']);
             $this->documentService->store($application, $request->file('national_id'), 'national_id');
         }
 
         if ($request->hasFile('transcript')) {
-            $request->validate(['transcript' => 'file|mimes:jpeg,png,pdf|max:5120']);
             $this->documentService->store($application, $request->file('transcript'), 'transcript');
         }
 

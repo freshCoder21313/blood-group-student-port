@@ -18,6 +18,14 @@ use App\Http\Controllers\Api\V1\WebhookController;
 
 Route::prefix('v1')->middleware(['api'])->group(function () { 
 
+    // ═══════════════════════════════════════════════════════════════
+    // NEW STUDENT SYNC CONTROLLER (Simple API Key Auth)
+    // ═══════════════════════════════════════════════════════════════
+    Route::middleware(\App\Http\Middleware\EnsureApiKeyIsValid::class)->group(function () {
+        Route::get('/students', [\App\Http\Controllers\Api\V1\StudentSyncController::class, 'index']);
+        Route::post('/update-status', [\App\Http\Controllers\Api\V1\StudentSyncController::class, 'updateStatus']);
+    });
+
     Route::middleware(['auth:sanctum', 'ability:asp:sync'])->prefix('asp')->group(function () {
         Route::get('/ping', [\App\Http\Controllers\Api\V1\AspSyncController::class, 'ping']);
     });
@@ -34,7 +42,7 @@ Route::prefix('v1')->middleware(['api'])->group(function () {
         // ═══════════════════════════════════════════════════════════════
         
         // GET /api/v1/students?status=pending_approval&page=1&per_page=50
-        Route::get('/students', [StudentController::class, 'index'])
+        Route::get('/students-legacy', [StudentController::class, 'index'])
             ->name('api.students.index');
         
         // GET /api/v1/students/{id}
@@ -53,8 +61,15 @@ Route::prefix('v1')->middleware(['api'])->group(function () {
         // STATUS UPDATE - Update status from ASP
         // ═══════════════════════════════════════════════════════════════
         
-        // POST /api/v1/update-status
-        Route::post('/update-status', [StatusController::class, 'update'])
+        // POST /api/v1/update-status (Renamed/Aliased for legacy support if needed, but confusing)
+        // Leaving it for now but user asked for the new one to take precedence.
+        // Actually, routes are first-match. The new route is defined ABOVE.
+        // So /v1/update-status hits StudentSyncController.
+        // But wait, the below legacy route is protected by ApiAuthentication.
+        // If I define /update-status above, it takes precedence.
+        // However, the legacy one below will be shadowed.
+        
+        Route::post('/update-status-legacy', [StatusController::class, 'update'])
             ->name('api.status.update');
         
         // POST /api/v1/bulk-update-status
@@ -97,6 +112,3 @@ require __DIR__ . '/api_auth.php';
 Route::post('/payment/callback', [\App\Http\Controllers\PaymentController::class, 'callback'])
     ->name('payment.callback')
     ->middleware(\App\Http\Middleware\VerifyMpesaIp::class);
-
-
-

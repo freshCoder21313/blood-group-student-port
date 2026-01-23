@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DocumentsUploadRequest;
 use App\Http\Requests\ParentDetailsRequest;
 use App\Http\Requests\PersonalDetailsRequest;
 use App\Http\Requests\ProgramSelectionRequest;
@@ -19,7 +20,8 @@ class ApplicationWizardController extends Controller
     public function __construct(
         private ApplicationService $applicationService,
         private DocumentService $documentService
-    ) {}
+    ) {
+    }
 
     public function show(Application $application): View
     {
@@ -62,7 +64,7 @@ class ApplicationWizardController extends Controller
         });
 
         $validated = $request->validate($formRequest->rules());
-        
+
         $this->applicationService->saveStep($application, 1, $validated);
 
         if ($request->input('action') === 'next') {
@@ -82,7 +84,7 @@ class ApplicationWizardController extends Controller
         });
 
         $validated = $request->validate($formRequest->rules());
-        
+
         $this->applicationService->saveStep($application, 2, $validated);
 
         if ($request->input('action') === 'next') {
@@ -102,8 +104,8 @@ class ApplicationWizardController extends Controller
         });
 
         $validated = $request->validate($formRequest->rules());
-        
-        $this->applicationService->updateProgram($application, $validated);
+
+        $this->applicationService->saveStep($application, 3, $validated);
 
         if ($request->input('action') === 'next') {
             return redirect()->route('application.wizard', ['application' => $application])->withFragment('#step-4');
@@ -114,26 +116,29 @@ class ApplicationWizardController extends Controller
 
     private function saveDocuments(Request $request, Application $application): RedirectResponse
     {
-         if ($request->hasFile('national_id')) {
-            $request->validate(['national_id' => 'file|mimes:jpeg,png,pdf|max:5120']);
+        $formRequest = new DocumentsUploadRequest();
+        $validated = $request->validate($formRequest->rules());
+
+        if ($request->hasFile('national_id')) {
             $this->documentService->store($application, $request->file('national_id'), 'national_id');
         }
 
         if ($request->hasFile('transcript')) {
-            $request->validate(['transcript' => 'file|mimes:jpeg,png,pdf|max:5120']);
             $this->documentService->store($application, $request->file('transcript'), 'transcript');
         }
 
         if ($request->input('action') === 'finish') {
-             try {
-                // Validate documents and mark step 4 complete
+            try {
+                // Mark step 4 as complete via service which validates existence of docs
                 $this->applicationService->saveStep($application, 4, [], true);
                 return redirect()->route('application.payment', $application);
             } catch (\Exception $e) {
                 return back()->withErrors(['error' => $e->getMessage()]);
             }
         }
-        
+
+        // Just save state without validation if not finishing
+        // We pass empty data as documents are handled separately, but this triggers step record update
         $this->applicationService->saveStep($application, 4, [], false);
         return back()->with('status', 'Documents Saved');
     }

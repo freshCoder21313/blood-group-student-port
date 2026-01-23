@@ -19,6 +19,8 @@ class User extends Authenticatable
         'password',
         'status',
         'role', // Added role
+        'otp_code',
+        'otp_expires_at',
         'email_verified_at',
         'phone_verified_at',
     ];
@@ -31,6 +33,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'phone_verified_at' => 'datetime',
+        'otp_expires_at' => 'datetime',
         'password' => 'hashed',
     ];
 

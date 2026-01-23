@@ -16,6 +16,7 @@ class Application extends Model
         'block_id',
         'application_number',
         'status',
+        'payment_status',
         'current_step',
         'total_steps',
         'admin_notes',
