@@ -96,16 +96,5 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-8">
-        <x-ui.container>
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-sm text-gray-500 dark:text-gray-400">© {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
-                <div class="flex gap-6 text-sm text-gray-500 dark:text-gray-400">
-                    <a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">{{ __('Terms') }}</a>
-                    <a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">{{ __('Privacy') }}</a>
-                    <a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">{{ __('Contact') }}</a>
-                </div>
-            </div>
-        </x-ui.container>
-    </footer>
+    @include('layouts.footer')
 </x-landing-layout>
