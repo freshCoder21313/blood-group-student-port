@@ -34,7 +34,7 @@
                 <div class="p-6 text-gray-900">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Invoice History') }}</h3>
                     @if(empty($fees['invoice_history']))
-                        <p class="text-gray-500">{{ __('No invoices found.') }}</p>
+                        <x-ui.empty-state message="No invoices found" description="You don't have any invoice history yet." />
                     @else
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">

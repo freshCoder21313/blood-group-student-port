@@ -10,7 +10,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     @if(empty($grades))
-                        <p class="text-gray-500">{{ __('No grades available.') }}</p>
+                        <x-ui.empty-state message="No grades available" description="Your grades have not been published yet." />
                     @else
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">

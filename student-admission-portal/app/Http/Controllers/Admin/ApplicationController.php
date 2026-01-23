@@ -16,7 +16,24 @@ class ApplicationController extends Controller
             abort(403);
         }
 
-        $applications = Application::with('student')->latest()->paginate(20);
+        $query = Application::with('student')->latest();
+
+        if ($search = request('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('application_number', 'like', "%{$search}%")
+                  ->orWhereHas('student', function ($subQ) use ($search) {
+                      $subQ->where('first_name', 'like', "%{$search}%")
+                           ->orWhere('last_name', 'like', "%{$search}%")
+                           ->orWhere('middle_name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        if ($status = request('status')) {
+            $query->where('status', $status);
+        }
+
+        $applications = $query->paginate(20)->withQueryString();
 
         return view('admin.applications.index', compact('applications'));
     }

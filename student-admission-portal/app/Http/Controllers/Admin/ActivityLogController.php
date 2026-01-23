@@ -14,9 +14,19 @@ class ActivityLogController extends Controller
             abort(403);
         }
 
-        $logs = ActivityLog::with('user')
-            ->latest()
-            ->paginate(20);
+        $query = ActivityLog::with('user')->latest();
+
+        if ($search = request('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('action', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhereHas('user', function ($subQ) use ($search) {
+                      $subQ->where('email', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $logs = $query->paginate(20)->withQueryString();
 
         return view('admin.activity-logs.index', compact('logs'));
     }

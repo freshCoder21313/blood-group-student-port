@@ -10,10 +10,24 @@ class PaymentController extends Controller
 {
     public function index()
     {
-        $payments = Payment::where('status', Payment::STATUS_PENDING_VERIFICATION)
-            ->with('application.student')
-            ->latest()
-            ->get();
+        $query = Payment::with('application.student')->latest();
+
+        if ($search = request('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('transaction_code', 'like', "%{$search}%")
+                  ->orWhere('mpesa_receipt_number', 'like', "%{$search}%")
+                  ->orWhereHas('application.student', function ($subQ) use ($search) {
+                      $subQ->where('first_name', 'like', "%{$search}%")
+                           ->orWhere('last_name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        if ($status = request('status')) {
+            $query->where('status', $status);
+        }
+
+        $payments = $query->paginate(20)->withQueryString();
 
         return view('admin.payments.index', compact('payments'));
     }
