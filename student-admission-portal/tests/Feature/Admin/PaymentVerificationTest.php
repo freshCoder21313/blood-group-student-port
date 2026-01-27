@@ -29,7 +29,7 @@ it('displays pending verification payments', function () {
         'transaction_code' => 'OTHERCODE456'
     ]);
 
-    $response = $this->actingAs($user)->get('/admin/payments');
+    $response = $this->actingAs($user)->get('/admin/payments?status=' . Payment::STATUS_PENDING_VERIFICATION);
 
     $response->assertStatus(200);
     $response->assertSee('TESTCODE123');

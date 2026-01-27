@@ -20,6 +20,10 @@ class AppServiceProvider extends ServiceProvider
                     return new \App\Services\Student\MockStudentInformationService();
                 }
 
+                if ($driver === 'asp') {
+                    return new \App\Services\Student\AspStudentInformationService();
+                }
+
                 throw new \RuntimeException("Unknown Student Information Driver: {$driver}");
             }
         );
