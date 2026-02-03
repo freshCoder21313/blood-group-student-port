@@ -192,6 +192,20 @@
                                     :delete-url="$transcriptDeleteUrl"
                                 />
                             </div>
+                            
+                            @php
+                                $healthCert = $documents->where('type', 'health_certificate')->first();
+                                $healthCertUrl = $healthCert ? route('documents.show', $healthCert) : null;
+                                $healthCertDeleteUrl = $healthCert ? route('documents.destroy', $healthCert) : null;
+                            @endphp
+                            <div>
+                                <x-ui.image-uploader :disabled="$readonly" 
+                                    name="health_certificate" 
+                                    label="Health Certificate" 
+                                    :value="$healthCertUrl"
+                                    :delete-url="$healthCertDeleteUrl"
+                                />
+                            </div>
                         </div>
 
                          <div class="flex items-center justify-between mt-6">

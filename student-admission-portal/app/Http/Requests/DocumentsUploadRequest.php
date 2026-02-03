@@ -24,6 +24,7 @@ class DocumentsUploadRequest extends FormRequest
         return [
             'national_id' => 'nullable|file|mimes:jpeg,png,pdf|max:5120',
             'transcript' => 'nullable|file|mimes:jpeg,png,pdf|max:5120',
+            'health_certificate' => 'nullable|file|mimes:jpeg,png,pdf|max:5120',
         ];
     }
 }

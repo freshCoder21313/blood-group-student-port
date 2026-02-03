@@ -127,6 +127,10 @@ class ApplicationWizardController extends Controller
             $this->documentService->store($application, $request->file('transcript'), 'transcript');
         }
 
+        if ($request->hasFile('health_certificate')) {
+            $this->documentService->store($application, $request->file('health_certificate'), 'health_certificate');
+        }
+
         if ($request->input('action') === 'finish') {
             try {
                 // Mark step 4 as complete via service which validates existence of docs

@@ -280,7 +280,7 @@ class ApplicationService
     private function validateDocuments(Application $application): void
     {
          $documents = $application->documents->pluck('type')->toArray();
-         $required = ['national_id', 'transcript'];
+         $required = ['national_id', 'transcript', 'health_certificate'];
          
          if (count(array_intersect($required, $documents)) !== count($required)) {
              throw new \Exception("Missing required documents.");
