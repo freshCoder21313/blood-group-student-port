@@ -47,14 +47,16 @@ test('documents can be uploaded and next step validated', function () {
     $response->assertRedirect();
     $this->assertDatabaseHas('documents', ['application_id' => $application->id, 'type' => 'national_id']);
     
-    // Upload Transcript and Next
+    // Upload Transcript and Health Cert and Next
     $response = $this->post(route('application.wizard.save', ['application' => $application, 'step' => 4]), [
         'transcript' => $file2,
+        'health_certificate' => UploadedFile::fake()->create('health.jpg', 100),
         'action' => 'finish'
     ]);
     
     $response->assertRedirect(route('application.payment', $application)); 
     $this->assertDatabaseHas('documents', ['application_id' => $application->id, 'type' => 'transcript']);
+    $this->assertDatabaseHas('documents', ['application_id' => $application->id, 'type' => 'health_certificate']);
     
     $this->assertTrue(ApplicationStep::where('application_id', $application->id)->where('step_number', 4)->first()->is_completed);
 });

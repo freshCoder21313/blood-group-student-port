@@ -55,6 +55,7 @@ test('Happy Path: User logs in -> Saves Step 1 -> Saves Step 2 -> Submits', func
         ->post(route('application.wizard.save', ['application' => $application->id, 'step' => 4]), [
             'national_id' => UploadedFile::fake()->create('id.jpg'),
             'transcript' => UploadedFile::fake()->create('transcript.pdf'),
+            'health_certificate' => UploadedFile::fake()->create('health.jpg'),
             'action' => 'finish'
         ])
         ->assertRedirect(route('application.payment', $application)); 

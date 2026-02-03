@@ -44,6 +44,7 @@ test('saveStep succeeds for step 4 if documents present', function () {
     
     Document::create(['application_id' => $application->id, 'type' => 'national_id', 'path' => 'p1', 'original_name' => 'n1', 'mime_type' => 't', 'size' => 1]);
     Document::create(['application_id' => $application->id, 'type' => 'transcript', 'path' => 'p2', 'original_name' => 'n2', 'mime_type' => 't', 'size' => 1]);
+    Document::create(['application_id' => $application->id, 'type' => 'health_certificate', 'path' => 'p3', 'original_name' => 'n3', 'mime_type' => 't', 'size' => 1]);
     
     $step = $service->saveStep($application, 4, [], true);
     
