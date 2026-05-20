@@ -16,6 +16,10 @@ class EnsureOtpVerified
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if (! config('auth.otp_enabled', true)) {
+            return $next($request);
+        }
+
         $user = $request->user();
 
         if ($user && ! $user->email_verified_at && ! $user->phone_verified_at) {

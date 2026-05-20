@@ -52,13 +52,18 @@ class RegisteredUserController extends Controller
 
             event(new Registered($user));
 
-            $otpService->generate($user, 'registration');
+            if (config('auth.otp_enabled', true)) {
+                $otpService->generate($user, 'registration');
+                $request->session()->put('auth.otp.user_id', $user->id);
+                DB::commit();
+                return redirect()->route('otp.verify');
+            }
 
-            $request->session()->put('auth.otp.user_id', $user->id);
+            Auth::login($user);
 
             DB::commit();
 
-            return redirect()->route('otp.verify');
+            return redirect()->route('dashboard');
 
         } catch (\Exception $e) {
             DB::rollBack();

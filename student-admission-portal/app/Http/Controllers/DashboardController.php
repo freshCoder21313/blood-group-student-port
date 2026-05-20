@@ -12,8 +12,7 @@ class DashboardController extends Controller
 {
     public function __construct(
         private ApplicationService $applicationService
-    ) {
-    }
+    ) {}
 
     public function index(Request $request): View
     {
@@ -35,7 +34,7 @@ class DashboardController extends Controller
 
             return view('admin.dashboard', [
                 'appsByStatus' => $appsByStatus,
-                'appsByProgram' => $appsByProgram
+                'appsByProgram' => $appsByProgram,
             ]);
         }
 
@@ -47,14 +46,14 @@ class DashboardController extends Controller
         if (($student && $student->student_code) || $approvedApplication) {
             return view('student.dashboard', [
                 'student' => $student,
-                'application' => $approvedApplication
+                'application' => $approvedApplication,
             ]);
         }
 
         $application = $this->applicationService->getCurrentApplication($user->id);
 
         return view('dashboard', [
-            'application' => $application
+            'application' => $application,
         ]);
     }
 

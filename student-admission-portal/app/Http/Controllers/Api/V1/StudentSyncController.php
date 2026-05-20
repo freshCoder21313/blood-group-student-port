@@ -38,9 +38,11 @@ class StudentSyncController extends Controller
                 // Ensure the path is absolute/accessible
                 // Using url() from the Storage facade, assuming 'public' disk
                 // Use default disk or specific url generation logic if disk is abstract
-                $doc->full_url = asset('storage/' . $doc->path); 
+                $doc->full_url = asset('storage/'.$doc->path);
+
                 return $doc;
             });
+
             return $app;
         });
 
@@ -61,7 +63,7 @@ class StudentSyncController extends Controller
 
         try {
             $application = Application::findOrFail($validated['application_id']);
-            
+
             $this->service->updateStatus(
                 $application,
                 $validated['status'],
@@ -76,7 +78,7 @@ class StudentSyncController extends Controller
             return response()->json([
                 'message' => 'Status updated successfully',
                 'application_id' => $application->id,
-                'status' => $validated['status']
+                'status' => $validated['status'],
             ]);
 
         } catch (\Exception $e) {
@@ -98,16 +100,15 @@ class StudentSyncController extends Controller
         try {
             // Only update fields present in the payload to avoid overwriting existing data with null
             $updateData = array_filter([
-                'grades'   => $validated['grades'] ?? null,
+                'grades' => $validated['grades'] ?? null,
                 'schedule' => $validated['schedule'] ?? null,
-                'fees'     => $validated['fees'] ?? null,
+                'fees' => $validated['fees'] ?? null,
             ], fn ($value) => $value !== null);
 
             $record = \App\Models\StudentAcademicRecord::updateOrCreate(
                 ['student_code' => $studentCode],
                 $updateData
             );
-
 
             return response()->json([
                 'success' => true,
@@ -117,7 +118,7 @@ class StudentSyncController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 400);
         }
     }

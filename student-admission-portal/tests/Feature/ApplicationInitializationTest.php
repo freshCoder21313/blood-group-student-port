@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\User;
 use App\Models\Application;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -12,8 +12,8 @@ test('user can initialize application via http endpoint', function () {
     $response = $this->actingAs($user)
         ->post(route('application.create'));
 
-    $application = Application::whereHas('student', fn($q) => $q->where('user_id', $user->id))->first();
-    $response->assertRedirect(route('application.personal', $application));
+    $application = Application::whereHas('student', fn ($q) => $q->where('user_id', $user->id))->first();
+    $response->assertRedirect(route('application.wizard', $application));
 
     $this->assertDatabaseHas('applications', [
         'student_id' => $user->student->id, // Student created via service

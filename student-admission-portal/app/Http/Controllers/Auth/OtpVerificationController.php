@@ -16,8 +16,12 @@ class OtpVerificationController extends Controller
     /**
      * Display the OTP verification view.
      */
-    public function create(): View
+    public function create()
     {
+        if (! config('auth.otp_enabled', true)) {
+            return redirect()->route('dashboard');
+        }
+
         return view('auth.verify-otp');
     }
 

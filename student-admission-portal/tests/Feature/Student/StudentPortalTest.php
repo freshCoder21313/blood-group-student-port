@@ -10,6 +10,11 @@ beforeEach(function () {
 });
 
 test('grades page loads and shows data', function () {
+    \App\Models\Student::factory()->create([
+        'user_id' => $this->user->id,
+        'student_code' => 'STU001',
+    ]);
+
     $response = $this->actingAs($this->user)->get(route('student.grades'));
 
     $response->assertOk();
@@ -18,6 +23,11 @@ test('grades page loads and shows data', function () {
 });
 
 test('schedule page loads and shows data', function () {
+    \App\Models\Student::factory()->create([
+        'user_id' => $this->user->id,
+        'student_code' => 'STU001',
+    ]);
+
     $response = $this->actingAs($this->user)->get(route('student.schedule'));
 
     $response->assertOk();
@@ -26,14 +36,17 @@ test('schedule page loads and shows data', function () {
 });
 
 test('fees page loads and shows data', function () {
+    \App\Models\Student::factory()->create([
+        'user_id' => $this->user->id,
+        'student_code' => 'STU001',
+    ]);
+
     $response = $this->actingAs($this->user)->get(route('student.fees'));
 
     $response->assertOk();
     $response->assertSee('50,000');
     $response->assertSee('INV-001');
 });
-
-
 
 test('guest cannot access grades page', function () {
     $this->get(route('student.grades'))->assertRedirect(route('login'));
@@ -42,16 +55,16 @@ test('guest cannot access grades page', function () {
 test('grades page loads data for specific linked student', function () {
     $student = \App\Models\Student::factory()->create([
         'user_id' => $this->user->id,
-        'student_code' => 'STU999'
+        'student_code' => 'STU999',
     ]);
 
     $this->mock(\App\Services\Student\StudentInformationServiceInterface::class, function ($mock) {
         $mock->shouldReceive('getGrades')
-             ->with('STU999')
-             ->once()
-             ->andReturn([
-                 ['code' => 'CS999', 'name' => 'Advanced Testing', 'grade' => 'A']
-             ]);
+            ->with('STU999')
+            ->once()
+            ->andReturn([
+                ['code' => 'CS999', 'name' => 'Advanced Testing', 'grade' => 'A'],
+            ]);
     });
 
     $response = $this->actingAs($this->user)->get(route('student.grades'));
@@ -70,5 +83,3 @@ test('grades page gracefully handles service failure', function () {
     $response->assertOk();
     $response->assertSessionHas('error', 'Unable to retrieve grades.');
 });
-
-

@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Services\Application;
 
+use App\Events\ApplicationStatusChanged;
+use App\Events\ApplicationSubmitted;
 use App\Models\Application;
 use App\Models\ApplicationStep;
-use App\Models\Student;
-use App\Events\ApplicationSubmitted;
-use App\Events\ApplicationStatusChanged;
 use App\Models\StatusHistory;
+use App\Models\Student;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class ApplicationService
@@ -56,7 +56,7 @@ class ApplicationService
                     'step_number' => $stepNumber,
                     'step_name' => $config['name'],
                     'data' => [],
-                    'is_completed' => false
+                    'is_completed' => false,
                 ]);
             }
 
@@ -81,8 +81,8 @@ class ApplicationService
     {
         return DB::transaction(function () use ($application, $stepNumber, $data, $isCompleted) {
             $step = ApplicationStep::where('application_id', $application->id)
-                                   ->where('step_number', $stepNumber)
-                                   ->firstOrFail();
+                ->where('step_number', $stepNumber)
+                ->firstOrFail();
 
             // 1. Sync Data to Main Tables
             if ($stepNumber === 1) {
@@ -90,21 +90,21 @@ class ApplicationService
             } elseif ($stepNumber === 2) {
                 $this->syncParentData($application->student, $data);
             } elseif ($stepNumber === 3) {
-                 if (isset($data['program_id'])) {
+                if (isset($data['program_id'])) {
                     $application->update(['program_id' => $data['program_id']]);
-                 }
+                }
             } elseif ($isCompleted && $stepNumber === 4) {
-                 // Documents are usually handled via DocumentService directly, 
-                 // but we can validate them here if needed.
-                 // The actual file upload sync happens in the controller via DocumentService.
-                 // Here we just mark progress.
-                 $this->validateDocuments($application);
+                // Documents are usually handled via DocumentService directly,
+                // but we can validate them here if needed.
+                // The actual file upload sync happens in the controller via DocumentService.
+                // Here we just mark progress.
+                $this->validateDocuments($application);
             }
 
             // 2. Update Step Record
             $step->update([
                 'data' => array_merge($step->data ?? [], $data),
-                'is_completed' => $isCompleted, 
+                'is_completed' => $isCompleted,
                 'completed_at' => $isCompleted ? now() : null,
             ]);
 
@@ -125,11 +125,11 @@ class ApplicationService
         // 1. Validate Payment
         // Check both the payment relationship and the status column for robustness
         $payment = $application->payment;
-        $isPaid = ($application->payment_status === 'paid') || 
+        $isPaid = ($application->payment_status === 'paid') ||
                   ($payment && in_array($payment->status, ['completed', 'verified', 'pending_verification']));
 
-        if (!$isPaid) {
-            throw new \Exception("Please submit payment proof");
+        if (! $isPaid) {
+            throw new \Exception('Please submit payment proof');
         }
 
         // 2. Validate All Steps Completed
@@ -137,14 +137,14 @@ class ApplicationService
             ->where('is_completed', false)
             ->where('step_number', '<=', $application->total_steps) // Ensure we check all required steps
             ->exists();
-        
+
         if ($incompleteSteps) {
-             throw new \Exception("Please complete all application steps.");
+            throw new \Exception('Please complete all application steps.');
         }
 
         // Strict Validation (Restored)
         $application->load(['student.parentInfo']);
-        
+
         $validator = Validator::make($application->toArray(), [
             'student.first_name' => 'required',
             'student.last_name' => 'required',
@@ -166,7 +166,7 @@ class ApplicationService
 
             $application->update([
                 'status' => 'pending_approval',
-                'submitted_at' => now()
+                'submitted_at' => now(),
             ]);
 
             // Log History
@@ -176,7 +176,7 @@ class ApplicationService
                 'to_status' => 'pending_approval',
                 'source' => 'system',
                 'changed_by' => 'student',
-                'comment' => 'Application submitted'
+                'comment' => 'Application submitted',
             ]);
 
             // 3. Trigger Notification/Event
@@ -186,9 +186,9 @@ class ApplicationService
             return $application->fresh();
         });
     }
-    
+
     // Alias for backward compatibility if needed, but intended to be replaced
-    public function submit(Application $application): Application 
+    public function submit(Application $application): Application
     {
         return $this->submitApplication($application);
     }
@@ -200,19 +200,18 @@ class ApplicationService
     {
         $allowedSourceStatuses = ['pending_approval', 'request_info'];
 
-        if (!in_array($application->status, $allowedSourceStatuses, true)) {
-             throw new \Exception("Application status cannot be updated. Current status: {$application->status}");
+        if (! in_array($application->status, $allowedSourceStatuses, true)) {
+            throw new \Exception("Application status cannot be updated. Current status: {$application->status}");
         }
-
 
         return DB::transaction(function () use ($application, $status, $notes, $source, $studentCode) {
             $oldStatus = $application->status;
 
             // Update application
             $application->update([
-                'status' => $status
+                'status' => $status,
             ]);
-            
+
             // Update Student Code if Approved
             if ($status === 'approved' && $studentCode) {
                 $application->student->update(['student_code' => $studentCode]);
@@ -225,7 +224,7 @@ class ApplicationService
                 'to_status' => $status,
                 'source' => $source,
                 'changed_by' => 'system',
-                'comment' => $notes
+                'comment' => $notes,
             ]);
 
             // Fire event
@@ -250,7 +249,7 @@ class ApplicationService
         $fillable = $student->getFillable();
         // filter data to only fillable columns
         $updateData = array_intersect_key($data, array_flip($fillable));
-        if (!empty($updateData)) {
+        if (! empty($updateData)) {
             $student->update($updateData);
         }
     }
@@ -260,8 +259,8 @@ class ApplicationService
         $parentInfo = $student->parentInfo ?? new \App\Models\ParentInfo(['student_id' => $student->id]);
         $fillable = $parentInfo->getFillable();
         $updateData = array_intersect_key($data, array_flip($fillable));
-        
-        if (!empty($updateData)) {
+
+        if (! empty($updateData)) {
             $student->parentInfo()->updateOrCreate(
                 ['student_id' => $student->id],
                 $updateData
@@ -282,12 +281,12 @@ class ApplicationService
 
     private function validateDocuments(Application $application): void
     {
-         $documents = $application->documents->pluck('type')->toArray();
-         $required = ['national_id', 'transcript', 'health_certificate'];
-         
-         if (count(array_intersect($required, $documents)) !== count($required)) {
-             throw new \Exception("Missing required documents.");
-         }
+        $documents = $application->documents->pluck('type')->toArray();
+        $required = ['national_id', 'transcript', 'health_certificate'];
+
+        if (count(array_intersect($required, $documents)) !== count($required)) {
+            throw new \Exception('Missing required documents.');
+        }
     }
 
     public function getAdmissionFee(): float

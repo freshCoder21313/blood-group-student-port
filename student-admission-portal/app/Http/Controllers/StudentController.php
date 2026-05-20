@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\View\View;
-use Illuminate\Support\Facades\Log;
 use App\Services\Student\StudentInformationServiceInterface;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 
 class StudentController extends Controller
 {
@@ -19,13 +19,12 @@ class StudentController extends Controller
     {
         $studentCode = $request->user()->student?->student_code;
 
-        if (!$studentCode) {
+        if (! $studentCode) {
             abort(403, 'Your application has not been approved yet. Academic data is unavailable.');
         }
 
         return $studentCode;
     }
-
 
     public function grades(Request $request): View
     {
