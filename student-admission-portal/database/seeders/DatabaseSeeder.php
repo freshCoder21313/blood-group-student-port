@@ -86,5 +86,8 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
+
+        // Seed site settings and default pages
+        $this->call(SiteSettingsSeeder::class);
     }
 }

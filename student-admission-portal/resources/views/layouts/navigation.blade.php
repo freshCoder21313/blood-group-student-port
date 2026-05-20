@@ -29,6 +29,14 @@
                             :active="request()->routeIs('admin.activity-logs.*')">
                             {{ __('Activity Logs') }}
                         </x-ui.nav-link>
+                        <x-ui.nav-link :href="route('admin.pages.index')"
+                            :active="request()->routeIs('admin.pages.*')">
+                            {{ __('Pages') }}
+                        </x-ui.nav-link>
+                        <x-ui.nav-link :href="route('admin.settings.index')"
+                            :active="request()->routeIs('admin.settings.*')">
+                            {{ __('Settings') }}
+                        </x-ui.nav-link>
                     @endif
                     
                     @if(Auth::user()->student && Auth::user()->student->application && Auth::user()->student->application->status === 'approved')
@@ -116,6 +124,12 @@
                 </x-ui.responsive-nav-link>
                 <x-ui.responsive-nav-link :href="route('admin.activity-logs.index')" :active="request()->routeIs('admin.activity-logs.*')">
                     {{ __('Activity Logs') }}
+                </x-ui.responsive-nav-link>
+                <x-ui.responsive-nav-link :href="route('admin.pages.index')" :active="request()->routeIs('admin.pages.*')">
+                    {{ __('Pages') }}
+                </x-ui.responsive-nav-link>
+                <x-ui.responsive-nav-link :href="route('admin.settings.index')" :active="request()->routeIs('admin.settings.*')">
+                    {{ __('Settings') }}
                 </x-ui.responsive-nav-link>
             @endif
 

@@ -6,11 +6,15 @@ use App\Http\Controllers\ApplicationFormController;
 use App\Http\Controllers\ApplicationWizardController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Public static pages
+Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.show');
 
 // Route::middleware(['auth', 'otp.verified'])->group(function () {
 Route::middleware(['auth', 'otp.verified'])->group(function () {
@@ -75,6 +79,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // Audit Log
     Route::get('/activity-logs', [\App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('activity-logs.index');
+
+    // Site Settings
+    Route::get('/settings', [\App\Http\Controllers\Admin\SiteSettingController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [\App\Http\Controllers\Admin\SiteSettingController::class, 'update'])->name('settings.update');
+
+    // Page Management
+    Route::resource('pages', \App\Http\Controllers\Admin\SitePageController::class)->except(['show']);
 });
 
 Route::middleware('auth')->group(function () {
