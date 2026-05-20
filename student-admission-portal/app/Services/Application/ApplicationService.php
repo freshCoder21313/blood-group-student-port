@@ -198,9 +198,12 @@ class ApplicationService
      */
     public function updateStatus(Application $application, string $status, ?string $notes = null, string $source = 'system', ?string $studentCode = null): Application
     {
-        if ($application->status !== 'pending_approval') {
+        $allowedSourceStatuses = ['pending_approval', 'request_info'];
+
+        if (!in_array($application->status, $allowedSourceStatuses, true)) {
              throw new \Exception("Application status cannot be updated. Current status: {$application->status}");
         }
+
 
         return DB::transaction(function () use ($application, $status, $notes, $source, $studentCode) {
             $oldStatus = $application->status;

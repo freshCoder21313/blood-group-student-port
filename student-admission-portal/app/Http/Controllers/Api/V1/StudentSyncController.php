@@ -96,14 +96,18 @@ class StudentSyncController extends Controller
         ]);
 
         try {
+            // Only update fields present in the payload to avoid overwriting existing data with null
+            $updateData = array_filter([
+                'grades'   => $validated['grades'] ?? null,
+                'schedule' => $validated['schedule'] ?? null,
+                'fees'     => $validated['fees'] ?? null,
+            ], fn ($value) => $value !== null);
+
             $record = \App\Models\StudentAcademicRecord::updateOrCreate(
                 ['student_code' => $studentCode],
-                [
-                    'grades' => $validated['grades'] ?? null,
-                    'schedule' => $validated['schedule'] ?? null,
-                    'fees' => $validated['fees'] ?? null,
-                ]
+                $updateData
             );
+
 
             return response()->json([
                 'success' => true,

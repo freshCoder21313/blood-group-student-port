@@ -64,6 +64,7 @@ class DashboardController extends Controller
 
         $application = $this->applicationService->createDraft($request->user()->id);
 
-        return redirect()->route('application.personal', $application);
+        return redirect()->route('application.wizard', $application);
+
     }
 }

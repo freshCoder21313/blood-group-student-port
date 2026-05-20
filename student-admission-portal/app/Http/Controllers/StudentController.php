@@ -17,9 +17,15 @@ class StudentController extends Controller
 
     private function getStudentCode(Request $request): string
     {
-        // Fallback to STU001 for MVP/Mock purposes if no student record exists
-        return $request->user()->student?->student_code ?? 'STU001';
+        $studentCode = $request->user()->student?->student_code;
+
+        if (!$studentCode) {
+            abort(403, 'Your application has not been approved yet. Academic data is unavailable.');
+        }
+
+        return $studentCode;
     }
+
 
     public function grades(Request $request): View
     {
