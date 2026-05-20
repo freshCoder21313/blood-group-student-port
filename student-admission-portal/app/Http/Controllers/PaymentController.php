@@ -6,6 +6,8 @@ use App\Models\Application;
 use App\Models\Payment;
 use App\Services\Application\ApplicationService;
 use App\Services\Payment\MpesaService;
+use App\Services\Payment\MpesaPaymentProcessor;
+use App\Services\Payment\ManualPaymentProcessor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -23,32 +25,18 @@ class PaymentController extends Controller
             'phone_number' => ['required', 'string', 'regex:/^(07|01|2547|2541)[0-9]{8}$/'],
         ]);
 
-        $phoneNumber = $request->phone_number;
-        $amount = $this->applicationService->getAdmissionFee(); 
-        $reference = 'APP-' . $application->application_number;  
-
-        // Initiate STK Push
-        $response = $this->mpesaService->initiateStkPush($phoneNumber, $amount, $reference);
-
-        $checkoutRequestId = $response['CheckoutRequestID'] ?? null;
-        $merchantRequestId = $response['MerchantRequestID'] ?? null;
-
-        if ($checkoutRequestId) {
-             Payment::create([
-                'application_id' => $application->id,
-                'checkout_request_id' => $checkoutRequestId,
-                'merchant_request_id' => $merchantRequestId,
-                'transaction_code' => null,
-                'phone_number' => $phoneNumber,
-                'amount' => $amount,
-                'status' => 'pending',
-                'result_desc' => 'Initiated',
+        try {
+            $processor = new MpesaPaymentProcessor($this->mpesaService);
+            $processor->process($application, [
+                'phone_number' => $request->phone_number,
+                'amount' => $this->applicationService->getAdmissionFee(),
             ]);
 
             return response()->json(['success' => true, 'message' => 'Payment initiated']);
+        } catch (\Exception $e) {
+            Log::error('M-Pesa payment initiation failed', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
-
-        return response()->json(['success' => false, 'message' => 'Failed to initiate payment'], 500);
     }
     
     public function storeManual(Request $request, Application $application)
@@ -58,12 +46,19 @@ class PaymentController extends Controller
             'proof_document' => ['required', 'file', 'mimes:jpg,png,pdf', 'max:5120'],
         ]);
 
-        $data = $request->only(['transaction_code', 'proof_document']);
-        $data['amount'] = $this->applicationService->getAdmissionFee(); 
+        try {
+            $processor = new ManualPaymentProcessor();
+            $processor->process($application, [
+                'transaction_code' => $request->transaction_code,
+                'proof_document' => $request->file('proof_document'),
+                'amount' => $this->applicationService->getAdmissionFee(),
+            ]);
 
-        $this->mpesaService->recordManualPayment($application, $data);
-
-        return redirect()->route('application.payment', $application);
+            return redirect()->route('application.payment', $application);
+        } catch (\Exception $e) {
+            Log::error('Manual payment submission failed', ['error' => $e->getMessage()]);
+            return redirect()->back()->withErrors(['proof_document' => 'Failed to process manual payment: ' . $e->getMessage()]);
+        }
     }
 
     public function checkStatus(Application $application)

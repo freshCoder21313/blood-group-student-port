@@ -37,6 +37,10 @@ Route::prefix('v1')->middleware(['api'])->group(function () {
 
     Route::middleware(\App\Http\Middleware\ApiAuthentication::class)->group(function () {
         
+        // POST /api/v1/students/{student_code}/academic-records
+        Route::post('/students/{student_code}/academic-records', [\App\Http\Controllers\Api\V1\StudentSyncController::class, 'updateAcademicRecords'])
+            ->name('api.students.academic-records.update');
+
         // ═══════════════════════════════════════════════════════════════
         // STUDENTS - Get list of students/applications
         // ═══════════════════════════════════════════════════════════════

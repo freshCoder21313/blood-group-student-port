@@ -83,4 +83,38 @@ class StudentSyncController extends Controller
             return response()->json(['message' => $e->getMessage()], 400);
         }
     }
+
+    /**
+     * POST /api/v1/students/{student_code}/academic-records
+     */
+    public function updateAcademicRecords(Request $request, string $studentCode): JsonResponse
+    {
+        $validated = $request->validate([
+            'grades' => 'nullable|array',
+            'schedule' => 'nullable|array',
+            'fees' => 'nullable|array',
+        ]);
+
+        try {
+            $record = \App\Models\StudentAcademicRecord::updateOrCreate(
+                ['student_code' => $studentCode],
+                [
+                    'grades' => $validated['grades'] ?? null,
+                    'schedule' => $validated['schedule'] ?? null,
+                    'fees' => $validated['fees'] ?? null,
+                ]
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Academic records updated successfully',
+                'student_code' => $studentCode,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 400);
+        }
+    }
 }

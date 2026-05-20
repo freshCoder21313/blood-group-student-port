@@ -24,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
                     return new \App\Services\Student\AspStudentInformationService();
                 }
 
+                if ($driver === 'database' || $driver === 'cache') {
+                    return new \App\Services\Student\DatabaseStudentInformationService();
+                }
+
                 throw new \RuntimeException("Unknown Student Information Driver: {$driver}");
             }
         );
