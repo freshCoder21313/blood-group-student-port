@@ -2,18 +2,15 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
-use App\Services\Auth\OtpService;
-use App\Services\Payment\MpesaService;
-use App\Services\Notifications\SmsChannel;
-use App\Services\Notifications\EmailChannel;
 use App\Models\Otp;
 use App\Models\Payment;
-use App\Models\Application;
-use Illuminate\Support\Facades\Http;
+use App\Services\Auth\OtpService;
+use App\Services\Notifications\EmailChannel;
+use App\Services\Notifications\SmsChannel;
+use App\Services\Payment\MpesaService;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Cache;
 use Mockery;
+use Tests\TestCase;
 
 class ServicesTest extends TestCase
 {
@@ -29,21 +26,21 @@ class ServicesTest extends TestCase
         // Mock Dependencies
         $smsMock = Mockery::mock(SmsChannel::class);
         $smsMock->shouldReceive('send')->once()->andReturn(true);
-        
+
         $emailMock = Mockery::mock(EmailChannel::class);
 
         // Mock Static Facades & Models
-        // Note: Mocking Eloquent models statically is hard without DB, 
+        // Note: Mocking Eloquent models statically is hard without DB,
         // so we focus on the Service logic flow here.
-        
+
         Config::set('services.sms.provider', 'twilio');
-        
+
         // Instantiate Service
         $service = new OtpService($smsMock, $emailMock);
 
-        // We can't easily test the full generate() method because it calls Otp::create 
+        // We can't easily test the full generate() method because it calls Otp::create
         // which requires DB. But we can verify the class structure and basic logic exist.
-        
+
         $this->assertInstanceOf(OtpService::class, $service);
     }
 
@@ -53,11 +50,11 @@ class ServicesTest extends TestCase
         // Mock Payment Model retrieval
         // Since we can't mock the static Payment::where()->first() easily without DB,
         // we will test the logic parts that don't hit DB or refactor slightly.
-        
-        // Actually, for this environment without SQLite, standard Unit Tests are best 
+
+        // Actually, for this environment without SQLite, standard Unit Tests are best
         // restricted to non-DB logic.
-        
-        $service = new MpesaService();
+
+        $service = new MpesaService;
         $this->assertInstanceOf(MpesaService::class, $service);
     }
 
@@ -67,12 +64,12 @@ class ServicesTest extends TestCase
         $secret = 'test_secret';
         $timestamp = 1700000000;
         $payload = json_encode(['foo' => 'bar']);
-        
-        $expected = hash_hmac('sha256', $payload . $timestamp, $secret);
-        
+
+        $expected = hash_hmac('sha256', $payload.$timestamp, $secret);
+
         // Replicate logic from Middleware
-        $actual = hash_hmac('sha256', $payload . $timestamp, $secret);
-        
+        $actual = hash_hmac('sha256', $payload.$timestamp, $secret);
+
         $this->assertEquals($expected, $actual);
     }
 }

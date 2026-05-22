@@ -24,8 +24,8 @@ class ManualPaymentProcessor implements PaymentProcessorInterface
             ->where('status', Payment::STATUS_PENDING)
             ->first();
 
-        if (!$payment) {
-            $payment = new Payment();
+        if (! $payment) {
+            $payment = new Payment;
             $payment->application_id = $application->id;
         }
 

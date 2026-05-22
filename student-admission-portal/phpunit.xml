@@ -17,7 +17,7 @@
         </include>
     </source>
     <php>
-        <ini name="error_reporting" value="-1"/>
+        <ini name="error_reporting" value="E_ALL &amp; ~E_DEPRECATED"/>
         <env name="APP_ENV" value="testing"/>
         <env name="BLIND_INDEX_KEY" value="base64:EVhWC2VVBxkap/sx4Q9sSkLs2lLM3aPVeArNhzYURmU="/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>

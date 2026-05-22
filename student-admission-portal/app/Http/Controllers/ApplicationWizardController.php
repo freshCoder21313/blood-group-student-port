@@ -12,16 +12,15 @@ use App\Services\Application\ApplicationService;
 use App\Services\DocumentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\View\View;
 
 class ApplicationWizardController extends Controller
 {
     public function __construct(
         private ApplicationService $applicationService,
         private DocumentService $documentService
-    ) {
-    }
+    ) {}
 
     public function show(Application $application): View
     {
@@ -56,10 +55,11 @@ class ApplicationWizardController extends Controller
     private function savePersonal(Request $request, Application $application): RedirectResponse
     {
         // Hydrate request with route param to ensure rules() works correctly
-        $formRequest = new PersonalDetailsRequest();
+        $formRequest = new PersonalDetailsRequest;
         $formRequest->setRouteResolver(function () use ($application) {
             $route = request()->route();
             $route->setParameter('application', $application);
+
             return $route;
         });
 
@@ -76,10 +76,11 @@ class ApplicationWizardController extends Controller
 
     private function saveParent(Request $request, Application $application): RedirectResponse
     {
-        $formRequest = new ParentDetailsRequest();
+        $formRequest = new ParentDetailsRequest;
         $formRequest->setRouteResolver(function () use ($application) {
             $route = request()->route();
             $route->setParameter('application', $application);
+
             return $route;
         });
 
@@ -96,10 +97,11 @@ class ApplicationWizardController extends Controller
 
     private function saveProgram(Request $request, Application $application): RedirectResponse
     {
-        $formRequest = new ProgramSelectionRequest();
+        $formRequest = new ProgramSelectionRequest;
         $formRequest->setRouteResolver(function () use ($application) {
             $route = request()->route();
             $route->setParameter('application', $application);
+
             return $route;
         });
 
@@ -116,7 +118,7 @@ class ApplicationWizardController extends Controller
 
     private function saveDocuments(Request $request, Application $application): RedirectResponse
     {
-        $formRequest = new DocumentsUploadRequest();
+        $formRequest = new DocumentsUploadRequest;
         $validated = $request->validate($formRequest->rules());
 
         if ($request->hasFile('national_id')) {
@@ -135,6 +137,7 @@ class ApplicationWizardController extends Controller
             try {
                 // Mark step 4 as complete via service which validates existence of docs
                 $this->applicationService->saveStep($application, 4, [], true);
+
                 return redirect()->route('application.payment', $application);
             } catch (\Exception $e) {
                 return back()->withErrors(['error' => $e->getMessage()]);
@@ -144,6 +147,7 @@ class ApplicationWizardController extends Controller
         // Just save state without validation if not finishing
         // We pass empty data as documents are handled separately, but this triggers step record update
         $this->applicationService->saveStep($application, 4, [], false);
+
         return back()->with('status', 'Documents Saved');
     }
 }

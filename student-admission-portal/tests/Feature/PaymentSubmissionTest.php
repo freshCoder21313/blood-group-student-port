@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Application;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class PaymentSubmissionTest extends TestCase
@@ -21,7 +21,7 @@ class PaymentSubmissionTest extends TestCase
         $user = User::factory()->create(['status' => 'new']);
 
         // Ensure student record exists
-        if (!$user->student) {
+        if (! $user->student) {
             $user->student()->create();
             $user->refresh();
         }

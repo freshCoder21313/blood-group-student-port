@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use App\Models\User;
@@ -24,5 +25,5 @@ test('verified user can access protected route', function () {
 
     $response = $this->actingAs($user)->get('/dashboard');
 
-    $response->assertStatus(200); 
+    $response->assertStatus(200);
 });

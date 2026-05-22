@@ -2,7 +2,6 @@
 
 namespace App\Services\Notifications;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class SmsChannel
@@ -19,6 +18,7 @@ class SmsChannel
         // In local/testing environment, we log instead of sending to save costs
         if (app()->environment('local', 'testing')) {
             Log::info("Mock SMS sent to {$recipient}: {$code}");
+
             return true;
         }
 
@@ -32,6 +32,7 @@ class SmsChannel
     private function logOnly(string $recipient, string $code): bool
     {
         Log::info("SMS Service (Log Only) -> To: {$recipient}, Code: {$code}");
+
         return true;
     }
 
@@ -39,6 +40,7 @@ class SmsChannel
     {
         // Implementation placeholder for Twilio
         Log::info("Sending via Twilio to {$recipient}");
+
         return true;
     }
 
@@ -46,6 +48,7 @@ class SmsChannel
     {
         // Implementation placeholder for Africa's Talking
         Log::info("Sending via AfricasTalking to {$recipient}");
+
         return true;
     }
 }

@@ -10,14 +10,16 @@ use Illuminate\Support\Str;
 class DocumentStorageService
 {
     private string $disk;
+
     private array $allowedMimeTypes;
+
     private int $maxFileSize;
 
     public function __construct()
     {
         // Prioritize S3 in production, use public disk locally
         $this->disk = app()->environment('production') ? 's3' : 'public';
-        
+
         $this->allowedMimeTypes = [
             'image/jpeg',
             'image/png',
@@ -54,7 +56,7 @@ class DocumentStorageService
     {
         // If local/public disk
         if ($document->disk === 'public') {
-            return asset('storage/' . $document->file_path);
+            return asset('storage/'.$document->file_path);
         }
 
         // If S3, create presigned URL
@@ -67,12 +69,13 @@ class DocumentStorageService
     public function delete(Document $document): bool
     {
         Storage::disk($document->disk)->delete($document->file_path);
+
         return $document->delete();
     }
 
     private function validateFile(UploadedFile $file): void
     {
-        if (!in_array($file->getMimeType(), $this->allowedMimeTypes)) {
+        if (! in_array($file->getMimeType(), $this->allowedMimeTypes)) {
             throw new \Exception('File type not allowed. Accepted: JPG, PNG, PDF');
         }
 
@@ -85,6 +88,7 @@ class DocumentStorageService
     {
         $extension = $file->getClientOriginalExtension();
         $hash = Str::random(40);
+
         return "{$hash}.{$extension}";
     }
 }

@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Application;
 use App\Models\Payment;
 use App\Services\Application\ApplicationService;
-use App\Services\Payment\MpesaService;
-use App\Services\Payment\MpesaPaymentProcessor;
 use App\Services\Payment\ManualPaymentProcessor;
+use App\Services\Payment\MpesaPaymentProcessor;
+use App\Services\Payment\MpesaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -16,8 +16,7 @@ class PaymentController extends Controller
     public function __construct(
         protected MpesaService $mpesaService,
         protected ApplicationService $applicationService
-    ) {
-    }
+    ) {}
 
     public function store(Request $request, Application $application)
     {
@@ -35,10 +34,11 @@ class PaymentController extends Controller
             return response()->json(['success' => true, 'message' => 'Payment initiated']);
         } catch (\Exception $e) {
             Log::error('M-Pesa payment initiation failed', ['error' => $e->getMessage()]);
+
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
-    
+
     public function storeManual(Request $request, Application $application)
     {
         $request->validate([
@@ -47,7 +47,7 @@ class PaymentController extends Controller
         ]);
 
         try {
-            $processor = new ManualPaymentProcessor();
+            $processor = new ManualPaymentProcessor;
             $processor->process($application, [
                 'transaction_code' => $request->transaction_code,
                 'proof_document' => $request->file('proof_document'),
@@ -57,7 +57,8 @@ class PaymentController extends Controller
             return redirect()->route('application.payment', $application);
         } catch (\Exception $e) {
             Log::error('Manual payment submission failed', ['error' => $e->getMessage()]);
-            return redirect()->back()->withErrors(['proof_document' => 'Failed to process manual payment: ' . $e->getMessage()]);
+
+            return redirect()->back()->withErrors(['proof_document' => 'Failed to process manual payment: '.$e->getMessage()]);
         }
     }
 
@@ -67,11 +68,11 @@ class PaymentController extends Controller
         $payment = Payment::where('application_id', $application->id)
             ->latest()
             ->first();
-        
-        if (!$payment) {
+
+        if (! $payment) {
             return response()->json(['status' => 'none']);
         }
-        
+
         return response()->json(['status' => $payment->status]);
     }
 
@@ -85,7 +86,7 @@ class PaymentController extends Controller
 
     public function simulateCallback(Application $application)
     {
-        if (!app()->environment('local', 'testing')) {
+        if (! app()->environment('local', 'testing')) {
             abort(404);
         }
 
@@ -95,7 +96,7 @@ class PaymentController extends Controller
             ->latest()
             ->first();
 
-        if (!$payment) {
+        if (! $payment) {
             return response()->json(['message' => 'No pending payment found'], 404);
         }
 
@@ -110,13 +111,13 @@ class PaymentController extends Controller
                     'CallbackMetadata' => [
                         'Item' => [
                             ['Name' => 'Amount', 'Value' => $payment->amount],
-                            ['Name' => 'MpesaReceiptNumber', 'Value' => 'SIM' . strtoupper(uniqid())],
+                            ['Name' => 'MpesaReceiptNumber', 'Value' => 'SIM'.strtoupper(uniqid())],
                             ['Name' => 'TransactionDate', 'Value' => now()->format('YmdHis')],
                             ['Name' => 'PhoneNumber', 'Value' => $payment->phone_number],
-                        ]
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->mpesaService->processCallback($mockPayload);

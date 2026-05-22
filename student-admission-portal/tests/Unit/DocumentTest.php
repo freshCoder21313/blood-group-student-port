@@ -25,8 +25,8 @@ test('documents table has expected columns', function () {
 });
 
 test('document model exists and has fillable attributes', function () {
-    $document = new Document();
-    
+    $document = new Document;
+
     $expectedFillable = [
         'application_id',
         'type',

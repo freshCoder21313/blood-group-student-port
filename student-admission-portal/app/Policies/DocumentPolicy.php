@@ -12,7 +12,7 @@ class DocumentPolicy
     public function view(User $user, Document $document): bool
     {
         $user->loadMissing('student');
-        
+
         if (! $user->student) {
             return false;
         }

@@ -12,7 +12,7 @@ class DocumentFactory extends Factory
         return [
             'application_id' => Application::factory(),
             'type' => $this->faker->randomElement(['passport', 'result_slip']),
-            'path' => 'documents/' . $this->faker->uuid . '.pdf',
+            'path' => 'documents/'.$this->faker->uuid.'.pdf',
             'original_name' => 'document.pdf',
             'mime_type' => 'application/pdf',
             'size' => $this->faker->numberBetween(1024, 10240),

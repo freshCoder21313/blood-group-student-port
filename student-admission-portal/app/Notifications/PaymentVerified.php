@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -37,12 +36,12 @@ class PaymentVerified extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->subject('Payment Verification Successful')
-                    ->line('Your payment has been manually verified.')
-                    ->line('Transaction Code: ' . $this->payment->transaction_code)
-                    ->line('Your application has been forwarded for final approval.')
-                    ->action('View Application Status', route('dashboard'))
-                    ->line('Thank you for choosing our institution.');
+            ->subject('Payment Verification Successful')
+            ->line('Your payment has been manually verified.')
+            ->line('Transaction Code: '.$this->payment->transaction_code)
+            ->line('Your application has been forwarded for final approval.')
+            ->action('View Application Status', route('dashboard'))
+            ->line('Thank you for choosing our institution.');
     }
 
     /**

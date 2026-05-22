@@ -6,7 +6,7 @@ use App\Events\ApplicationSubmitted;
 use App\Models\Application;
 
 test('application submitted event can be instantiated', function () {
-    $application = new Application();
+    $application = new Application;
     $event = new ApplicationSubmitted($application);
 
     expect($event)->toBeInstanceOf(ApplicationSubmitted::class);

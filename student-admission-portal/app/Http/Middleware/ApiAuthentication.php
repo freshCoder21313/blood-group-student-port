@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\ApiLog;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Models\ApiLog;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiAuthentication
@@ -23,7 +23,7 @@ class ApiAuthentication
             $timestamp = $request->header('X-Timestamp');
             $signature = $request->header('X-Signature');
 
-            if (!$apiKey || !$timestamp || !$signature) {
+            if (! $apiKey || ! $timestamp || ! $signature) {
                 return $this->unauthorizedResponse('Missing authentication headers', $requestId);
             }
 
@@ -35,7 +35,7 @@ class ApiAuthentication
             // Validate timestamp (prevent replay attacks)
             $timestampInt = (int) $timestamp;
             $currentTime = time();
-            
+
             if (abs($currentTime - $timestampInt) > self::TIMESTAMP_TOLERANCE_SECONDS) {
                 return $this->unauthorizedResponse('Request timestamp expired', $requestId);
             }
@@ -44,11 +44,11 @@ class ApiAuthentication
             $payload = $request->getContent();
             $expectedSignature = hash_hmac(
                 'sha256',
-                $payload . $timestamp,
+                $payload.$timestamp,
                 config('services.asp.api_secret')
             );
 
-            if (!hash_equals($expectedSignature, $signature)) {
+            if (! hash_equals($expectedSignature, $signature)) {
                 return $this->unauthorizedResponse('Invalid signature', $requestId);
             }
 
@@ -66,7 +66,7 @@ class ApiAuthentication
         } catch (\Exception $e) {
             Log::error('API Authentication error', [
                 'request_id' => $requestId,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return $this->unauthorizedResponse('Authentication error', $requestId);
@@ -78,13 +78,13 @@ class ApiAuthentication
         Log::warning('API authentication failed', [
             'request_id' => $requestId,
             'message' => $message,
-            'ip' => request()->ip()
+            'ip' => request()->ip(),
         ]);
 
         return response()->json([
             'success' => false,
             'message' => $message,
-            'request_id' => $requestId
+            'request_id' => $requestId,
         ], 401);
     }
 

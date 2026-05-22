@@ -2,13 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\Application;
-use App\Models\Student;
 use App\Models\User;
 use App\Services\Application\ApplicationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class StudentCanUpdateParentDetailsTest extends TestCase
 {
@@ -20,7 +18,7 @@ class StudentCanUpdateParentDetailsTest extends TestCase
         $user = User::factory()->create();
         $service = app(ApplicationService::class);
         $application = $service->createDraft($user->id);
-        
+
         // Advance to step 2 manually or logic allows update regardless?
         // Service updates step if stepNumber >= current_step.
         // So we can update step 2 directly.
@@ -31,7 +29,7 @@ class StudentCanUpdateParentDetailsTest extends TestCase
             'relationship' => 'Father',
             'guardian_phone' => '0712345678',
             'guardian_email' => 'parent@test.com',
-            'action' => 'save'
+            'action' => 'save',
         ];
 
         $response = $this->actingAs($user)

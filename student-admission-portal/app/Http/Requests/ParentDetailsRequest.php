@@ -25,13 +25,13 @@ class ParentDetailsRequest extends FormRequest
 
         if ($isDraft) {
             foreach ($rules as $field => $fieldRules) {
-                if (!in_array('nullable', $fieldRules)) {
+                if (! in_array('nullable', $fieldRules)) {
                     array_unshift($rules[$field], 'nullable');
                 }
             }
         } else {
             foreach ($rules as $field => $fieldRules) {
-                if (!in_array('nullable', $fieldRules)) {
+                if (! in_array('nullable', $fieldRules)) {
                     array_unshift($rules[$field], 'required');
                 }
             }

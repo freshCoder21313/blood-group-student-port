@@ -16,7 +16,7 @@ return new class extends Migration
             $table->renameColumn('full_name', 'guardian_name');
             $table->renameColumn('phone', 'guardian_phone');
             $table->renameColumn('email', 'guardian_email');
-            
+
             // Drop unused columns to match story spec strictly
             $table->dropColumn(['occupation', 'address']);
         });
@@ -32,7 +32,7 @@ return new class extends Migration
             $table->renameColumn('guardian_name', 'full_name');
             $table->renameColumn('guardian_phone', 'phone');
             $table->renameColumn('guardian_email', 'email');
-            
+
             // Restore columns
             $table->string('occupation')->nullable();
             $table->text('address')->nullable();

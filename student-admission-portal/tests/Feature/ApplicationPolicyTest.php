@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\User;
 use App\Models\Application;
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -34,7 +34,7 @@ test('user cannot update submitted application', function () {
     $student = Student::factory()->create(['user_id' => $user->id]);
     $application = Application::factory()->create([
         'student_id' => $student->id,
-        'status' => 'pending_approval'
+        'status' => 'pending_approval',
     ]);
 
     expect($user->can('update', $application))->toBeFalse();

@@ -16,7 +16,7 @@ class PersonalDetailsRequest extends FormRequest
     {
         $application = $this->route('application');
         // If application is not draft, we might enforce strictness, but for now mostly draft.
-        
+
         $isDraft = $application ? $application->status === 'draft' : true;
 
         $rules = [
@@ -38,14 +38,14 @@ class PersonalDetailsRequest extends FormRequest
         if ($isDraft) {
             foreach ($rules as $field => $fieldRules) {
                 // Ensure nullable is present
-                if (!in_array('nullable', $fieldRules)) {
+                if (! in_array('nullable', $fieldRules)) {
                     array_unshift($rules[$field], 'nullable');
                 }
             }
         } else {
             // If not draft (e.g. somehow editing after submit, or if we use this for strict validation), make them required
             foreach ($rules as $field => $fieldRules) {
-                if (!in_array('nullable', $fieldRules)) {
+                if (! in_array('nullable', $fieldRules)) {
                     array_unshift($rules[$field], 'required');
                 }
             }

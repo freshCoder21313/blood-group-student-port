@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Application;
 use App\Models\Document;
 use App\Services\Storage\DocumentStorageService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class DocumentController extends Controller
 {
@@ -21,14 +21,14 @@ class DocumentController extends Controller
     public function index(int $applicationId): JsonResponse
     {
         $application = Application::with('documents')->findOrFail($applicationId);
-        
+
         $documents = $application->documents->map(function ($doc) {
             return [
                 'id' => $doc->id,
                 'type' => $doc->document_type,
                 'original_name' => $doc->original_name,
                 'url' => $this->storageService->getTemporaryUrl($doc),
-                'uploaded_at' => $doc->uploaded_at
+                'uploaded_at' => $doc->uploaded_at,
             ];
         });
 
@@ -43,7 +43,7 @@ class DocumentController extends Controller
         $request->validate([
             'application_id' => 'required|exists:applications,id',
             'type' => 'required|string',
-            'file' => 'required|file|mimes:jpeg,png,pdf|max:10240'
+            'file' => 'required|file|mimes:jpeg,png,pdf|max:10240',
         ]);
 
         try {
@@ -58,13 +58,13 @@ class DocumentController extends Controller
                 'message' => 'File uploaded successfully',
                 'data' => [
                     'id' => $document->id,
-                    'url' => $this->storageService->getTemporaryUrl($document)
-                ]
+                    'url' => $this->storageService->getTemporaryUrl($document),
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 400);
         }
     }
@@ -76,7 +76,7 @@ class DocumentController extends Controller
     {
         $document = Document::findOrFail($id);
         $url = $this->storageService->getTemporaryUrl($document);
-        
+
         return response()->json(['url' => $url]);
     }
 }

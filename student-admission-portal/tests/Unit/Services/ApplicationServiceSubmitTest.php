@@ -3,9 +3,7 @@
 declare(strict_types=1);
 
 use App\Events\ApplicationSubmitted;
-use App\Models\Application;
 use App\Models\Payment;
-use App\Models\Student;
 use App\Models\User;
 use App\Services\Application\ApplicationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,19 +14,19 @@ uses(TestCase::class, RefreshDatabase::class);
 
 test('submit dispatches ApplicationSubmitted event', function () {
     Event::fake();
-    
+
     $user = User::factory()->create();
-    $service = new ApplicationService();
+    $service = new ApplicationService;
     $application = $service->createDraft($user->id);
-    
+
     // Mock steps completion
     $application->steps()->update(['is_completed' => true]);
-    
+
     // Mock payment
     Payment::factory()->create([
         'application_id' => $application->id,
         'status' => 'completed',
-        'amount' => 1000
+        'amount' => 1000,
     ]);
 
     // Setup required data for validation
@@ -43,14 +41,14 @@ test('submit dispatches ApplicationSubmitted event', function () {
         'nationality' => 'Kenyan',
         'national_id' => '12345678',
     ]);
-    
+
     $application->student->parentInfo()->create([
         'guardian_name' => 'Jane Doe',
         'guardian_phone' => '0700000000',
         'relationship' => 'Parent',
     ]);
-    
+
     $service->submit($application);
-    
+
     Event::assertDispatched(ApplicationSubmitted::class);
 });

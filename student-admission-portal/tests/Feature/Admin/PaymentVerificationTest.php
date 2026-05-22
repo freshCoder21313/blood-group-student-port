@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\User;
-use App\Models\Payment;
 use App\Models\Application;
+use App\Models\Payment;
+use App\Models\User;
 
 it('allows authenticated users to access payment verification page', function () {
     $user = User::factory()->create();
@@ -15,7 +15,7 @@ it('allows authenticated users to access payment verification page', function ()
 it('displays pending verification payments', function () {
     $user = User::factory()->create();
     $application = Application::factory()->create();
-    
+
     $pendingPayment = Payment::factory()->create([
         'application_id' => $application->id,
         'status' => Payment::STATUS_PENDING_VERIFICATION,
@@ -26,10 +26,10 @@ it('displays pending verification payments', function () {
 
     $otherPayment = Payment::factory()->create([
         'status' => Payment::STATUS_COMPLETED,
-        'transaction_code' => 'OTHERCODE456'
+        'transaction_code' => 'OTHERCODE456',
     ]);
 
-    $response = $this->actingAs($user)->get('/admin/payments?status=' . Payment::STATUS_PENDING_VERIFICATION);
+    $response = $this->actingAs($user)->get('/admin/payments?status='.Payment::STATUS_PENDING_VERIFICATION);
 
     $response->assertStatus(200);
     $response->assertSee('TESTCODE123');
@@ -83,9 +83,9 @@ it('can approve a payment', function () {
     // Notification::assertSentTo($studentUser, PaymentVerified::class);
 });
 
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\PaymentVerified; // Not used in test yet but might be in impl
 use App\Notifications\PaymentRejected;
+use App\Notifications\PaymentVerified; // Not used in test yet but might be in impl
+use Illuminate\Support\Facades\Notification;
 
 it('can reject a payment', function () {
     Notification::fake();
@@ -94,7 +94,7 @@ it('can reject a payment', function () {
     $studentUser = User::factory()->create();
     $student = \App\Models\Student::factory()->create(['user_id' => $studentUser->id]);
     $application = Application::factory()->create(['student_id' => $student->id]);
-    
+
     $payment = Payment::factory()->create([
         'application_id' => $application->id,
         'status' => Payment::STATUS_PENDING_VERIFICATION,
@@ -107,7 +107,7 @@ it('can reject a payment', function () {
         'id' => $payment->id,
         'status' => Payment::STATUS_FAILED,
     ]);
-    
+
     // Check application status reverted to draft
     $this->assertDatabaseHas('applications', [
         'id' => $application->id,

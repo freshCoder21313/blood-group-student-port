@@ -7,7 +7,6 @@ use App\Models\Student;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class StudentSyncControllerTest extends TestCase
@@ -27,11 +26,11 @@ class StudentSyncControllerTest extends TestCase
         $student = Student::factory()->create(['user_id' => $user->id]);
         $app = Application::factory()->create([
             'student_id' => $student->id,
-            'status' => 'pending_approval'
+            'status' => 'pending_approval',
         ]);
 
         $response = $this->getJson('/api/v1/students?status=pending', [
-            'X-API-KEY' => 'test-api-key'
+            'X-API-KEY' => 'test-api-key',
         ]);
 
         $response->assertStatus(200)
@@ -42,7 +41,7 @@ class StudentSyncControllerTest extends TestCase
     public function test_list_pending_students_unauthorized()
     {
         $response = $this->getJson('/api/v1/students?status=pending', [
-            'X-API-KEY' => 'wrong-key'
+            'X-API-KEY' => 'wrong-key',
         ]);
 
         $response->assertStatus(401);
@@ -54,28 +53,28 @@ class StudentSyncControllerTest extends TestCase
         $student = Student::factory()->create(['user_id' => $user->id]);
         $app = Application::factory()->create([
             'student_id' => $student->id,
-            'status' => 'pending_approval'
+            'status' => 'pending_approval',
         ]);
 
         $response = $this->postJson('/api/v1/update-status', [
             'application_id' => $app->id,
             'status' => 'approved',
             'student_code' => 'STU-2024-001',
-            'note' => 'Approved via API'
+            'note' => 'Approved via API',
         ], [
-            'X-API-KEY' => 'test-api-key'
+            'X-API-KEY' => 'test-api-key',
         ]);
 
         $response->assertStatus(200);
 
         $this->assertDatabaseHas('applications', [
             'id' => $app->id,
-            'status' => 'approved'
+            'status' => 'approved',
         ]);
 
         $this->assertDatabaseHas('students', [
             'id' => $student->id,
-            'student_code' => 'STU-2024-001'
+            'student_code' => 'STU-2024-001',
         ]);
     }
 }

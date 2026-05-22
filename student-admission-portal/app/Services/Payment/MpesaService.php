@@ -2,21 +2,25 @@
 
 namespace App\Services\Payment;
 
+use App\Models\Application;
+use App\Models\Payment;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
-use Carbon\Carbon;
-use App\Models\Payment;
-use App\Models\Application;
-use App\Services\Payment\ManualPaymentProcessor;
 
 class MpesaService
 {
     private string $consumerKey;
+
     private string $consumerSecret;
+
     private string $shortcode;
+
     private string $passkey;
+
     private string $callbackUrl;
+
     private string $baseUrl;
 
     public function __construct()
@@ -34,10 +38,11 @@ class MpesaService
     public function initiateStkPush(string $phoneNumber, float $amount, string $reference)
     {
         if (empty($this->consumerKey)) {
-            Log::warning("M-Pesa keys missing. Returning mock success.");
+            Log::warning('M-Pesa keys missing. Returning mock success.');
+
             return [
-                'MerchantRequestID' => 'MOCK_' . uniqid(),
-                'CheckoutRequestID' => 'MOCK_' . uniqid(),
+                'MerchantRequestID' => 'MOCK_'.uniqid(),
+                'CheckoutRequestID' => 'MOCK_'.uniqid(),
                 'ResponseCode' => '0',
                 'ResponseDescription' => 'Success (Mock)',
                 'CustomerMessage' => 'Success (Mock)',
@@ -47,7 +52,7 @@ class MpesaService
         try {
             $accessToken = $this->getAccessToken();
             $timestamp = Carbon::now()->format('YmdHis');
-            $password = base64_encode($this->shortcode . $this->passkey . $timestamp);
+            $password = base64_encode($this->shortcode.$this->passkey.$timestamp);
             $formattedPhone = $this->formatPhoneNumber($phoneNumber);
 
             $response = Http::withToken($accessToken)
@@ -62,12 +67,12 @@ class MpesaService
                     'PhoneNumber' => $formattedPhone,
                     'CallBackURL' => $this->callbackUrl,
                     'AccountReference' => $reference,
-                    'TransactionDesc' => 'Payment ' . $reference,
+                    'TransactionDesc' => 'Payment '.$reference,
                 ]);
 
             $result = $response->json();
-            
-            if (!$response->successful()) {
+
+            if (! $response->successful()) {
                 Log::error('M-Pesa STK Push Failed', $result);
                 // We could throw exception here, but returning result allows controller to handle
             }
@@ -75,7 +80,7 @@ class MpesaService
             return $result;
 
         } catch (\Exception $e) {
-            Log::error('M-Pesa STK Push error: ' . $e->getMessage());
+            Log::error('M-Pesa STK Push error: '.$e->getMessage());
             throw $e;
         }
     }
@@ -84,8 +89,9 @@ class MpesaService
     {
         $body = $payload['Body']['stkCallback'] ?? null;
 
-        if (!$body) {
+        if (! $body) {
             Log::error('Invalid M-Pesa callback structure');
+
             return;
         }
 
@@ -95,22 +101,24 @@ class MpesaService
         // Find payment by checkout_request_id
         $payment = Payment::where('checkout_request_id', $checkoutRequestId)->first();
 
-        if (!$payment) {
+        if (! $payment) {
             Log::warning("Payment not found for Callback CheckoutRequestID: $checkoutRequestId");
+
             return;
         }
 
         if ($resultCode == 0) {
             $metadata = collect($body['CallbackMetadata']['Item'] ?? [])->pluck('Value', 'Name')->toArray();
-            
+
             $receiptNumber = $metadata['MpesaReceiptNumber'] ?? null;
-            
-            if (!$receiptNumber) {
-                Log::error("M-Pesa Success Callback missing Receipt Number", $body);
+
+            if (! $receiptNumber) {
+                Log::error('M-Pesa Success Callback missing Receipt Number', $body);
                 $payment->update([
                     'status' => 'failed',
-                    'result_desc' => 'Missing Receipt Number in Success Callback'
+                    'result_desc' => 'Missing Receipt Number in Success Callback',
                 ]);
+
                 return;
             }
 
@@ -122,31 +130,32 @@ class MpesaService
                 'result_desc' => 'Success',
                 'manual_submission' => false, // Verified electronically, clear manual flag
             ]);
-            
-            // Application status update removed. 
+
+            // Application status update removed.
             // Application remains in 'draft' until user manually submits (Story 3.3).
 
         } else {
             $payment->update([
                 'status' => 'failed',
-                'result_desc' => $body['ResultDesc'] ?? 'Unknown error'
+                'result_desc' => $body['ResultDesc'] ?? 'Unknown error',
             ]);
         }
     }
 
     public function recordManualPayment(Application $application, array $data): Payment
     {
-        $processor = new ManualPaymentProcessor();
+        $processor = new ManualPaymentProcessor;
+
         return $processor->process($application, $data);
     }
 
     private function getAccessToken(): string
     {
         return Cache::remember('mpesa_access_token', 3000, function () {
-            $credentials = base64_encode($this->consumerKey . ':' . $this->consumerSecret);
-            $response = Http::withHeaders(['Authorization' => 'Basic ' . $credentials])
+            $credentials = base64_encode($this->consumerKey.':'.$this->consumerSecret);
+            $response = Http::withHeaders(['Authorization' => 'Basic '.$credentials])
                 ->get("{$this->baseUrl}/oauth/v1/generate?grant_type=client_credentials");
-            
+
             return $response->json('access_token');
         });
     }
@@ -154,9 +163,13 @@ class MpesaService
     private function formatPhoneNumber(string $phone): string
     {
         $phone = preg_replace('/[^0-9]/', '', $phone);
-        if (str_starts_with($phone, '0')) return '254' . substr($phone, 1);
-        if (str_starts_with($phone, '+')) return substr($phone, 1);
+        if (str_starts_with($phone, '0')) {
+            return '254'.substr($phone, 1);
+        }
+        if (str_starts_with($phone, '+')) {
+            return substr($phone, 1);
+        }
+
         return $phone;
     }
 }
-

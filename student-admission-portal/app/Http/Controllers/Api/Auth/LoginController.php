@@ -28,7 +28,7 @@ class LoginController extends Controller
 
         // Optional: Check if user is active
         if ($user->status === 'inactive') {
-             return response()->json(['message' => 'Account is locked.'], 403);
+            return response()->json(['message' => 'Account is locked.'], 403);
         }
 
         // Create token
@@ -41,7 +41,7 @@ class LoginController extends Controller
                 'user' => $user->load('student'),
                 'token' => $token,
                 'token_type' => 'Bearer',
-            ]
+            ],
         ]);
     }
 }

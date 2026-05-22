@@ -15,15 +15,15 @@ class DocumentService
     {
         // Remove existing document of same type if exists
         $existing = Document::where('application_id', $application->id)
-                            ->where('type', $type)
-                            ->first();
+            ->where('type', $type)
+            ->first();
 
         if ($existing) {
             $this->delete($existing);
         }
 
         $path = $file->store('documents', 'private');
-        
+
         return Document::create([
             'application_id' => $application->id,
             'type' => $type,

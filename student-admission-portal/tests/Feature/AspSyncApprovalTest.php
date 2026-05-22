@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Application;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -20,7 +20,7 @@ class AspSyncApprovalTest extends TestCase
         $user = User::factory()->create();
 
         // Ensure student record exists
-        if (!$user->student) {
+        if (! $user->student) {
             $user->student()->create();
             $user->refresh();
         }
@@ -35,7 +35,7 @@ class AspSyncApprovalTest extends TestCase
         $token = $user->createToken('test-token')->plainTextToken;
 
         // 2.1.2 Sync Pending
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$token)
             ->getJson('/api/v1/sync/pending');
 
         // Note: The actual endpoint might be different, checking routes...
@@ -51,7 +51,7 @@ class AspSyncApprovalTest extends TestCase
             'student_code' => 'STUDENT-2026-001',
         ];
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$token)
             ->postJson('/api/v1/sync/status', $approveData);
 
         $response->assertStatus(200);

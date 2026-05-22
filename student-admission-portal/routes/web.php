@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ApplicationFormController;
 use App\Http\Controllers\ApplicationWizardController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentController;
-use App\Http\Controllers\StudentController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -28,16 +28,16 @@ Route::middleware(['auth', 'otp.verified'])->group(function () {
     // New Wizard Routes
     Route::get('/application/{application}/wizard', [ApplicationWizardController::class, 'show'])->name('application.wizard');
     Route::post('/application/{application}/wizard/{step}', [ApplicationWizardController::class, 'save'])->name('application.wizard.save');
-    
+
     // Redirect old routes to wizard for seamless UX
     Route::get('/application/{application}/personal', function ($application) {
         return redirect()->route('application.wizard', ['application' => $application])->withFragment('#step-1');
     })->name('application.personal');
-    
+
     Route::get('/application/{application}/parent', function ($application) {
         return redirect()->route('application.wizard', ['application' => $application])->withFragment('#step-2');
     })->name('application.parent');
-    
+
     Route::get('/application/{application}/program', function ($application) {
         return redirect()->route('application.wizard', ['application' => $application])->withFragment('#step-3');
     })->name('application.program');
@@ -56,7 +56,7 @@ Route::middleware(['auth', 'otp.verified'])->group(function () {
     Route::post('/payment/{application}/initiate', [\App\Http\Controllers\PaymentController::class, 'store'])->name('payment.initiate');
     Route::post('/payment/{application}/manual', [\App\Http\Controllers\PaymentController::class, 'storeManual'])->name('payment.manual.store');
     Route::get('/payment/{application}/status', [\App\Http\Controllers\PaymentController::class, 'checkStatus'])->name('payment.status');
-    
+
     // Dev only route
     if (app()->environment('local', 'testing')) {
         Route::post('/payment/{application}/simulate-callback', [\App\Http\Controllers\PaymentController::class, 'simulateCallback'])->name('payment.simulate');

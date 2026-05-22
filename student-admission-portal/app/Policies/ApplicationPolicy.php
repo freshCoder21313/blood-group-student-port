@@ -6,7 +6,6 @@ namespace App\Policies;
 
 use App\Models\Application;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ApplicationPolicy
 {
@@ -40,7 +39,7 @@ class ApplicationPolicy
     public function update(User $user, Application $application): bool
     {
         return $user->id === $application->student->user_id
-            && !in_array($application->status, ['pending_approval', 'approved', 'submitted']);
+            && ! in_array($application->status, ['pending_approval', 'approved', 'submitted']);
     }
 
     /**

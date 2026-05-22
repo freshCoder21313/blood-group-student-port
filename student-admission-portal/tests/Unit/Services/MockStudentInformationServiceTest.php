@@ -3,7 +3,7 @@
 use App\Services\Student\MockStudentInformationService;
 
 test('getGrades returns expected structure and values', function () {
-    $service = new MockStudentInformationService();
+    $service = new MockStudentInformationService;
     $grades = $service->getGrades('S12345');
 
     expect($grades)->toBeArray()
@@ -14,7 +14,7 @@ test('getGrades returns expected structure and values', function () {
 });
 
 test('getSchedule returns expected structure and values', function () {
-    $service = new MockStudentInformationService();
+    $service = new MockStudentInformationService;
     $schedule = $service->getSchedule('S12345');
 
     expect($schedule)->toBeArray()
@@ -24,7 +24,7 @@ test('getSchedule returns expected structure and values', function () {
 });
 
 test('getFees returns expected structure including invoice history', function () {
-    $service = new MockStudentInformationService();
+    $service = new MockStudentInformationService;
     $fees = $service->getFees('S12345');
 
     expect($fees)->toBeArray()

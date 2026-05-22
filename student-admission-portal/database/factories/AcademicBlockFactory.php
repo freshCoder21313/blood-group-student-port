@@ -17,8 +17,8 @@ class AcademicBlockFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => 'Fall ' . $this->faker->year,
-            'code' => 'BLOCK-' . $this->faker->unique()->numberBetween(100, 999),
+            'name' => 'Fall '.$this->faker->year,
+            'code' => 'BLOCK-'.$this->faker->unique()->numberBetween(100, 999),
             'start_date' => $this->faker->date(),
             'end_date' => $this->faker->date(),
             'is_active' => true,

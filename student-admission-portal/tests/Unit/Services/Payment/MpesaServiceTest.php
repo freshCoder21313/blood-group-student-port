@@ -7,12 +7,12 @@ use Tests\TestCase;
 uses(TestCase::class);
 
 test('mpesa service can be instantiated', function () {
-    $service = new MpesaService();
+    $service = new MpesaService;
     expect($service)->toBeInstanceOf(MpesaService::class);
 });
 
 test('mpesa service has required methods', function () {
-    $service = new MpesaService();
+    $service = new MpesaService;
     expect(method_exists($service, 'initiateStkPush'))->toBeTrue();
     expect(method_exists($service, 'processCallback'))->toBeTrue();
 });
@@ -36,7 +36,7 @@ test('mpesa service initiates stk push', function () {
         ]),
     ]);
 
-    $service = new MpesaService();
+    $service = new MpesaService;
     $response = $service->initiateStkPush('254700000000', 100, 'TEST1234');
 
     expect($response)->toBeArray();

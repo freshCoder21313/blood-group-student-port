@@ -1,20 +1,24 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services\Auth;
 
 use App\Models\Otp;
 use App\Models\User;
-use App\Services\Notifications\SmsChannel;
 use App\Services\Notifications\EmailChannel;
-use Illuminate\Support\Facades\Cache;
+use App\Services\Notifications\SmsChannel;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class OtpService
 {
     private const OTP_LENGTH = 6;
+
     private const OTP_EXPIRY_MINUTES = 10;
+
     private const MAX_ATTEMPTS = 3;
+
     private const RESEND_COOLDOWN_SECONDS = 60;
 
     public function __construct(
@@ -59,7 +63,7 @@ class OtpService
         $this->emailChannel->send($user->email, $otpCode);
 
         // Send OTP via SMS if phone exists
-        if (!empty($user->phone)) {
+        if (! empty($user->phone)) {
             $this->smsChannel->send($user->phone, $otpCode);
         }
 
@@ -81,21 +85,22 @@ class OtpService
             ->latest()
             ->first();
 
-        if (!$otp) {
+        if (! $otp) {
             return [
                 'success' => false,
                 'message' => 'OTP expired or not found',
-                'code' => 'OTP_EXPIRED'
+                'code' => 'OTP_EXPIRED',
             ];
         }
 
         // Check max attempts
         if ($otp->attempts >= self::MAX_ATTEMPTS) {
             $otp->update(['verified_at' => Carbon::now()]); // Invalidate
+
             return [
                 'success' => false,
                 'message' => 'Maximum attempts exceeded',
-                'code' => 'MAX_ATTEMPTS_EXCEEDED'
+                'code' => 'MAX_ATTEMPTS_EXCEEDED',
             ];
         }
 
@@ -105,22 +110,23 @@ class OtpService
         // Verify code
         if ($otp->otp_code !== $code) {
             $remainingAttempts = self::MAX_ATTEMPTS - $otp->attempts;
+
             return [
                 'success' => false,
                 'message' => "Invalid OTP. {$remainingAttempts} attempts remaining",
-                'code' => 'INVALID_OTP'
+                'code' => 'INVALID_OTP',
             ];
         }
 
         // Mark as verified
         $otp->update([
-            'verified_at' => Carbon::now()
+            'verified_at' => Carbon::now(),
         ]);
 
         return [
             'success' => true,
             'message' => 'OTP verified successfully',
-            'code' => 'VERIFIED'
+            'code' => 'VERIFIED',
         ];
     }
 
@@ -138,11 +144,11 @@ class OtpService
     {
         $cacheKey = "otp_cooldown:{$identifier}";
         if (Cache::has($cacheKey)) {
-            // Throwing exception might be too harsh for UI, maybe return result? 
-            // But strict service pattern often throws. 
+            // Throwing exception might be too harsh for UI, maybe return result?
+            // But strict service pattern often throws.
             // Previous code threw Exception. I'll keep it or use a custom exception.
             // For now, keep as is.
-             throw new \Exception("Please wait before requesting new OTP.");
+            throw new \Exception('Please wait before requesting new OTP.');
         }
     }
 

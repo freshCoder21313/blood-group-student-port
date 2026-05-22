@@ -2,12 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\ApiLog;
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use App\Models\ApiLog;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
 class LogApiRequests
 {
@@ -21,10 +21,10 @@ class LogApiRequests
         $request->attributes->set('start_time', microtime(true));
         $requestId = (string) Str::uuid();
         $request->attributes->set('request_id', $requestId);
-        
+
         $response = $next($request);
         $response->headers->set('X-Request-ID', $requestId);
-        
+
         return $response;
     }
 
@@ -40,7 +40,7 @@ class LogApiRequests
         try {
             $this->logRequest($request, $response, $duration, $requestId);
         } catch (\Exception $e) {
-            Log::error('Failed to write api_log: ' . $e->getMessage());
+            Log::error('Failed to write api_log: '.$e->getMessage());
         }
     }
 
@@ -51,12 +51,12 @@ class LogApiRequests
 
         $jsonRequestBody = json_encode($requestBody);
         if (strlen($jsonRequestBody) > 10000) {
-            $jsonRequestBody = substr($jsonRequestBody, 0, 10000) . '... (truncated)';
+            $jsonRequestBody = substr($jsonRequestBody, 0, 10000).'... (truncated)';
         }
 
         $responseBody = $response->getContent();
         if (strlen($responseBody) > 10000) {
-            $responseBody = substr($responseBody, 0, 10000) . '... (truncated)';
+            $responseBody = substr($responseBody, 0, 10000).'... (truncated)';
         }
 
         ApiLog::create([
@@ -76,12 +76,12 @@ class LogApiRequests
     protected function maskPii(array &$data): void
     {
         $sensitive = [
-            'password', 
-            'password_confirmation', 
-            'national_id', 
-            'passport_number', 
-            'credit_card', 
-            'cvv'
+            'password',
+            'password_confirmation',
+            'national_id',
+            'passport_number',
+            'credit_card',
+            'cvv',
         ];
 
         foreach ($data as $key => &$value) {

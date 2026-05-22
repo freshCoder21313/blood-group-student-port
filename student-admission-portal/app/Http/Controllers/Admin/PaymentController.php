@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
-use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
@@ -15,11 +14,11 @@ class PaymentController extends Controller
         if ($search = request('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('transaction_code', 'like', "%{$search}%")
-                  ->orWhere('mpesa_receipt_number', 'like', "%{$search}%")
-                  ->orWhereHas('application.student', function ($subQ) use ($search) {
-                      $subQ->where('first_name', 'like', "%{$search}%")
-                           ->orWhere('last_name', 'like', "%{$search}%");
-                  });
+                    ->orWhere('mpesa_receipt_number', 'like', "%{$search}%")
+                    ->orWhereHas('application.student', function ($subQ) use ($search) {
+                        $subQ->where('first_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -62,7 +61,7 @@ class PaymentController extends Controller
                 $payment->application->student->user->notify(new \App\Notifications\PaymentVerified($payment));
             }
         }
-        
+
         return redirect()->route('admin.payments.index')->with('status', 'Payment approved successfully.');
     }
 
@@ -76,7 +75,7 @@ class PaymentController extends Controller
             $payment->application->update([
                 'status' => 'draft', // Revert to draft so they can fix it
             ]);
-            
+
             if ($payment->application->student && $payment->application->student->user) {
                 $payment->application->student->user->notify(new \App\Notifications\PaymentRejected($payment));
             }

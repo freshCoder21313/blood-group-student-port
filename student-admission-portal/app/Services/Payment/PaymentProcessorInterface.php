@@ -11,10 +11,6 @@ interface PaymentProcessorInterface
 {
     /**
      * Process the payment for the application.
-     *
-     * @param Application $application
-     * @param array $data
-     * @return Payment
      */
     public function process(Application $application, array $data): Payment;
 }

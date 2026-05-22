@@ -75,5 +75,4 @@ return [
         'driver' => env('STUDENT_INFO_DRIVER', 'mock'),
     ],
 
-
 ];

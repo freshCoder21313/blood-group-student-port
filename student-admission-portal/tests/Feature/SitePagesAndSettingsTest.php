@@ -71,7 +71,7 @@ test('footer displays copyright from site settings', function () {
 
     $response = $this->get('/');
 
-    $response->assertSee('© ' . date('Y') . ' TestSchool. All rights reserved.');
+    $response->assertSee('© '.date('Y').' TestSchool. All rights reserved.');
 });
 
 // ============================================================

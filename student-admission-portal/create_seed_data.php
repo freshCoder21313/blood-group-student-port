@@ -6,11 +6,11 @@ $app = require __DIR__.'/bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
-use App\Models\User;
-use App\Models\Student;
-use App\Models\Program;
 use App\Models\AcademicBlock;
 use App\Models\Application;
+use App\Models\Program;
+use App\Models\Student;
+use App\Models\User;
 use Illuminate\Support\Str;
 
 echo "--- START SEEDING ---\n";
@@ -20,9 +20,9 @@ try {
     $user = User::firstOrCreate(
         ['email' => 'parent@test.com'],
         [
-            'phone' => '+84909000111', 
+            'phone' => '+84909000111',
             'password' => bcrypt('password'),
-            'status' => 'active'
+            'status' => 'active',
         ]
     );
     echo "User ID: {$user->id}\n";
@@ -36,7 +36,7 @@ try {
             'date_of_birth' => '2005-01-01',
             'gender' => 'male',
             'address' => '123 Test Street',
-            'city' => 'Nairobi'
+            'city' => 'Nairobi',
         ]
     );
     echo "Student ID: {$student->id}\n";
@@ -56,7 +56,7 @@ try {
             'intake' => 'January',
             'start_date' => now(),
             'end_date' => now()->addMonths(6),
-            'is_active' => true
+            'is_active' => true,
         ]
     );
     echo "Block ID: {$block->id}\n";
@@ -67,17 +67,17 @@ try {
         [
             'program_id' => $program->id,
             'block_id' => $block->id,
-            'application_number' => 'APP-' . Str::upper(Str::random(8)),
+            'application_number' => 'APP-'.Str::upper(Str::random(8)),
             'status' => 'pending_payment',
             'current_step' => 4,
             'total_steps' => 4,
-            'submitted_at' => now()
+            'submitted_at' => now(),
         ]
     );
 
     echo "\n>>> SUCCESS! USE THIS APPLICATION ID: {$app->id} <<<\n";
 
 } catch (\Exception $e) {
-    echo "Error: " . $e->getMessage() . "\n";
+    echo 'Error: '.$e->getMessage()."\n";
     echo $e->getTraceAsString();
 }

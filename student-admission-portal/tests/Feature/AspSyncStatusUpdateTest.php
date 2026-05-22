@@ -2,8 +2,8 @@
 
 use App\Events\ApplicationStatusChanged;
 use App\Models\Application;
-use App\Models\User;
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Laravel\Sanctum\Sanctum;
@@ -49,7 +49,7 @@ test('successfully updates status and fires event', function () {
     );
 
     $application = Application::factory()->create([
-        'status' => 'pending_approval'
+        'status' => 'pending_approval',
     ]);
 
     $response = $this->postJson('/api/v1/sync/status', [
@@ -87,7 +87,7 @@ test('successfully updates status with comment', function () {
     );
 
     $application = Application::factory()->create([
-        'status' => 'pending_approval'
+        'status' => 'pending_approval',
     ]);
 
     $response = $this->postJson('/api/v1/sync/status', [
@@ -117,7 +117,7 @@ test('successfully updates status and sends email', function () {
     $student = Student::factory()->create(['user_id' => $user->id]);
     $application = Application::factory()->create([
         'student_id' => $student->id,
-        'status' => 'pending_approval'
+        'status' => 'pending_approval',
     ]);
 
     $response = $this->postJson('/api/v1/sync/status', [
@@ -139,7 +139,7 @@ test('fails to update status if not pending_approval', function () {
     );
 
     $application = Application::factory()->create([
-        'status' => 'rejected'
+        'status' => 'rejected',
     ]);
 
     $response = $this->postJson('/api/v1/sync/status', [

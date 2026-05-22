@@ -18,6 +18,7 @@ class AspSyncController extends Controller
     {
         $this->service = $service;
     }
+
     /**
      * Ping endpoint to verify connectivity and auth.
      */
@@ -60,7 +61,7 @@ class AspSyncController extends Controller
 
             return response()->json([
                 'message' => 'Status updated',
-                'data' => new ApplicationResource($updatedApplication)
+                'data' => new ApplicationResource($updatedApplication),
             ]);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 422);

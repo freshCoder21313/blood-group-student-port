@@ -4,8 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\IpUtils;
+use Symfony\Component\HttpFoundation\Response;
 
 class VerifyMpesaIp
 {
@@ -17,7 +17,7 @@ class VerifyMpesaIp
 
         $ip = $request->ip();
         $whitelistedIps = config('mpesa.whitelisted_ips', []);
-        
+
         if (IpUtils::checkIp($ip, $whitelistedIps)) {
             return $next($request);
         }

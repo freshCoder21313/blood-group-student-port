@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -14,9 +14,9 @@ return new class extends Migration
     {
         Schema::table('payments', function (Blueprint $table) {
             // Rename proof_image_path if it exists, otherwise add proof_document_path
-            if (Schema::hasColumn('payments', 'proof_image_path') && !Schema::hasColumn('payments', 'proof_document_path')) {
+            if (Schema::hasColumn('payments', 'proof_image_path') && ! Schema::hasColumn('payments', 'proof_document_path')) {
                 $table->renameColumn('proof_image_path', 'proof_document_path');
-            } elseif (!Schema::hasColumn('payments', 'proof_document_path')) {
+            } elseif (! Schema::hasColumn('payments', 'proof_document_path')) {
                 $table->string('proof_document_path')->nullable();
             }
         });
@@ -32,11 +32,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('payments', function (Blueprint $table) {
-            if (Schema::hasColumn('payments', 'proof_document_path') && !Schema::hasColumn('payments', 'proof_image_path')) {
+            if (Schema::hasColumn('payments', 'proof_document_path') && ! Schema::hasColumn('payments', 'proof_image_path')) {
                 $table->renameColumn('proof_document_path', 'proof_image_path');
             }
         });
-        
+
         // Remove pending_verification from enum
         DB::statement("ALTER TABLE payments MODIFY COLUMN status ENUM('pending', 'completed', 'failed', 'submitted', 'verified', 'rejected') DEFAULT 'pending'");
     }

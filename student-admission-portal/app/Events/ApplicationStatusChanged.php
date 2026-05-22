@@ -10,7 +10,5 @@ class ApplicationStatusChanged
 {
     use Dispatchable, SerializesModels;
 
-    public function __construct(public Application $application, public string $fromStatus, public string $toStatus)
-    {
-    }
+    public function __construct(public Application $application, public string $fromStatus, public string $toStatus) {}
 }

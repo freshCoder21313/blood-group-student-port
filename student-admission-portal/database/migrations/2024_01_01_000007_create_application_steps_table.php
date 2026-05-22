@@ -17,7 +17,7 @@ return new class extends Migration
             $table->boolean('is_completed')->default(false);
             $table->timestamp('completed_at')->nullable();
             $table->timestamps();
-            
+
             $table->unique(['application_id', 'step_number']);
         });
     }

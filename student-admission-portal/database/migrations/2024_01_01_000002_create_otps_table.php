@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('verified_at')->nullable();
             $table->tinyInteger('attempts')->default(0);
             $table->timestamps();
-            
+
             $table->index(['identifier', 'otp_code', 'purpose']);
             $table->index('expires_at');
         });

@@ -17,15 +17,15 @@ class AppServiceProvider extends ServiceProvider
                 $driver = config('services.student_info.driver', 'mock');
 
                 if ($driver === 'mock') {
-                    return new \App\Services\Student\MockStudentInformationService();
+                    return new \App\Services\Student\MockStudentInformationService;
                 }
 
                 if ($driver === 'asp') {
-                    return new \App\Services\Student\AspStudentInformationService();
+                    return new \App\Services\Student\AspStudentInformationService;
                 }
 
                 if ($driver === 'database' || $driver === 'cache') {
-                    return new \App\Services\Student\DatabaseStudentInformationService();
+                    return new \App\Services\Student\DatabaseStudentInformationService;
                 }
 
                 throw new \RuntimeException("Unknown Student Information Driver: {$driver}");

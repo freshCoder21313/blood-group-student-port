@@ -40,7 +40,7 @@ return new class extends Migration
                 'initiated_at',
                 'completed_at',
                 'manual_submission',
-                'proof_image_path'
+                'proof_image_path',
             ]);
         });
     }

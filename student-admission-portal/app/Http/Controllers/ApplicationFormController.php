@@ -11,7 +11,6 @@ use App\Models\Program;
 use App\Services\Application\ApplicationService;
 use App\Services\DocumentService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ApplicationFormController extends Controller
@@ -126,6 +125,7 @@ class ApplicationFormController extends Controller
             try {
                 // Validate documents and mark step 4 complete
                 $this->applicationService->saveStep($application, 4, [], true);
+
                 return redirect()->route('application.payment', $application);
             } catch (\Exception $e) {
                 return back()->withErrors(['error' => $e->getMessage()]);
@@ -134,6 +134,7 @@ class ApplicationFormController extends Controller
 
         // Save Draft
         $this->applicationService->saveStep($application, 4, [], false);
+
         return back()->with('status', 'documents-updated');
     }
 
@@ -153,6 +154,7 @@ class ApplicationFormController extends Controller
 
         try {
             $this->applicationService->submit($application);
+
             return redirect()->route('dashboard')->with('status', 'application-submitted');
         } catch (\Illuminate\Validation\ValidationException $e) {
             throw $e;

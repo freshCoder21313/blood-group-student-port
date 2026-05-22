@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use App\Services\Notifications\EmailChannel;
@@ -31,6 +32,6 @@ test('new users can register and are redirected to otp verification', function (
     $this->assertDatabaseHas('users', ['email' => 'test@example.com']);
     $this->assertDatabaseHas('otps', [
         'identifier' => 'test@example.com',
-        'purpose' => 'registration'
+        'purpose' => 'registration',
     ]);
 });

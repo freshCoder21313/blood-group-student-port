@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Application;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class AdmissionLetterController extends Controller
@@ -13,7 +12,7 @@ class AdmissionLetterController extends Controller
     {
         // Allow student or admin to view
         // Note: auth()->user() might be null if not protected by middleware, but route has 'auth'
-        if (!Gate::allows('view', $application) && !auth()->user()->isAdmin()) {
+        if (! Gate::allows('view', $application) && ! auth()->user()->isAdmin()) {
             abort(403);
         }
 
@@ -33,6 +32,6 @@ class AdmissionLetterController extends Controller
             'block' => $block,
         ]);
 
-        return $pdf->download('Admission_Letter_' . $student->first_name . '.pdf');
+        return $pdf->download('Admission_Letter_'.$student->first_name.'.pdf');
     }
 }

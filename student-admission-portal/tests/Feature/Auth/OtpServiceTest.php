@@ -1,8 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
-use App\Models\User;
 use App\Models\Otp;
+use App\Models\User;
 use App\Services\Auth\OtpService;
 use App\Services\Notifications\EmailChannel;
 use App\Services\Notifications\SmsChannel;
@@ -19,7 +20,7 @@ test('it can generate an otp for a user', function () {
     $user = User::factory()->create([
         'email' => 'test@example.com',
     ]);
-    
+
     $this->mock(EmailChannel::class)->shouldReceive('send')->once();
 
     $service = app(OtpService::class);
@@ -52,7 +53,7 @@ test('it can verify a valid otp', function () {
 
     expect($result['success'])->toBeTrue()
         ->and($result['code'])->toBe('VERIFIED');
-        
+
     $this->assertNotNull($otp->fresh()->verified_at);
 });
 
@@ -74,7 +75,7 @@ test('it fails verification with invalid code', function () {
 
     expect($result['success'])->toBeFalse()
         ->and($result['code'])->toBe('INVALID_OTP');
-        
+
     expect($otp->fresh()->attempts)->toBe(1);
     expect($otp->fresh()->verified_at)->toBeNull();
 });
@@ -90,14 +91,14 @@ test('it invalidates otp after max attempts', function () {
         'type' => 'email',
         'purpose' => 'registration',
         'expires_at' => now()->addMinutes(10),
-        'attempts' => 3, 
+        'attempts' => 3,
     ]);
 
-    $result = $service->verify($user->email, '123456', 'registration'); 
+    $result = $service->verify($user->email, '123456', 'registration');
 
     expect($result['success'])->toBeFalse()
         ->and($result['code'])->toBe('MAX_ATTEMPTS_EXCEEDED');
-        
+
     expect($otp->fresh()->verified_at)->not->toBeNull(); // Should be invalidated
 });
 

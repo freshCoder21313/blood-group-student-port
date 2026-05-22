@@ -1,15 +1,13 @@
 <?php
 
 use App\Models\Application;
-use App\Models\User;
 use App\Models\Payment;
+use App\Models\User;
 use App\Services\Payment\MpesaService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery\MockInterface;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Laravel\post;
-use function Pest\Laravel\get;
 use function Pest\Laravel\postJson;
 
 uses(RefreshDatabase::class);
@@ -86,17 +84,17 @@ test('mpesa callback updates payment status', function () {
                     'Item' => [
                         ['Name' => 'Amount', 'Value' => 100],
                         ['Name' => 'MpesaReceiptNumber', 'Value' => 'RC123'],
-                    ]
-                ]
-            ]
-        ]
+                    ],
+                ],
+            ],
+        ],
     ];
 
     // Assuming we use the real service logic in callback or mock processCallback
     // Since callback calls processCallback, we can verify DB update if we use real service or verify method call if mocked.
     // Let's use real service logic test here, or partial mock.
     // But this is Feature test, so integration.
-    
+
     // We need to bypass CSRF for callback
     postJson(route('payment.callback'), $callbackData)
         ->assertOk();

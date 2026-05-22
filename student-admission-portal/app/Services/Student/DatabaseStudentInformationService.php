@@ -14,6 +14,7 @@ class DatabaseStudentInformationService implements StudentInformationServiceInte
     public function getGrades(string $studentCode): array
     {
         $record = StudentAcademicRecord::where('student_code', $studentCode)->first();
+
         return $record->grades ?? [];
     }
 
@@ -23,6 +24,7 @@ class DatabaseStudentInformationService implements StudentInformationServiceInte
     public function getSchedule(string $studentCode): array
     {
         $record = StudentAcademicRecord::where('student_code', $studentCode)->first();
+
         return $record->schedule ?? [];
     }
 
@@ -32,11 +34,12 @@ class DatabaseStudentInformationService implements StudentInformationServiceInte
     public function getFees(string $studentCode): array
     {
         $record = StudentAcademicRecord::where('student_code', $studentCode)->first();
+
         return $record->fees ?? [
             'balance' => 0,
             'currency' => 'KES',
             'status' => 'Unknown',
-            'invoice_history' => []
+            'invoice_history' => [],
         ];
     }
 }

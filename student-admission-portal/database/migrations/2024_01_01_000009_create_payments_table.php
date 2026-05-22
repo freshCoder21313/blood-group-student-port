@@ -20,13 +20,13 @@ return new class extends Migration
                 'pending',
                 'submitted',
                 'verified',
-                'rejected'
+                'rejected',
             ])->default('pending');
             $table->text('verification_notes')->nullable();
             $table->timestamp('verified_at')->nullable();
             $table->string('verified_by')->nullable();
             $table->timestamps();
-            
+
             $table->index('mpesa_code');
             $table->index('status');
         });

@@ -44,8 +44,8 @@ class CreateAspToken extends Command
         $token = $user->createToken('ASP System Token', ['asp:sync']);
 
         $this->info("Token created for user: {$email}");
-        $this->info("Token: " . $token->plainTextToken);
-        
+        $this->info('Token: '.$token->plainTextToken);
+
         return 0;
     }
 }

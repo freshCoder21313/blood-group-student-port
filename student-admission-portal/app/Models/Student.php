@@ -52,7 +52,7 @@ class Student extends Model
 
     public function generateBlindIndex(?string $value): ?string
     {
-        if (!$value) {
+        if (! $value) {
             return null;
         }
 

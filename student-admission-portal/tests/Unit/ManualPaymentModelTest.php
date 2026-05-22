@@ -9,7 +9,7 @@ class ManualPaymentModelTest extends TestCase
 {
     public function test_payment_model_has_manual_fallback_fillables()
     {
-        $payment = new Payment();
+        $payment = new Payment;
         $this->assertContains('proof_document_path', $payment->getFillable(), 'proof_document_path should be fillable');
     }
 

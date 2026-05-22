@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\User;
 use App\Models\Student;
 use App\Models\StudentAcademicRecord;
-use Illuminate\Support\Facades\Config;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Config;
 
 uses(RefreshDatabase::class);
 
@@ -30,22 +30,22 @@ test('asp system can push student academic records with valid hmac signature', f
     $payload = [
         'grades' => [
             ['code' => 'MATH101', 'name' => 'Mathematics', 'grade' => 'A'],
-            ['code' => 'CS101', 'name' => 'Computer Science', 'grade' => 'A+']
+            ['code' => 'CS101', 'name' => 'Computer Science', 'grade' => 'A+'],
         ],
         'schedule' => [
-            ['day' => 'Monday', 'time' => '09:00 - 11:00', 'course' => 'Mathematics', 'venue' => 'Lab 1']
+            ['day' => 'Monday', 'time' => '09:00 - 11:00', 'course' => 'Mathematics', 'venue' => 'Lab 1'],
         ],
         'fees' => [
             'balance' => 500.0,
             'currency' => 'KES',
             'status' => 'Partial',
-            'invoice_history' => []
-        ]
+            'invoice_history' => [],
+        ],
     ];
 
     $timestamp = time();
     $body = json_encode($payload);
-    $signature = hash_hmac('sha256', $body . $timestamp, $this->apiSecret);
+    $signature = hash_hmac('sha256', $body.$timestamp, $this->apiSecret);
 
     $response = $this->withHeaders([
         'X-API-Key' => $this->apiKey,
@@ -57,7 +57,7 @@ test('asp system can push student academic records with valid hmac signature', f
         ->assertJson([
             'success' => true,
             'message' => 'Academic records updated successfully',
-            'student_code' => $studentCode
+            'student_code' => $studentCode,
         ]);
 
     $this->assertDatabaseHas('student_academic_records', [
@@ -75,7 +75,7 @@ test('student dashboard pages pull from database cache when using database drive
     $user = User::factory()->create(['role' => 'student']);
     $student = Student::factory()->create([
         'user_id' => $user->id,
-        'student_code' => 'STU999'
+        'student_code' => 'STU999',
     ]);
 
     // 2. Pre-seed academic records cache
@@ -87,8 +87,8 @@ test('student dashboard pages pull from database cache when using database drive
             'balance' => 0.0,
             'currency' => 'KES',
             'status' => 'Paid',
-            'invoice_history' => []
-        ]
+            'invoice_history' => [],
+        ],
     ]);
 
     // 3. Act as student and hit grades page

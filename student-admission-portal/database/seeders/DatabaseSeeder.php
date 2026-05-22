@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         $blocks = \App\Models\AcademicBlock::all();
 
         if ($programs->isEmpty() || $blocks->isEmpty()) {
-            throw new \Exception("Programs or Academic Blocks not seeded. Check seeders.");
+            throw new \Exception('Programs or Academic Blocks not seeded. Check seeders.');
         }
 
         // 2. Create Admins
@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
                 'phone' => '0700000000',
                 'password' => bcrypt('password'),
                 'status' => 'active',
-                'role' => 'admin'
+                'role' => 'admin',
             ]
         );
 
@@ -46,13 +46,13 @@ class DatabaseSeeder extends Seeder
                 'name' => "Admitted Student $i",
                 'email' => "student$i@example.com",
                 'status' => 'active',
-                'role' => 'student'
+                'role' => 'student',
             ]);
 
             $student = \App\Models\Student::factory()->create([
                 'user_id' => $user->id,
-                'student_code' => "STD-2026-" . str_pad((string) $i, 3, '0', STR_PAD_LEFT),
-                'first_name' => "Student",
+                'student_code' => 'STD-2026-'.str_pad((string) $i, 3, '0', STR_PAD_LEFT),
+                'first_name' => 'Student',
                 'last_name' => (string) $i,
             ]);
 
@@ -70,10 +70,10 @@ class DatabaseSeeder extends Seeder
         foreach ($statuses as $status) {
             for ($i = 1; $i <= 5; $i++) {
                 $user = User::factory()->create([
-                    'name' => "Applicant " . ucfirst(str_replace('_', ' ', $status)) . " $i",
+                    'name' => 'Applicant '.ucfirst(str_replace('_', ' ', $status))." $i",
                     'email' => "{$status}{$i}@example.com",
                     'status' => 'new',
-                    'role' => 'student'
+                    'role' => 'student',
                 ]);
 
                 $student = \App\Models\Student::factory()->create(['user_id' => $user->id]);

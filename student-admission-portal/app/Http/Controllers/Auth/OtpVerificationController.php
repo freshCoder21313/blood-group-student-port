@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
@@ -54,7 +55,7 @@ class OtpVerificationController extends Controller
             'email_verified_at' => now(),
             'status' => 'active',
         ]);
-        
+
         // Login if not already logged in
         if (! Auth::check()) {
             Auth::login($user);
@@ -65,7 +66,7 @@ class OtpVerificationController extends Controller
 
         return redirect()->route('dashboard');
     }
-    
+
     /**
      * Resend OTP
      */
@@ -76,9 +77,10 @@ class OtpVerificationController extends Controller
         if (! $user) {
             return redirect()->route('login');
         }
-        
+
         try {
             $otpService->generate($user, 'registration');
+
             return back()->with('status', 'OTP has been resent!');
         } catch (\Exception $e) {
             return back()->withErrors(['code' => $e->getMessage()]);
@@ -90,12 +92,12 @@ class OtpVerificationController extends Controller
         if (Auth::check()) {
             return Auth::user();
         }
-        
+
         $userId = $request->session()->get('auth.otp.user_id');
         if ($userId) {
             return User::find($userId);
         }
-        
+
         return null;
     }
 }

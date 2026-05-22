@@ -23,14 +23,14 @@ class MpesaPaymentProcessor implements PaymentProcessorInterface
     {
         $phoneNumber = $data['phone_number'];
         $amount = $data['amount'];
-        $reference = 'APP-' . $application->application_number;
+        $reference = 'APP-'.$application->application_number;
 
         $response = $this->mpesaService->initiateStkPush($phoneNumber, $amount, $reference);
 
         $checkoutRequestId = $response['CheckoutRequestID'] ?? null;
         $merchantRequestId = $response['MerchantRequestID'] ?? null;
 
-        if (!$checkoutRequestId) {
+        if (! $checkoutRequestId) {
             throw new \RuntimeException($response['ResponseDescription'] ?? 'Failed to initiate M-Pesa STK Push');
         }
 

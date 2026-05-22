@@ -20,7 +20,7 @@ class SendApprovalNotification implements ShouldQueue
 
     public function handle(): void
     {
-        if (!$this->application->student || !$this->application->student->email) {
+        if (! $this->application->student || ! $this->application->student->email) {
             return;
         }
 

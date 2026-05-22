@@ -3,18 +3,18 @@
 namespace Tests\Feature\Student;
 
 use App\Models\Application;
-use App\Models\User;
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
 it('shows the student dashboard for approved students', function () {
     $user = User::factory()->create();
-    
+
     // Create a student record for the user (Application usually creates this)
     $student = Student::factory()->create(['user_id' => $user->id, 'student_code' => 'STD-123']);
-    
+
     // Create an approved application for this student/user
     Application::factory()->create([
         'student_id' => $student->id,
@@ -25,17 +25,17 @@ it('shows the student dashboard for approved students', function () {
 
     $response->assertStatus(200);
     $response->assertViewIs('student.dashboard');
-    $response->assertSee('Welcome, ' . $student->first_name);
+    $response->assertSee('Welcome, '.$student->first_name);
     $response->assertSee('Student ID:');
     $response->assertSee('STD-123');
 });
 
 it('shows the applicant dashboard for non-approved students', function () {
     $user = User::factory()->create();
-    
+
     // Create student record
     $student = Student::factory()->create(['user_id' => $user->id]);
-    
+
     // Create pending application
     Application::factory()->create([
         'student_id' => $student->id,
@@ -50,7 +50,7 @@ it('shows the applicant dashboard for non-approved students', function () {
 
 it('shows the applicant dashboard for users with no application', function () {
     $user = User::factory()->create();
-    
+
     $response = $this->actingAs($user)->get('/dashboard');
 
     $response->assertStatus(200);
@@ -59,10 +59,10 @@ it('shows the applicant dashboard for users with no application', function () {
 
 it('shows the student dashboard for approved students even if they have a new draft application', function () {
     $user = User::factory()->create();
-    
+
     // Create student record for the user with student code
     $student = Student::factory()->create(['user_id' => $user->id, 'student_code' => 'STD-123']);
-    
+
     // Create an APPROVED application (from previous year/program)
     Application::factory()->create([
         'student_id' => $student->id,
@@ -81,7 +81,7 @@ it('shows the student dashboard for approved students even if they have a new dr
 
     $response->assertStatus(200);
     $response->assertViewIs('student.dashboard');
-    $response->assertSee('Welcome, ' . $student->first_name);
+    $response->assertSee('Welcome, '.$student->first_name);
     $response->assertSee('Student ID:');
     $response->assertSee('STD-123');
 });

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\UpdateStatusRequest;
-use App\Models\Application;
-use App\Models\StatusHistory;
 use App\Events\ApplicationApproved;
 use App\Events\ApplicationRejected;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\UpdateStatusRequest;
 use App\Jobs\SendApprovalNotification;
+use App\Models\Application;
+use App\Models\StatusHistory;
 use App\Services\Application\ApplicationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -23,9 +23,9 @@ class StatusController extends Controller
 
     /**
      * Update application status from ASP
-     * 
+     *
      * POST /api/v1/update-status
-     * 
+     *
      * Body:
      * {
      *   "application_id": 123,
@@ -53,10 +53,10 @@ class StatusController extends Controller
             if ($validated['status'] === 'approved') {
                 $application->approved_at = now();
                 $application->approved_by = $validated['changed_by'] ?? 'system';
-                
+
                 if (isset($validated['student_code'])) {
                     $application->student->update([
-                        'student_code' => $validated['student_code']
+                        'student_code' => $validated['student_code'],
                     ]);
                 }
             }
@@ -75,13 +75,13 @@ class StatusController extends Controller
                 'to_status' => $validated['status'],
                 'changed_by' => $validated['changed_by'] ?? 'ASP System',
                 'notes' => $validated['notes'] ?? null,
-                'source' => 'asp'
+                'source' => 'asp',
             ]);
 
             DB::commit();
 
             // Dispatch events and jobs
-            match($validated['status']) {
+            match ($validated['status']) {
                 'approved' => event(new ApplicationApproved($application)),
                 'rejected' => event(new ApplicationRejected($application)),
                 'request_info' => SendApprovalNotification::dispatch($application, 'request_info'),
@@ -92,7 +92,7 @@ class StatusController extends Controller
                 'application_id' => $application->id,
                 'old_status' => $oldStatus,
                 'new_status' => $validated['status'],
-                'changed_by' => $validated['changed_by'] ?? 'system'
+                'changed_by' => $validated['changed_by'] ?? 'system',
             ]);
 
             return response()->json([
@@ -102,29 +102,29 @@ class StatusController extends Controller
                     'application_id' => $application->id,
                     'old_status' => $oldStatus,
                     'new_status' => $application->status,
-                    'student_code' => $application->student->student_code
-                ]
+                    'student_code' => $application->student->student_code,
+                ],
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             Log::error('Failed to update application status', [
                 'application_id' => $validated['application_id'] ?? null,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update status',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
 
     /**
      * Bulk update
-     * 
+     *
      * POST /api/v1/bulk-update-status
      */
     public function bulkUpdate(Request $request): JsonResponse
@@ -135,7 +135,7 @@ class StatusController extends Controller
             'applications.*.status' => 'required|in:approved,rejected,request_info',
             'applications.*.student_code' => 'nullable|string',
             'applications.*.notes' => 'nullable|string',
-            'changed_by' => 'required|string'
+            'changed_by' => 'required|string',
         ]);
 
         $results = [];
@@ -144,7 +144,7 @@ class StatusController extends Controller
             try {
                 $item['changed_by'] = $validated['changed_by'];
                 // Manually validate and process
-                $updateRequest = new UpdateStatusRequest();
+                $updateRequest = new UpdateStatusRequest;
                 $updateRequest->merge($item);
                 $updateRequest->setContainer(app());
                 $updateRequest->validateResolved();
@@ -152,20 +152,20 @@ class StatusController extends Controller
                 $this->update($updateRequest);
                 $results[] = [
                     'application_id' => $item['application_id'],
-                    'success' => true
+                    'success' => true,
                 ];
             } catch (\Exception $e) {
                 $results[] = [
                     'application_id' => $item['application_id'],
                     'success' => false,
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ];
             }
         }
 
         return response()->json([
             'success' => true,
-            'data' => $results
+            'data' => $results,
         ]);
     }
 }

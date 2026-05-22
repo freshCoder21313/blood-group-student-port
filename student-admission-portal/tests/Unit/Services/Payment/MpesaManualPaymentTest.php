@@ -22,15 +22,15 @@ class MpesaManualPaymentTest extends TestCase
         $user = \App\Models\User::factory()->create();
         $student = \App\Models\Student::factory()->create(['user_id' => $user->id]);
         $application = Application::factory()->create(['student_id' => $student->id]);
-        
+
         $file = UploadedFile::fake()->create('proof.pdf', 100);
         $data = [
             'transaction_code' => 'QDH1234567',
-            'amount' => 1000, 
+            'amount' => 1000,
             'proof_document' => $file,
         ];
 
-        $service = new MpesaService();
+        $service = new MpesaService;
         $payment = $service->recordManualPayment($application, $data);
 
         $this->assertInstanceOf(Payment::class, $payment);

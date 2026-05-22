@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Application;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,7 +15,7 @@ class StudentDashboardTest extends TestCase
     {
         // 3.1.1 Log in as admitted student
         $user = User::factory()->create(['status' => 'active']);
-        if (!$user->student) {
+        if (! $user->student) {
             $user->student()->create();
             $user->refresh();
         }

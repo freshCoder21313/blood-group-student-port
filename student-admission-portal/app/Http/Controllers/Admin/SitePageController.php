@@ -26,7 +26,7 @@ class SitePageController extends Controller
             abort(403);
         }
 
-        return view('admin.pages.form', ['page' => new SitePage()]);
+        return view('admin.pages.form', ['page' => new SitePage]);
     }
 
     public function store(Request $request)
@@ -69,7 +69,7 @@ class SitePageController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:site_pages,slug,' . $page->id,
+            'slug' => 'required|string|max:255|unique:site_pages,slug,'.$page->id,
             'content' => 'nullable|string',
             'is_published' => 'boolean',
         ]);

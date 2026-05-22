@@ -16,7 +16,7 @@ it('encrypts pii in database', function () {
 
     expect($dbStudent->national_id)->not->toBe('12345678')
         ->and(strlen($dbStudent->national_id))->toBeGreaterThan(20);
-        
+
     expect($dbStudent->passport_number)->not->toBe('A1234567')
         ->and(strlen($dbStudent->passport_number))->toBeGreaterThan(20);
 });
@@ -47,7 +47,7 @@ it('populates blind indexes', function () {
 
     expect($dbStudent->national_id_index)->not->toBeNull()
         ->and($dbStudent->national_id_index)->not->toBe('12345678');
-        
+
     expect($dbStudent->passport_number_index)->not->toBeNull()
         ->and($dbStudent->passport_number_index)->not->toBe('A1234567');
 });
@@ -58,12 +58,12 @@ it('clears blind index when pii is cleared', function () {
         'user_id' => $user->id,
         'national_id' => '12345678',
     ]);
-    
+
     expect($student->national_id_index)->not->toBeNull();
-    
+
     $student->update(['national_id' => null]);
     $student->refresh();
-    
+
     expect($student->national_id)->toBeNull();
     expect($student->national_id_index)->toBeNull();
 });
@@ -75,13 +75,13 @@ it('can find student by blind index', function () {
         'user_id' => $user->id,
         'national_id' => $nationalId,
     ]);
-    
+
     // Test using the scope (Abstraction)
     $foundStudent = Student::whereNationalId($nationalId)->first();
-    
+
     expect($foundStudent)->not->toBeNull()
         ->and($foundStudent->id)->toBe($student->id);
-        
+
     // Verify raw query still works (Implementation detail)
     $hashedIndex = hash_hmac('sha256', $nationalId, config('app.blind_index_key'));
     $rawFound = Student::where('national_id_index', $hashedIndex)->first();

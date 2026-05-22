@@ -4,12 +4,11 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\StudentResource;
-use App\Http\Resources\StudentCollection;
 use App\Models\Application;
 use App\Models\Student;
 use App\Services\Integration\AspApiService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
@@ -19,7 +18,7 @@ class StudentController extends Controller
 
     /**
      * Get list of students by status
-     * 
+     *
      * GET /api/v1/students?status=pending_approval&page=1&per_page=50
      */
     public function index(Request $request): JsonResponse
@@ -38,7 +37,7 @@ class StudentController extends Controller
             'program',
             'block',
             'documents',
-            'payment'
+            'payment',
         ]);
 
         // Filter by status
@@ -56,7 +55,7 @@ class StudentController extends Controller
 
         $perPage = $validated['per_page'] ?? 50;
         $applications = $query->orderBy('submitted_at', 'desc')
-                             ->paginate($perPage);
+            ->paginate($perPage);
 
         return response()->json([
             'success' => true,
@@ -66,13 +65,13 @@ class StudentController extends Controller
                 'last_page' => $applications->lastPage(),
                 'per_page' => $applications->perPage(),
                 'total' => $applications->total(),
-            ]
+            ],
         ]);
     }
 
     /**
      * Get application details
-     * 
+     *
      * GET /api/v1/students/{id}
      */
     public function show(int $id): JsonResponse
@@ -85,70 +84,70 @@ class StudentController extends Controller
             'documents',
             'payment',
             'steps',
-            'statusHistories'
+            'statusHistories',
         ])->findOrFail($id);
 
         return response()->json([
             'success' => true,
-            'data' => new StudentResource($application)
+            'data' => new StudentResource($application),
         ]);
     }
 
     /**
      * Get student grades from ASP
-     * 
+     *
      * GET /api/v1/students/{student_code}/grades
      */
     public function grades(string $studentCode): JsonResponse
     {
         $student = Student::where('student_code', $studentCode)
-                         ->whereHas('application', fn($q) => $q->where('status', 'approved'))
-                         ->firstOrFail();
+            ->whereHas('application', fn ($q) => $q->where('status', 'approved'))
+            ->firstOrFail();
 
         // Call ASP API to get grades
         $grades = $this->aspService->getStudentGrades($studentCode);
 
         return response()->json([
             'success' => true,
-            'data' => $grades
+            'data' => $grades,
         ]);
     }
 
     /**
      * Get student timetable from ASP
-     * 
+     *
      * GET /api/v1/students/{student_code}/timetable
      */
     public function timetable(string $studentCode): JsonResponse
     {
         $student = Student::where('student_code', $studentCode)
-                         ->whereHas('application', fn($q) => $q->where('status', 'approved'))
-                         ->firstOrFail();
+            ->whereHas('application', fn ($q) => $q->where('status', 'approved'))
+            ->firstOrFail();
 
         $timetable = $this->aspService->getStudentTimetable($studentCode);
 
         return response()->json([
             'success' => true,
-            'data' => $timetable
+            'data' => $timetable,
         ]);
     }
 
     /**
      * Get student fees from ASP
-     * 
+     *
      * GET /api/v1/students/{student_code}/fees
      */
     public function fees(string $studentCode): JsonResponse
     {
         $student = Student::where('student_code', $studentCode)
-                         ->whereHas('application', fn($q) => $q->where('status', 'approved'))
-                         ->firstOrFail();
+            ->whereHas('application', fn ($q) => $q->where('status', 'approved'))
+            ->firstOrFail();
 
         $fees = $this->aspService->getStudentFees($studentCode);
 
         return response()->json([
             'success' => true,
-            'data' => $fees
+            'data' => $fees,
         ]);
     }
 }

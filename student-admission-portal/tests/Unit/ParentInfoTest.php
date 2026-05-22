@@ -5,8 +5,8 @@ namespace Tests\Unit;
 use App\Models\ParentInfo;
 use App\Models\Student;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class ParentInfoTest extends TestCase
 {
@@ -15,7 +15,7 @@ class ParentInfoTest extends TestCase
     #[Test]
     public function it_has_correct_fillable_attributes()
     {
-        $parentInfo = new ParentInfo();
+        $parentInfo = new ParentInfo;
 
         // sort arrays to ensure order doesn't matter
         $expected = [
@@ -25,9 +25,9 @@ class ParentInfoTest extends TestCase
             'relationship',
             'guardian_email',
         ];
-        
+
         $actual = $parentInfo->getFillable();
-        
+
         sort($expected);
         sort($actual);
 
@@ -39,11 +39,11 @@ class ParentInfoTest extends TestCase
     {
         // We'll skip factory for now and create manually to test relationship method existence
         $student = Student::factory()->create();
-        
+
         // We can't save ParentInfo yet if columns don't exist, so we test the relation method on instance
-        $parentInfo = new ParentInfo();
+        $parentInfo = new ParentInfo;
         $parentInfo->student_id = $student->id;
-        
+
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsTo::class, $parentInfo->student());
     }
 }

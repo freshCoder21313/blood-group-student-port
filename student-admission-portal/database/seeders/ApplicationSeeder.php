@@ -56,7 +56,7 @@ class ApplicationSeeder extends Seeder
         );
         $app->submitted_at = now();
         $app->save();
-        
+
         // 3b. Ready for Admin Application (Step 5 completed, submitted)
         // This user is specifically for you to login as Admin and approve
         $app = $this->createApplication(
@@ -69,16 +69,16 @@ class ApplicationSeeder extends Seeder
         );
         $app->submitted_at = now();
         $app->save();
-        
+
         // Create payment for this "ready" user to make it realistic
         \App\Models\Payment::firstOrCreate([
-            'application_id' => $app->id
+            'application_id' => $app->id,
         ], [
             'amount' => 1000,
             'status' => 'completed',
-            'transaction_code' => 'RDY' . Str::upper(Str::random(7)),
+            'transaction_code' => 'RDY'.Str::upper(Str::random(7)),
             'phone_number' => '0700000000',
-            'result_desc' => 'Success'
+            'result_desc' => 'Success',
         ]);
 
         // 4. Approved Application
@@ -121,7 +121,7 @@ class ApplicationSeeder extends Seeder
         );
         $app->submitted_at = now()->subDays(10);
         $app->approved_at = now()->subDays(5);
-        $app->student->student_code = 'ST-' . now()->year . '-' . Str::upper(Str::random(5));
+        $app->student->student_code = 'ST-'.now()->year.'-'.Str::upper(Str::random(5));
         $app->student->save();
         $app->save();
     }
@@ -130,7 +130,7 @@ class ApplicationSeeder extends Seeder
     {
         // Check if user exists
         $user = User::where('email', $email)->first();
-        if (!$user) {
+        if (! $user) {
             $user = User::factory()->create([
                 'email' => $email,
                 // Password is 'password' by default in factory
@@ -139,8 +139,8 @@ class ApplicationSeeder extends Seeder
 
         // Check if student exists
         $student = Student::where('user_id', $user->id)->first();
-        if (!$student) {
-             $student = Student::factory()->create([
+        if (! $student) {
+            $student = Student::factory()->create([
                 'user_id' => $user->id,
                 'first_name' => explode(' ', $name)[0],
                 'last_name' => explode(' ', $name)[1] ?? 'User',
@@ -152,20 +152,20 @@ class ApplicationSeeder extends Seeder
             \App\Models\ParentInfo::firstOrCreate(
                 ['student_id' => $student->id],
                 [
-                    'guardian_name' => 'Parent of ' . $student->first_name,
-                    'guardian_phone' => '07' . rand(10000000, 99999999),
+                    'guardian_name' => 'Parent of '.$student->first_name,
+                    'guardian_phone' => '07'.rand(10000000, 99999999),
                     'relationship' => 'Parent',
-                    'guardian_email' => 'parent.' . $student->id . '@example.com'
+                    'guardian_email' => 'parent.'.$student->id.'@example.com',
                 ]
             );
         }
-       
+
         $app = Application::firstOrCreate(
             ['student_id' => $student->id],
             [
                 'program_id' => $program->id,
                 'block_id' => $block->id,
-                'application_number' => 'APP-' . strtoupper(Str::random(8)),
+                'application_number' => 'APP-'.strtoupper(Str::random(8)),
                 'status' => $status,
                 'current_step' => $step,
                 'total_steps' => 5,
@@ -192,13 +192,13 @@ class ApplicationSeeder extends Seeder
             \App\Models\Document::firstOrCreate(
                 [
                     'application_id' => $application->id,
-                    'type' => $type
+                    'type' => $type,
                 ],
                 [
-                    'path' => 'documents/seed_' . $type . '.pdf',
-                    'original_name' => 'seed_' . $type . '.pdf',
+                    'path' => 'documents/seed_'.$type.'.pdf',
+                    'original_name' => 'seed_'.$type.'.pdf',
                     'mime_type' => 'application/pdf',
-                    'size' => 1024
+                    'size' => 1024,
                 ]
             );
         }
@@ -215,8 +215,8 @@ class ApplicationSeeder extends Seeder
             'application_id' => $application->id,
             'amount' => 1000,
             'status' => 'completed',
-            'transaction_code' => 'SEED' . Str::upper(Str::random(6)),
-            'phone_number' => '07' . rand(10000000, 99999999),
+            'transaction_code' => 'SEED'.Str::upper(Str::random(6)),
+            'phone_number' => '07'.rand(10000000, 99999999),
             'result_desc' => 'Success',
             'merchant_request_id' => Str::random(10),
             'checkout_request_id' => Str::random(10),

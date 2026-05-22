@@ -6,13 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Application;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 
 class ApplicationController extends Controller
 {
     public function index()
     {
-        if (!auth()->user()->isAdmin()) {
+        if (! auth()->user()->isAdmin()) {
             abort(403);
         }
 
@@ -21,11 +20,11 @@ class ApplicationController extends Controller
         if ($search = request('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('application_number', 'like', "%{$search}%")
-                  ->orWhereHas('student', function ($subQ) use ($search) {
-                      $subQ->where('first_name', 'like', "%{$search}%")
-                           ->orWhere('last_name', 'like', "%{$search}%")
-                           ->orWhere('middle_name', 'like', "%{$search}%");
-                  });
+                    ->orWhereHas('student', function ($subQ) use ($search) {
+                        $subQ->where('first_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%")
+                            ->orWhere('middle_name', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -40,7 +39,7 @@ class ApplicationController extends Controller
 
     public function show(Application $application)
     {
-        if (!auth()->user()->isAdmin()) {
+        if (! auth()->user()->isAdmin()) {
             abort(403);
         }
 
@@ -51,7 +50,7 @@ class ApplicationController extends Controller
 
     public function approve(Application $application)
     {
-        if (!auth()->user()->isAdmin()) {
+        if (! auth()->user()->isAdmin()) {
             abort(403);
         }
 
@@ -63,7 +62,7 @@ class ApplicationController extends Controller
         $application->update([
             'status' => 'approved',
             'approved_at' => now(),
-            'approved_by' => auth()->id()
+            'approved_by' => auth()->id(),
         ]);
 
         ActivityLogger::log('approve_application', "Approved application {$application->application_number}", $application);
@@ -73,7 +72,7 @@ class ApplicationController extends Controller
 
     public function reject(Request $request, Application $application)
     {
-        if (!auth()->user()->isAdmin()) {
+        if (! auth()->user()->isAdmin()) {
             abort(403);
         }
 
@@ -83,7 +82,7 @@ class ApplicationController extends Controller
             'status' => 'rejected',
             'rejection_reason' => $request->rejection_reason,
             'approved_at' => now(), // Decision date
-            'approved_by' => auth()->id()
+            'approved_by' => auth()->id(),
         ]);
 
         ActivityLogger::log('reject_application', "Rejected application {$application->application_number}. Reason: {$request->rejection_reason}", $application);

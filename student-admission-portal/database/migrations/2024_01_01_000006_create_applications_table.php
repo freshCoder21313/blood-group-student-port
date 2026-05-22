@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('applications', function (Blueprint $table) {
@@ -17,10 +18,10 @@ return new class extends Migration {
             $table->enum('status', [
                 'draft',           // Drafting
                 'pending_payment', // Waiting for payment
-                'pending_approval',// Waiting for approval
+                'pending_approval', // Waiting for approval
                 'request_info',    // Requesting info
                 'approved',        // Approved
-                'rejected'         // Rejected
+                'rejected',         // Rejected
             ])->default('draft');
             $table->tinyInteger('current_step')->default(1);
             $table->tinyInteger('total_steps')->default(4);

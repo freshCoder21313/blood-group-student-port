@@ -2,17 +2,19 @@
 
 namespace Tests\Unit\Services;
 
-use Tests\TestCase;
 use App\Services\Integration\AspApiService;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
+use Tests\TestCase;
 
 class AspApiServiceTest extends TestCase
 {
     private AspApiService $service;
+
     private string $baseUrl = 'http://test-asp.com/api';
+
     private string $apiKey = 'test-key';
+
     private string $apiSecret = 'test-secret';
 
     protected function setUp(): void
@@ -25,19 +27,19 @@ class AspApiServiceTest extends TestCase
         Config::set('asp_integration.api_secret', $this->apiSecret);
         Config::set('asp_integration.timeout', 5);
 
-        $this->service = new AspApiService();
+        $this->service = new AspApiService;
     }
 
     public function test_get_student_grades_success()
     {
         // Mock HTTP Response
         Http::fake([
-            $this->baseUrl . '/students/STU001/grades' => Http::response([
+            $this->baseUrl.'/students/STU001/grades' => Http::response([
                 'success' => true,
                 'data' => [
                     ['subject' => 'Math', 'score' => 9.0],
-                    ['subject' => 'Physics', 'score' => 8.5]
-                ]
+                    ['subject' => 'Physics', 'score' => 8.5],
+                ],
             ], 200),
         ]);
 

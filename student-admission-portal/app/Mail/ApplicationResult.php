@@ -20,8 +20,8 @@ class ApplicationResult extends Mailable
 
     public function envelope(): Envelope
     {
-        $subject = $this->type === 'approved' 
-            ? 'Congratulations! Your application has been approved' 
+        $subject = $this->type === 'approved'
+            ? 'Congratulations! Your application has been approved'
             : 'Admission Application Update';
 
         return new Envelope(

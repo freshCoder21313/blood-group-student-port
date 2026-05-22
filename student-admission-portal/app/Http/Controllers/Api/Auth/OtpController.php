@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Services\Auth\OtpService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class OtpController extends Controller
 {
@@ -21,11 +21,12 @@ class OtpController extends Controller
 
         try {
             $result = $this->otpService->generate($request->identifier, $type);
+
             return response()->json($result);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 429);
         }
     }
@@ -34,7 +35,7 @@ class OtpController extends Controller
     {
         $request->validate([
             'identifier' => 'required',
-            'otp_code' => 'required|string|size:6'
+            'otp_code' => 'required|string|size:6',
         ]);
 
         $result = $this->otpService->verify($request->identifier, $request->otp_code);

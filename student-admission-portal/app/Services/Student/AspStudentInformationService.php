@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 class AspStudentInformationService implements StudentInformationServiceInterface
 {
     private string $baseUrl;
+
     private string $apiKey;
 
     public function __construct()
@@ -34,7 +35,7 @@ class AspStudentInformationService implements StudentInformationServiceInterface
             'balance' => 0,
             'currency' => 'KES',
             'status' => 'Unknown',
-            'invoice_history' => []
+            'invoice_history' => [],
         ]);
     }
 
@@ -49,10 +50,12 @@ class AspStudentInformationService implements StudentInformationServiceInterface
                 return $response->json();
             }
 
-            Log::warning("ASP API Error for {$endpoint}: " . $response->status());
+            Log::warning("ASP API Error for {$endpoint}: ".$response->status());
+
             return $default;
         } catch (\Exception $e) {
-            Log::error("ASP API Connection Failed for {$endpoint}: " . $e->getMessage());
+            Log::error("ASP API Connection Failed for {$endpoint}: ".$e->getMessage());
+
             return $default;
         }
     }
